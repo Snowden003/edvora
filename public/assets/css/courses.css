@@ -1,0 +1,260 @@
+.courses-slider-wrapper {
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0;
+    cursor: grab;
+}
+
+.courses-slider-wrapper:active {
+    cursor: grabbing;
+}
+
+.courses-slider-track {
+    display: flex;
+    gap: 32px;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+    padding: 10px 5px;
+}
+
+/* Course Card - Moved to popular-courses.css for home page */
+
+/* Course card styles moved to popular-courses.css */
+
+/* Slider container styles moved to popular-courses.css */
+
+/* Hero Section */
+.courses-hero-section {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    background: #020811;
+    position: relative;
+    overflow: hidden;
+}
+
+.courses-bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Loading animation for course images */
+.course-image {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+/* Responsive Design for Courses Slider */
+@media (max-width: 768px) {
+    .courses-slider-track {
+        gap: 15px !important;
+    }
+
+    .course-card {
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+
+    .course-content {
+        padding: 15px !important;
+    }
+
+    .course-image {
+        height: 160px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .course-card {
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+}
+
+/* Enhanced Course Card - Moved to popular-courses.css */
+
+/* Continue Your Learning Section - Premium Redesign */
+.continue-learning-section {
+    background: radial-gradient(circle at center, #061E3E 0%, #020811 100%);
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+.continue-learning-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.continue-learning-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #1F8FFF, #00F0FF);
+    border-radius: 2px;
+}
+
+/* Premium Progress Bar */
+.progress-container {
+    margin-bottom: 1.5rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: #1F8FFF;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.premium-progress {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.premium-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1F8FFF, #00F0FF);
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(31, 143, 255, 0.5);
+}
+
+.next-lesson-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.next-lesson-text strong {
+    color: white;
+    font-weight: 500;
+}
+
+/* Premium Button */
+.btn-premium {
+    background: linear-gradient(135deg, #1F8FFF 0%, #00F0FF 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #00F0FF 0%, #1F8FFF 100%);
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.btn-premium:hover::before {
+    opacity: 1;
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(31, 143, 255, 0.4);
+    color: white;
+}
+
+/* Course Detail Styles */
+.course-hero {
+    background: linear-gradient(135deg, var(--primary-black) 0%, var(--primary-blue) 100%);
+    position: relative;
+    overflow: hidden;
+    padding-top: 80px;
+}
+
+.course-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.course-thumbnail {
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.course-stats {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.instructor-card,
+.curriculum-item,
+.review-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.enroll-btn,
+.price-tag {
+    background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
+    color: white;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 5px 20px rgba(31, 143, 255, 0.3);
+}
+
+.course-hero-desc,
+.course-hero-desc p,
+.course-hero-desc span,
+.course-hero-desc li {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.course-overview-desc,
+.course-overview-desc p,
+.course-overview-desc span,
+.course-overview-desc li {
+    color: #212529 !important;
+}
+
+.skill-badge {
+    background: rgba(31, 143, 255, 0.1);
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    border-radius: 25px;
+    padding: 8px 16px;
+    transition: transform 0.3s ease;
+}

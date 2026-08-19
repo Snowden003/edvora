@@ -1,0 +1,405 @@
+/* ===== Popular Courses Section Styles ===== */
+
+/* Course Card Base */
+.course-card {
+    min-width: 340px;
+    max-width: 340px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+    flex-shrink: 0;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(31, 143, 255, 0.15);
+    border-color: rgba(31, 143, 255, 0.3);
+}
+
+/* Enhanced Course Card */
+.course-card-enhanced {
+    background: #FFFFFF;
+    border: 1px solid rgba(31, 143, 255, 0.1);
+}
+
+.course-card-enhanced:hover {
+    background: #FFFFFF;
+    border-color: rgba(31, 143, 255, 0.3);
+}
+
+/* Course Image */
+.course-image {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.course-image i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 2;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.course-card:hover .course-image i {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Course Image Backgrounds */
+.course-image.web-dev {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.course-image.design {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.course-image.ai-ml {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.course-image.mobile-dev {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.course-image.cybersecurity {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Category Badge */
+.course-category-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1F8FFF;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 3;
+    backdrop-filter: blur(10px);
+}
+
+/* Course Content */
+.course-content {
+    padding: 24px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+}
+
+/* Teacher Info */
+.course-teacher-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.teacher-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1f8fff;
+    box-shadow: 0 2px 8px rgba(31, 143, 255, 0.2);
+}
+
+.teacher-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    border: 2px solid #1f8fff;
+    box-shadow: 0 2px 8px rgba(31, 143, 255, 0.2);
+}
+
+.teacher-name {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.course-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #0D0D0D;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.course-description {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+/* Course Rating */
+.course-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.course-rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.course-rating-stars i {
+    color: #FFC107;
+    font-size: 1rem;
+}
+
+.course-rating-score {
+    font-weight: 800;
+    color: #0D0D0D;
+    font-size: 0.95rem;
+}
+
+.course-rating-count {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Course Meta */
+.course-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.course-meta > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.course-meta i {
+    color: #1F8FFF;
+    font-size: 0.9rem;
+}
+
+/* Enroll Button */
+.course-enroll-btn {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: white;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin-top: 16px;
+    box-shadow: 0 4px 15px rgba(31, 143, 255, 0.2);
+}
+
+.course-enroll-btn:hover {
+    background: linear-gradient(135deg, #0066cc, #004999);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(31, 143, 255, 0.4);
+    color: white;
+}
+
+.course-enroll-btn::after {
+    content: '→';
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.course-enroll-btn:hover::after {
+    transform: translateX(4px);
+}
+
+/* Slider Container */
+.courses-slider-container {
+    position: relative;
+    max-width: 1084px;
+    margin: 0 auto;
+}
+
+.courses-slider-wrapper {
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0;
+    cursor: grab;
+}
+
+.courses-slider-wrapper:active {
+    cursor: grabbing;
+}
+
+.courses-slider-track {
+    display: flex;
+    gap: 32px;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+    padding: 10px 5px;
+}
+
+/* Navigation Buttons */
+.slider-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2px solid #1F8FFF;
+    color: #1F8FFF;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.slider-nav-btn:hover {
+    background: #1F8FFF;
+    color: #FFFFFF;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(31, 143, 255, 0.3);
+}
+
+.slider-prev {
+    left: 10px;
+}
+
+.slider-next {
+    right: 10px;
+}
+
+/* Slider Indicators */
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #D1D5DB;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #1F8FFF;
+    width: 32px;
+    border-radius: 6px;
+}
+
+.indicator:hover {
+    background: #1F8FFF;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .courses-slider-track {
+        gap: 20px !important;
+    }
+
+    .course-card,
+    .course-card-enhanced {
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+
+    .course-content {
+        padding: 18px !important;
+    }
+
+    .course-image {
+        height: 160px !important;
+    }
+
+    .slider-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .slider-prev {
+        left: 10px;
+    }
+
+    .slider-next {
+        right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .course-card,
+    .course-card-enhanced {
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+
+    .course-title {
+        font-size: 1.1rem;
+    }
+
+    .course-description {
+        font-size: 0.9rem;
+    }
+
+    .slider-nav-btn {
+        display: none;
+    }
+}

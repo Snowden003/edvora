@@ -1,0 +1,537 @@
+/* Roadmap Page Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: linear-gradient(135deg, #0D0D0D 0%, #1F8FFF 50%, #BFC0C0 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.navbar {
+    background: rgba(6, 30, 62, 0.85);
+}
+
+/* Hero Section */
+.hero-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 70%, rgba(31, 143, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(31, 143, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(31, 143, 255, 0.2) 0%, transparent 50%);
+    animation: backgroundPulse 8s ease-in-out infinite;
+}
+
+.roadmap-section {
+    background: #ffffff !important;
+}
+
+@keyframes backgroundPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* Floating Elements */
+.floating-element {
+    position: absolute;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.3);
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-element:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-element:nth-child(2) {
+    top: 20%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.floating-element:nth-child(3) {
+    top: 60%;
+    left: 5%;
+    animation-delay: 2s;
+}
+
+.floating-element:nth-child(4) {
+    top: 70%;
+    right: 10%;
+    animation-delay: 3s;
+}
+
+.floating-element:nth-child(5) {
+    top: 30%;
+    left: 80%;
+    animation-delay: 4s;
+}
+
+.floating-element:nth-child(6) {
+    top: 80%;
+    left: 70%;
+    animation-delay: 5s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.7;
+    }
+}
+
+/* Particles */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, #1F8FFF, #1F8FFF);
+    border-radius: 50%;
+    animation: particleFloat 10s linear infinite;
+}
+
+.particle:nth-child(1) {
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    left: 40%;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+    left: 60%;
+    animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+    left: 80%;
+    animation-delay: 6s;
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Hero Content */
+.hero-content {
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    animation: badgeGlow 3s ease-in-out infinite;
+}
+
+@keyframes badgeGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(31, 143, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(31, 143, 255, 0.6);
+    }
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    animation: titleSlideIn 1.5s ease-out;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    animation: subtitleFadeIn 2s ease-out 0.5s both;
+}
+
+@keyframes titleSlideIn {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes subtitleFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Roadmap Section */
+.roadmap-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+.roadmap-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.roadmap-title {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #0070E0;
+    margin-bottom: 3rem;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #1F8FFF, #0D0D0D, #BFC0C0);
+    border-radius: 2px;
+    box-shadow: 0 0 20px rgba(31, 143, 255, 0.5);
+}
+
+.timeline-item {
+    position: relative;
+    margin: 4rem 0;
+    animation: timelineSlideIn 1s ease-out;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    margin-right: 55%;
+    text-align: right;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    margin-left: 55%;
+    text-align: left;
+}
+
+@keyframes timelineSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Timeline Nodes */
+.timeline-node {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #0D0D0D, #1F8FFF);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 0 30px rgba(31, 143, 255, 0.6);
+    animation: nodeGlow 3s ease-in-out infinite;
+    z-index: 5;
+}
+
+@keyframes nodeGlow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 30px rgba(31, 143, 255, 0.6);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow: 0 0 50px rgba(31, 143, 255, 0.8);
+    }
+}
+
+/* Timeline Content Cards */
+.timeline-content {
+    color: #0D0D0D;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.timeline-content:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Stage Images */
+.stage-image {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    margin-bottom: 0;
+}
+
+.stage-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    border-radius: 20px 20px 0 0;
+}
+
+.stage-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(31, 143, 255, 0.3), rgba(31, 143, 255, 0.3));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.timeline-content:hover .stage-image::before {
+    opacity: 1;
+}
+
+.timeline-content:hover .stage-image img {
+    transform: scale(1.1);
+}
+
+/* Content padding for text sections */
+.timeline-content .stage-number,
+.timeline-content .stage-title,
+.timeline-content .stage-description,
+.timeline-content .stage-skills,
+.timeline-content .stage-duration,
+.timeline-content .progress-btn {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.timeline-content .stage-number {
+    margin-top: 2rem;
+}
+
+.timeline-content .progress-btn {
+    margin-bottom: 2rem;
+}
+
+.stage-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #1F8FFF, #1F8FFF);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(31, 143, 255, 0.3);
+    animation: stageBadgeGlow 3s ease-in-out infinite;
+}
+
+@keyframes stageBadgeGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(31, 143, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 6px 25px rgba(31, 143, 255, 0.5);
+    }
+}
+
+.stage-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0D0D0D;
+    margin-bottom: 1rem;
+}
+
+.stage-description {
+    color: #0d0d0dd7;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.stage-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.skill-tag {
+    background: rgba(0, 0, 0, 0.055);
+    color: #0D0D0D;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.stage-duration {
+    color: #1F8FFF;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Progress Button */
+.progress-btn {
+    background: linear-gradient(135deg, #1F8FFF, #1F8FFF);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(31, 143, 255, 0.3);
+}
+
+.progress-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(31, 143, 255, 0.5);
+    background: linear-gradient(135deg, #1F8FFF, #0070E0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .roadmap-title {
+        font-size: 2rem;
+    }
+
+    .timeline::before {
+        left: 30px;
+    }
+
+    .timeline-node {
+        left: 30px;
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content,
+    .timeline-item:nth-child(even) .timeline-content {
+        margin-left: 80px;
+        margin-right: 0;
+        text-align: right;
+    }
+
+    .stage-title {
+        font-size: 1.5rem;
+    }
+
+    .stage-description {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,19 @@
+/* Centralized CSS Variables for Edvora Tech */
+:root {
+    --primary-blue: #1F8FFF;
+    --primary-blue-dark: #0070E0;
+    --primary-black: #0D0D0D;
+    --primary-gray: #BFC0C0;
+    --accent-cyan: #00F0FF;
+    --accent-yellow: #00F0FF;
+    /* Redirected to Cyan */
+    --primary-orange: #1F8FFF;
+    /* Redirected to Electric Blue */
+    --light-gray: #F5F5F5;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --padding: 20px;
+    --brand-yellow: #FFD700;
+    --brand-orange: #FF8C00;
+    --brand-blue: #1F8FFF;
+}

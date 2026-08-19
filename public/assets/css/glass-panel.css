@@ -1,0 +1,12 @@
+/* Glass Panel Styles - Dark Blue Theme */
+
+/* Ensure headings and text inside are white */
+
+/* Form Controls in Glass Panel */
+
+/* Remove default dark styling for option elements (browser limitation, but try to style) */
+
+/* Dark Mode Support needed? 
+   The panel is already dark, so it works in both modes. 
+   Unless the page background is black, then maybe adjust opacity.
+*/

@@ -1,0 +1,257 @@
+<?php
+
+use App\Http\Controllers\IdentityVerificationController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\EnrollmentRequestController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherDashboardController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\CourseChatController;
+use App\Models\Course;
+use Illuminate\Support\Facades\Route;
+
+// Home
+Route::get('/', [HomePageController::class, 'index'])->name('home');
+
+Route::get('/sitemap.xml', function () {
+    $courses = Course::query()
+        ->where('status', 'published')
+        ->select(['slug', 'updated_at'])
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    return response()
+        ->view('sitemap', compact('courses'))
+        ->header('Content-Type', 'application/xml');
+})->name('sitemap');
+
+// Logout GET (redirect to home for convenience)
+Route::get('/logout', function () {
+    return redirect()->route('home');
+})->name('logout.get');
+
+// Contact Message
+Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+
+// Books (public, no login required)
+Route::prefix('books')->name('books.')->group(function () {
+    Route::get('/', [BookController::class, 'index'])->name('index');
+    Route::get('/{slug}/download', [BookController::class, 'download'])->name('download');
+    Route::get('/{slug}/view', [BookController::class, 'view'])->name('view');
+    Route::get('/{slug}', [BookController::class, 'show'])->name('show');
+});
+
+// Courses
+Route::prefix('courses')->name('courses.')->group(function () {
+    Route::get('/', [CourseController::class, 'index'])->name('index');
+    Route::get('/{slug}', [CourseController::class, 'show'])->name('detail');
+});
+
+// Teachers
+Route::prefix('teachers')->name('teachers.')->group(function () {
+    Route::get('/', [TeacherController::class, 'index'])->name('index');
+    Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+});
+
+// Events
+Route::prefix('events')->name('events.')->group(function () {
+    Route::get('/', [EventController::class, 'index'])->name('index');
+    Route::get('/{slug}', [EventController::class, 'show'])->name('detail');
+});
+Route::post('/events/{id}/register', [EventController::class, 'register'])->name('events.register');
+
+// Competitions
+Route::prefix('competitions')->name('competitions.')->group(function () {
+    Route::get('/', [CompetitionController::class, 'index'])->name('index');
+    Route::get('/{id}', [CompetitionController::class, 'show'])->name('detail');
+});
+
+// Competitions API
+Route::get('/api/competitions', [CompetitionController::class, 'apiIndex'])->name('api.competitions.index');
+Route::get('/api/competitions/{id}', [CompetitionController::class, 'apiShow'])->name('api.competitions.show');
+
+// Community & Resources
+Route::get('/leaderboard',     [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
+Route::get('/scoring-help',    [\App\Http\Controllers\ScoringHelpController::class, 'index'])->name('scoring.help');
+Route::get('/roadmap',         [\App\Http\Controllers\RoadmapController::class, 'index'])->name('roadmap');
+Route::get('/foundation',      [\App\Http\Controllers\FoundationController::class, 'index'])->name('foundation');
+
+// About
+Route::get('/about',        fn() => view('about'))->name('about');
+Route::get('/story',        fn() => view('story'))->name('story');
+Route::get('/how-we-work',  [\App\Http\Controllers\HowWeWorkController::class, 'index'])->name('how-we-work');
+Route::get('/contact',      fn() => view('contact'))->name('contact');
+Route::get('/faq',          fn() => view('faq'))->name('faq');
+Route::get('/terms',        fn() => view('terms'))->name('terms');
+Route::get('/privacy',      fn() => view('privacy'))->name('privacy');
+
+// Protected routes
+Route::middleware(['auth'])->group(function () {
+
+    // Course actions (any authenticated user)
+    Route::get('/courses/{course}/chat', [CourseChatController::class, 'show'])->name('courses.chat.show');
+    Route::get('/courses/{course}/chat/messages', [CourseChatController::class, 'index'])->name('courses.chat.index');
+    Route::post('/courses/{course}/chat/messages', [CourseChatController::class, 'store'])->name('courses.chat.store');
+    Route::post('/courses/{course}/enroll',  [EnrollmentController::class, 'enroll'])->name('courses.enroll');
+    Route::post('/courses/{course}/wishlist', [WishlistController::class, 'toggle'])->name('courses.wishlist.toggle');
+    Route::post('/courses/{course}/enrollment-request', [EnrollmentRequestController::class, 'store'])->name('courses.enrollment-request.store');
+    Route::delete('/enrollment-requests/{enrollmentRequest}/cancel', [EnrollmentRequestController::class, 'cancel'])->name('courses.enrollment-request.cancel');
+
+    // Profile (both student & teacher)
+    Route::middleware(['role:student,teacher'])->group(function () {
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+        Route::post('/profile', [ProfileController::class, 'saveProfile'])->name('profile.save');
+    });
+
+    // ─── STUDENT IDENTITY VERIFICATION ───
+    Route::prefix('student')->name('student.')->middleware(['role:student'])->group(function () {
+        Route::get('/identity/verify',   [IdentityVerificationController::class, 'show'])->name('identity.show');
+        Route::post('/identity/verify',  [IdentityVerificationController::class, 'upload'])->name('identity.upload');
+        Route::get('/identity/pending',  [IdentityVerificationController::class, 'pending'])->name('identity.pending');
+    });
+
+    // ─── STUDENT AREA ─── prefix: /student
+    Route::prefix('student')->name('student.')->middleware(['role:student', 'verified', 'student.verified'])->group(function () {
+        Route::get('/dashboard',         [StudentDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/courses',           [StudentDashboardController::class, 'yourCourses'])->name('courses');
+        Route::get('/courses/{slug}/learn', [StudentDashboardController::class, 'courseLearning'])->name('courses.learn');
+        Route::get('/courses/{slug}/sessions/join',  [StudentDashboardController::class, 'joinClass'])->name('courses.sessions.join');
+        Route::get('/courses/{slug}/sessions/leave', [StudentDashboardController::class, 'leaveClass'])->name('courses.sessions.leave');
+
+        // API: Check if class session is still active
+        Route::get('/courses/{slug}/check-session', [StudentDashboardController::class, 'checkSession'])->name('courses.check-session');
+        // API: Get class notes (for AJAX polling)
+        Route::get('/courses/{slug}/notes', [StudentDashboardController::class, 'getClassNotes'])->name('courses.notes.api');
+        // API: Check for any active class across enrolled courses
+        Route::get('/active-class/check', [StudentDashboardController::class, 'checkActiveClass'])->name('active-class.check');
+        // Reviews
+        Route::post('/courses/{slug}/reviews',              [StudentDashboardController::class, 'storeReview'])->name('courses.reviews.store');
+        Route::post('/reviews/{review}/like',               [StudentDashboardController::class, 'toggleReviewLike'])->name('reviews.like');
+
+        Route::get('/certificates',      [StudentDashboardController::class, 'certificates'])->name('certificates');
+        Route::get('/reviews',           fn() => view('reviews'))->name('reviews');
+        Route::get('/profile',           [ProfileController::class, 'show'])->name('profile');
+        Route::post('/profile',          [ProfileController::class, 'saveProfile'])->name('profile.save');
+        Route::get('/profile-details',   [\App\Http\Controllers\StudentProfileController::class, 'show'])->name('profile-details');
+        Route::post('/profile-details',  [\App\Http\Controllers\StudentProfileController::class, 'store'])->name('profile-details.store');
+
+        Route::prefix('notifications')->name('notifications.')->group(function () {
+            Route::get('/',                           [NotificationController::class, 'index'])->name('index');
+            Route::post('/{notification}/read',       [NotificationController::class, 'markAsRead'])->name('read');
+            Route::post('/read-all',                  [NotificationController::class, 'markAllAsRead'])->name('read.all');
+            Route::delete('/delete-all',              [NotificationController::class, 'destroyAll'])->name('delete.all');
+            Route::delete('/{notification}',          [NotificationController::class, 'destroy'])->name('delete');
+            Route::get('/unread-count',               [NotificationController::class, 'unreadCount'])->name('unread.count');
+            Route::get('/check-new',               [NotificationController::class, 'checkNew'])->name('check.new');
+        });
+
+        Route::prefix('quizzes')->name('exams.')->group(function () {
+            Route::get('/',              [QuizController::class, 'index'])->name('index');
+            Route::get('/{quiz}',        [QuizController::class, 'show'])->name('show');
+            Route::get('/{quiz}/take',   [QuizController::class, 'take'])->name('take');
+            Route::post('/{quiz}/submit',[QuizController::class, 'submit'])->name('submit');
+        });
+    });
+
+    // ─── TEACHER AREA ─── prefix: /teacher
+    Route::prefix('teacher')->name('teacher.')->middleware(['role:teacher', 'teacher.onboarded'])->group(function () {
+        Route::get('/dashboard',         [TeacherDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/your-courses',      [TeacherDashboardController::class, 'yourCourses'])->name('your-courses');
+        Route::get('/onboarding',        [TeacherDashboardController::class, 'onboarding'])->name('onboarding');
+        Route::post('/onboarding',       [TeacherDashboardController::class, 'submitOnboarding'])->name('onboarding.submit');
+        Route::get('/request-courses',   [\App\Http\Controllers\RequestCoursesController::class, 'index'])->name('request-courses');
+        Route::post('/request-courses',  [\App\Http\Controllers\RequestCoursesController::class, 'store'])->name('request-courses.store');
+        Route::put('/request-courses/{id}',  [\App\Http\Controllers\RequestCoursesController::class, 'update'])->name('request-courses.update');
+        Route::delete('/request-courses/{id}',  [\App\Http\Controllers\RequestCoursesController::class, 'destroy'])->name('request-courses.destroy');
+        Route::get('/reviews',           fn() => view('reviews'))->name('reviews');
+
+        Route::prefix('notifications')->name('notifications.')->group(function () {
+            Route::get('/',                           [NotificationController::class, 'index'])->name('index');
+            Route::post('/{notification}/read',       [NotificationController::class, 'markAsRead'])->name('read');
+            Route::post('/read-all',                  [NotificationController::class, 'markAllAsRead'])->name('read.all');
+            Route::delete('/delete-all',              [NotificationController::class, 'destroyAll'])->name('delete.all');
+            Route::delete('/{notification}',          [NotificationController::class, 'destroy'])->name('delete');
+            Route::get('/unread-count',               [NotificationController::class, 'unreadCount'])->name('unread.count');
+            Route::get('/check-new',               [NotificationController::class, 'checkNew'])->name('check.new');
+        });
+
+        Route::prefix('quizzes')->name('exams.')->group(function () {
+            Route::get('/',              [QuizController::class, 'index'])->name('index');
+            Route::get('/create',        [QuizController::class, 'create'])->name('create');
+            Route::post('/',             [QuizController::class, 'store'])->name('store');
+            Route::get('/{quiz}',        [QuizController::class, 'show'])->name('show');
+            Route::get('/{quiz}/edit',   [QuizController::class, 'edit'])->name('edit');
+            Route::put('/{quiz}',        [QuizController::class, 'update'])->name('update');
+            Route::delete('/{quiz}',     [QuizController::class, 'destroy'])->name('destroy');
+            Route::get('/{quiz}/questions',  [QuizController::class, 'questions'])->name('questions');
+            Route::post('/{quiz}/questions', [QuizController::class, 'storeQuestion'])->name('questions.store');
+            Route::post('/{quiz}/publish',   [QuizController::class, 'publish'])->name('publish');
+        });
+
+        // Enrollment Requests
+        Route::get('/enrollment-requests',                    [EnrollmentRequestController::class, 'index'])->name('enrollment-requests');
+        Route::get('/enrollment-requests/{enrollmentRequest}/student', [EnrollmentRequestController::class, 'studentProfile'])->name('enrollment-requests.student');
+        Route::post('/enrollment-requests/{enrollmentRequest}/approve', [EnrollmentRequestController::class, 'approve'])->name('enrollment-requests.approve');
+        Route::post('/enrollment-requests/{enrollmentRequest}/reject',  [EnrollmentRequestController::class, 'reject'])->name('enrollment-requests.reject');
+
+        Route::get('/courses/{id}',                       [TeacherDashboardController::class, 'courseDetail'])->name('courses.detail');
+        Route::post('/courses/{id}/documents',            [TeacherDashboardController::class, 'uploadDocument'])->name('courses.documents.upload');
+        Route::delete('/courses/{id}/documents/{docId}',  [TeacherDashboardController::class, 'deleteDocument'])->name('courses.documents.delete');
+        Route::get('/courses/{id}/export-pdf',            [TeacherDashboardController::class, 'exportPdf'])->name('courses.export-pdf');
+        Route::get('/courses/{id}/export-attendance-pdf', [TeacherDashboardController::class, 'exportAttendancePdf'])->name('courses.export-attendance-pdf');
+        Route::post('/courses/{id}/sessions/start',       [TeacherDashboardController::class, 'startClass'])->name('courses.sessions.start');
+        Route::post('/courses/{id}/sessions/end',         [TeacherDashboardController::class, 'endClass'])->name('courses.sessions.end');
+        Route::post('/courses/{id}/sessions/activity',    [TeacherDashboardController::class, 'updateParticipantActivity'])->name('courses.sessions.activity');
+        Route::get('/courses/{id}/sessions/join',        [TeacherDashboardController::class, 'joinClass'])->name('courses.sessions.join');
+        Route::post('/courses/auto-close-inactive',       [TeacherDashboardController::class, 'autoCloseInactiveSessions'])->name('courses.auto-close');
+        Route::get('/courses/{id}/sessions/leave',        [TeacherDashboardController::class, 'leaveClass'])->name('courses.sessions.leave');
+        Route::get('/courses/{id}/attendance',            [TeacherDashboardController::class, 'attendance'])->name('courses.attendance');
+        Route::post('/courses/{id}/sessions/{sessionId}/attendance', [TeacherDashboardController::class, 'saveAttendance'])->name('courses.sessions.attendance');
+        Route::post('/courses/{id}/lessons/{lessonId}/recording',   [TeacherDashboardController::class, 'saveRecording'])->name('courses.lessons.recording');
+        Route::post('/courses/{id}/notes',                [TeacherDashboardController::class, 'storeClassNote'])->name('courses.notes.store');
+        Route::put('/courses/{id}/notes/{noteId}',        [TeacherDashboardController::class, 'updateClassNote'])->name('courses.notes.update');
+        Route::delete('/courses/{id}/notes/{noteId}',     [TeacherDashboardController::class, 'deleteClassNote'])->name('courses.notes.delete');
+        Route::post('/courses/{id}/lessons',               [TeacherDashboardController::class, 'storeLesson'])->name('courses.lessons.store');
+        Route::put('/courses/{id}/lessons/{lessonId}',     [TeacherDashboardController::class, 'updateLesson'])->name('courses.lessons.update');
+        Route::delete('/courses/{id}/lessons/{lessonId}',  [TeacherDashboardController::class, 'deleteLesson'])->name('courses.lessons.delete');
+
+        Route::post('/courses/{id}/students/{userId}/ban',   [TeacherDashboardController::class, 'banStudent'])->name('courses.students.ban');
+        Route::post('/courses/{id}/students/{userId}/unban', [TeacherDashboardController::class, 'unbanStudent'])->name('courses.students.unban');
+
+        // Points / Gamification
+        Route::get('/courses/{id}/points', [TeacherDashboardController::class, 'points'])->name('courses.points');
+        Route::post('/courses/{id}/points', [TeacherDashboardController::class, 'storePoints'])->name('courses.points.store');
+        Route::get('/courses/{id}/points/students/{userId}', [TeacherDashboardController::class, 'studentPointsHistory'])->name('courses.points.student');
+
+    });
+
+    // ─── ADMIN AREA ─── prefix: /admin
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+
+        // Events Management (Custom Admin - Not Filament)
+        Route::get('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'index'])->name('events.index');
+        Route::get('/events/create', [\App\Http\Controllers\Admin\EventAdminController::class, 'create'])->name('events.create');
+        Route::post('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'store'])->name('events.store');
+        Route::get('/events/{event}/edit', [\App\Http\Controllers\Admin\EventAdminController::class, 'edit'])->name('events.edit');
+        Route::put('/events/{event}', [\App\Http\Controllers\Admin\EventAdminController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event}', [\App\Http\Controllers\Admin\EventAdminController::class, 'destroy'])->name('events.destroy');
+        Route::get('/events/{event}/registrations/pdf', [\App\Http\Controllers\Admin\EventAdminController::class, 'downloadRegistrationsPdf'])->name('events.registrations.pdf');
+    });
+});
+
+// API Routes for events
+Route::get('/api/events', [EventController::class, 'apiIndex'])->name('api.events.index');
+
+// Breeze Auth routes
+require __DIR__.'/auth.php';

@@ -1,0 +1,200 @@
+/*   --------------  Courses Page Style  --------------  */
+.course-card {
+    background: rgba(255, 255, 255, 0.872);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.306) !important;
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.course-card:hover {
+    transform: translateY(-10px);
+    box-shadow:10px 10px 30px rgba(0, 238, 255, 0.114) !important;
+}
+.course-card .position-relative::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.2),
+        transparent 50%
+    );
+}
+.card-img-top {
+    height: 250px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+.course-card .btn-primary {
+    background: linear-gradient(135deg, #1f8fff, #00f0ff);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.course-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 240, 255, 0.4);
+}
+
+.course-card .btn-outline-primary {
+    position: relative;
+    border: 1.5px solid rgba(31, 143, 255, 0.5);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    color: var(--primary-blue);
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 10px 16px;
+
+    transition: all 0.35s cubic-bezier(.2,.8,.2,1);
+    overflow: hidden;
+}
+
+.course-card .btn-outline-primary:hover {
+    color: white ;
+    background-color: var(--primary-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(31, 143, 255, 0.35);
+}
+
+.course-card .btn-outline-primary:hover::before {
+    opacity: 1;
+}
+
+#loadMoreBtn {
+    background-color: var(--primary-blue);
+    color: #fff;
+}
+
+#loadMoreBtn:hover {
+    background-color: var(--primary-blue-dark);
+    color: #fff;
+}
+
+/* ===== Input Group Wrapper ===== */
+.input-group-text {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(31, 143, 255, 0.15) !important;
+    border-right: none !important;
+    border-radius: 14px 0 0 14px !important;
+    color: var(--primary-blue);
+}
+
+/* ===== Text Input ===== */
+.form-control {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(31, 143, 255, 0.15) !important;
+    border-radius: 16px !important;
+    padding: 12px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+}
+
+/* Remove double border inside input group */
+.input-group .form-control {
+    border-left: none !important;
+    border-radius: 0 14px 14px 0 !important;
+}
+
+/* ===== Focus Effect ===== */
+.form-control:focus{
+    border-color: #0070e053 !important;
+    box-shadow:
+        0 0 0 1px #0070e05f !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+}
+.form-select:focus {
+    border: none;
+    box-shadow:
+        0 0 0 1px #0070e05f !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* ===== Placeholder ===== */
+.form-control::placeholder {
+    color: rgba(13, 13, 13, 0.5);
+    font-weight: 400;
+}
+
+/* ===== Dropdown Select ===== */
+.form-select {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(31, 143, 255, 0.15) !important;
+    border-radius: 14px !important;
+    padding: 12px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* ===== Hover Subtle Lift ===== */
+.form-control:hover,
+.form-select:hover {
+    box-shadow:
+        0 8px 20px rgba(31, 143, 255, 0.1);
+}
+
+/* ===== Newsletter Input Style ===== */
+
+section.gray form .form-control {
+    border-radius: 14px;
+}
+
+/* ===== Load More Button Glass Style ===== */
+
+#loadMoreBtn {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(31, 143, 255, 0.2);
+    border-radius: 16px;
+    padding: 12px 30px;
+    font-weight: 600;
+    color: var(--primary-blue);
+    transition: all 0.4s ease;
+}
+
+#loadMoreBtn:hover {
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue),
+        var(--accent-cyan)
+    );
+    color: white;
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 30px rgba(31, 143, 255, 0.3);
+}
+
+
+/* Events Page Styles */
+.event-newsletter {
+    background: #f8fafd8f;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.47);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+.event-newsletter:hover{
+    box-shadow:10px 10px 30px rgba(0, 0, 0, 0.18) !important;
+}
+.btn-primary {
+    background-color: var(--primary-blue);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 16px;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background-color: var(--primary-blue-dark);
+}

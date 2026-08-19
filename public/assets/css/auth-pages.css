@@ -1,0 +1,196 @@
+/* Auth pages - Login, Register, Forgot Password */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.auth-section {
+    flex: 1 0 auto;
+    min-height: auto;
+    background: linear-gradient(135deg, #0a0a0a 0%, #0d1b2e 50%, #1F8FFF 100%);
+    display: flex;
+    align-items: flex-start;
+    padding: 3rem 0;
+}
+
+.auth-card {
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.auth-card .card-body {
+    padding: 1.75rem;
+}
+
+.auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1F8FFF;
+    margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.auth-input-group .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    color: #1F8FFF;
+    width: 44px;
+    justify-content: center;
+}
+
+.auth-input-group .form-control {
+    border-left: none;
+    padding-left: 0;
+}
+
+.auth-input-group .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+
+.auth-input-group .input-group:focus-within .input-group-text {
+    border-color: #1F8FFF;
+    color: #1F8FFF;
+}
+
+.auth-input-group .input-group:focus-within .form-control {
+    border-color: #1F8FFF;
+}
+
+.togglePass {
+    background-color: #f8f9fa;
+    border-left: none;
+    border-color: #dee2e6;
+    color: #6c757d;
+    padding: 0 12px;
+    transition: color 0.2s;
+}
+
+.togglePass:hover,
+.togglePass:focus {
+    color: #1F8FFF;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+
+.auth-input-group .input-group:focus-within .togglePass {
+    border-color: #1F8FFF;
+}
+
+/* Role selector cards */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.role-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.role-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+}
+
+.role-card-inner {
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.role-card-inner i {
+    font-size: 1.5rem;
+    color: #adb5bd;
+    display: block;
+    margin-bottom: 0.25rem;
+    transition: color 0.2s;
+}
+
+.role-card-inner .role-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    display: block;
+    transition: color 0.2s;
+}
+
+.role-card-inner .role-desc {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.role-card input[type="radio"]:checked + .role-card-inner {
+    border-color: #1F8FFF;
+    background: rgba(31, 143, 255, 0.05);
+}
+
+.role-card input[type="radio"]:checked + .role-card-inner i {
+    color: #1F8FFF;
+}
+
+.role-card input[type="radio"]:checked + .role-card-inner .role-title {
+    color: #1F8FFF;
+}
+
+.role-card-inner:hover {
+    border-color: #86b7fe;
+    background: rgba(31, 143, 255, 0.03);
+}
+
+.auth-submit-btn {
+    background-color: #1F8FFF;
+    border-color: #1F8FFF;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.auth-submit-btn:hover {
+    background-color: #0d7ae0;
+    border-color: #0d7ae0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31,143,255,0.3);
+}
+
+.auth-link {
+    color: #1F8FFF;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-link:hover {
+    color: #0d7ae0;
+    text-decoration: underline;
+}
+
+.link {
+    color: var(--primary-blue, #1F8FFF);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.link:hover {
+    text-decoration: underline !important;
+}
+
+.custom-shadow {
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.208);
+}

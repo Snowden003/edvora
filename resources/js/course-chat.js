@@ -1,0 +1,184 @@
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+const createAvatar = (user, className) => {
+    if (user.avatar) {
+        const img = document.createElement('img');
+        img.className = className;
+        img.alt = user.name;
+        img.src = user.avatar;
+        return img;
+    }
+    const div = document.createElement('div');
+    div.className = `${className} ${className}--letter`;
+    div.textContent = (user.name || '?').charAt(0).toUpperCase();
+    return div;
+};
+
+const isTeacher = (user) => user.role === 'teacher';
+
+const timeLabel = (value) => new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+
+const renderMember = (user) => {
+    const element = document.createElement('div');
+    element.className = 'course-chat__member';
+    const info = document.createElement('div');
+    info.className = 'course-chat__member-info';
+    const nameRow = document.createElement('div');
+    nameRow.className = 'course-chat__member-name-row';
+    const name = document.createElement('span');
+    name.className = 'course-chat__member-name';
+    name.textContent = user.name;
+    nameRow.appendChild(name);
+    if (isTeacher(user)) {
+        const teacherBadge = document.createElement('span');
+        teacherBadge.className = 'course-chat__badge course-chat__badge--teacher';
+        teacherBadge.textContent = 'Instructor';
+        nameRow.appendChild(teacherBadge);
+    }
+    const onlineBadge = document.createElement('span');
+    onlineBadge.className = 'course-chat__badge course-chat__badge--online';
+    onlineBadge.textContent = 'Online';
+    info.appendChild(nameRow);
+    info.appendChild(onlineBadge);
+    element.appendChild(createAvatar(user, 'course-chat__member-avatar'));
+    element.appendChild(info);
+    return element;
+};
+
+const initCourseChat = (root) => {
+    const courseId = root.dataset.courseId;
+    const messagesUrl = root.dataset.messagesUrl;
+    const sendUrl = root.dataset.sendUrl;
+    const currentUserId = Number(root.dataset.currentUserId);
+    const messages = root.querySelector('[data-chat-messages]');
+    const members = root.querySelector('[data-online-members]');
+    const onlineCount = root.querySelector('[data-online-count]');
+    const status = root.querySelector('[data-chat-status]');
+    const form = root.querySelector('[data-chat-form]');
+    const input = root.querySelector('[data-chat-input]');
+    const submit = root.querySelector('[data-chat-submit]');
+    const displayedMessageIds = new Set();
+    let onlineUsers = [];
+
+    const setStatus = (text) => { status.textContent = text; };
+
+    const renderMembers = () => {
+        members.replaceChildren(...onlineUsers.map(renderMember));
+        onlineCount.textContent = onlineUsers.length;
+    };
+
+    const renderMessage = (message) => {
+        if (displayedMessageIds.has(message.id)) return;
+        displayedMessageIds.add(message.id);
+        const isMine = Number(message.user.id) === currentUserId;
+        const element = document.createElement('div');
+        element.className = `course-chat__message${isMine ? ' course-chat__message--mine' : ''}`;
+        const content = document.createElement('div');
+        const meta = document.createElement('div');
+        meta.className = 'course-chat__meta';
+        const name = document.createElement('span');
+        name.className = 'course-chat__name';
+        name.textContent = isMine ? 'You' : message.user.name;
+        meta.appendChild(name);
+        if (!isMine && isTeacher(message.user)) {
+            const teacherBadge = document.createElement('span');
+            teacherBadge.className = 'course-chat__badge course-chat__badge--teacher';
+            teacherBadge.textContent = 'Instructor';
+            meta.appendChild(teacherBadge);
+        }
+        const time = document.createElement('time');
+        time.textContent = timeLabel(message.created_at);
+        meta.appendChild(time);
+        const bubble = document.createElement('div');
+        bubble.className = 'course-chat__bubble';
+        bubble.textContent = message.body;
+        content.appendChild(meta);
+        content.appendChild(bubble);
+        element.appendChild(createAvatar(message.user, 'course-chat__avatar'));
+        element.appendChild(content);
+        messages.querySelector('.course-chat__empty')?.remove();
+        messages.append(element);
+        messages.scrollTop = messages.scrollHeight;
+    };
+
+    fetch(messagesUrl, { headers: { Accept: 'application/json' } })
+        .then(async (response) => {
+            if (!response.ok) throw new Error('Unable to load messages');
+            return response.json();
+        })
+        .then(({ messages: chatMessages }) => {
+            if (chatMessages.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'course-chat__empty';
+                empty.textContent = 'No messages yet. Start the conversation.';
+                messages.append(empty);
+            } else {
+                chatMessages.forEach(renderMessage);
+            }
+        })
+        .catch(() => setStatus('Unable to load message history.'));
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const body = input.value.trim();
+        if (!body) return;
+        submit.disabled = true;
+        try {
+            const response = await fetch(sendUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ body }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Unable to send message');
+            renderMessage(data.message);
+            input.value = '';
+            input.style.height = '';
+        } catch (error) {
+            setStatus(error.message || 'Unable to send message.');
+        } finally {
+            submit.disabled = false;
+            input.focus();
+        }
+    });
+
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = `${Math.min(input.scrollHeight, 108)}px`;
+    });
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    if (!window.Echo) {
+        setStatus('Live chat is unavailable. Check the Reverb connection.');
+        return;
+    }
+
+    window.Echo.join(`course-chat.${courseId}`)
+        .here((users) => {
+            onlineUsers = users;
+            renderMembers();
+            setStatus('Live chat connected.');
+        })
+        .joining((user) => {
+            if (!onlineUsers.some((onlineUser) => Number(onlineUser.id) === Number(user.id))) {
+                onlineUsers.push(user);
+                renderMembers();
+            }
+        })
+        .leaving((user) => {
+            onlineUsers = onlineUsers.filter((onlineUser) => Number(onlineUser.id) !== Number(user.id));
+            renderMembers();
+        })
+        .listen('.course.message.created', ({ message }) => renderMessage(message))
+        .error(() => setStatus('Live chat connection failed. Reconnecting may restore it.'));
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-course-chat]').forEach(initCourseChat);
+});

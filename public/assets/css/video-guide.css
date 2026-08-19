@@ -1,0 +1,530 @@
+/* Video Guide Section Styles */
+.video-guide-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Effects */
+.video-bg-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Secondary icons made static for performance */
+
+/* Simplified Floating Particles */
+.video-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    /* animation: videoParticleFloat 10s linear infinite; */
+    opacity: 0.3;
+}
+
+.video-particle.particle-1 {
+    top: 15%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.video-particle.particle-2 {
+    top: 60%;
+    right: 25%;
+    animation-delay: 2s;
+}
+
+.video-particle.particle-3 {
+    bottom: 20%;
+    left: 30%;
+    animation-delay: 4s;
+}
+
+.video-particle.particle-4 {
+    top: 30%;
+    right: 40%;
+    animation-delay: 6s;
+}
+
+.video-particle.particle-5 {
+    bottom: 40%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+/* Section Header */
+.video-header {
+    position: relative;
+    z-index: 10;
+}
+
+.video-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    color: #1F8FFF;
+    margin-bottom: 2rem;
+    /* animation: videoBadgeGlow 3s ease-in-out infinite; */
+    box-shadow: 0 8px 25px rgba(31, 143, 255, 0.1);
+}
+
+.video-badge i {
+    font-size: 1.2rem;
+    font-size: 1.2rem;
+    /* animation: videoBadgeSpin 4s linear infinite; */
+}
+
+.video-title {
+    color: var(--primary-blue);
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary-black), var(--primary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 15px rgba(31, 143, 255, 0.1);
+}
+
+.video-subtitle {
+    color: #6c757d;
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Video Container */
+.video-container {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 15px 40px  rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    /* Float animation removed for stability */
+}
+
+/* Video Player Wrapper */
+.video-player-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0D0D0D, #1F8FFF);
+}
+
+.video-player {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    border-radius: 15px;
+    display: block;
+}
+
+/* Video Placeholder */
+.video-placeholder {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #0D0D0D, #1F8FFF);
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.video-placeholder:hover {
+    transform: scale(1.02);
+    box-shadow: 0 25px 80px rgba(31, 143, 255, 0.3);
+}
+
+/* Play Button Overlay */
+.video-play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+.video-play-button {
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #1F8FFF;
+    cursor: pointer;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* animation: videoPlayPulse 2s ease-in-out infinite; */
+    box-shadow: 0 15px 40px  rgba(0, 0, 0, 0.09);
+}
+
+.video-play-button:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 1);
+}
+
+.video-play-button i {
+    margin-left: 5px;
+}
+
+/* Simplified Play Button Ripple (One ripple only) */
+.video-play-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    /* animation: videoRipple 3s ease-out infinite; */
+    display: none;
+    /* Hidden for performance */
+}
+
+/* Video Info */
+.video-info {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 4;
+}
+
+.video-duration,
+.video-quality {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Video Title Overlay */
+.video-title-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 40px 30px 30px;
+    z-index: 4;
+}
+
+.video-title-overlay h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.video-title-overlay p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Video Features */
+.video-features {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.video-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(31, 143, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.video-feature-item:hover {
+    background: rgba(31, 143, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.video-feature-item i {
+    font-size: 1.5rem;
+    color: #1F8FFF;
+}
+
+.video-feature-item span {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Video Info Cards */
+/* Video Info Cards - Optimized */
+.video-info-card {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.video-info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(31, 143, 255, 0.1);
+}
+
+.video-info-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-black), var(--primary-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.video-info-card h5 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.video-info-card p {
+    color: #6c757d;
+    line-height: 1.6;
+    margin: 0;
+}
+
+
+/* Animations */
+@keyframes videoIconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.2;
+    }
+}
+
+@keyframes videoParticleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+@keyframes videoBadgeGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 25px rgba(31, 143, 255, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 8px 25px rgba(31, 143, 255, 0.3);
+    }
+}
+
+@keyframes videoBadgeSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes videoTitleGlow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px rgba(31, 143, 255, 0.3);
+    }
+
+    50% {
+        text-shadow: 0 0 40px rgba(31, 143, 255, 0.4);
+    }
+}
+
+@keyframes videoContainerFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes videoPlayPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 15px 40px  rgba(0, 0, 0, 0.09);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 20px 50px rgba(31, 143, 255, 0.3);
+    }
+}
+
+@keyframes videoRipple {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes videoInfoCardFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes videoInfoIconSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .video-title {
+        font-size: 2rem;
+    }
+
+    .video-subtitle {
+        font-size: 1rem;
+    }
+
+    .video-player {
+        max-height: 300px;
+    }
+
+    .video-placeholder {
+        height: 250px;
+    }
+
+    .video-play-button {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+    }
+
+    .video-play-ripple {
+        width: 70px;
+        height: 70px;
+    }
+
+    .video-container {
+        padding: 1.5rem;
+    }
+
+    .video-info-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .video-title {
+        font-size: 1.8rem;
+    }
+
+    .video-player {
+        max-height: 250px;
+    }
+
+    .video-placeholder {
+        height: 200px;
+    }
+
+    .video-play-button {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .video-play-ripple {
+        width: 60px;
+        height: 60px;
+    }
+
+    .video-title-overlay {
+        padding: 20px 20px 20px;
+    }
+
+    .video-title-overlay h4 {
+        font-size: 1.2rem;
+    }
+
+    .video-title-overlay p {
+        font-size: 0.9rem;
+    }
+}

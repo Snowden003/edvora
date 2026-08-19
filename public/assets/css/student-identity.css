@@ -1,0 +1,149 @@
+/* ===== Student Identity Verification Pages ===== */
+
+/* Shared logo wrap */
+.logo-wrap {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.logo-wrap img {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* ── Identity Verify Card ── */
+.identity-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+    margin-top: 1rem;
+}
+
+.identity-card h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.id-icon-wrap {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #e8f4ff, #cce5ff);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    border: 3px solid #1F8FFF;
+    margin-bottom: 1rem;
+}
+
+.id-icon-wrap i {
+    color: #1F8FFF;
+}
+
+/* Drop zone */
+.drop-zone {
+    border: 2px dashed #1F8FFF;
+    border-radius: 14px;
+    padding: 2.2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: #f7fbff;
+    color: #6c757d;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+    background: #e8f4ff;
+    border-color: #0d6efd;
+}
+
+.drop-zone .drop-icon {
+    font-size: 2.2rem;
+    margin-bottom: .5rem;
+}
+
+.drop-zone .drop-label {
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: .25rem;
+}
+
+.drop-zone .drop-hint {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+#previewContainer {
+    display: none;
+}
+
+#previewImg {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Tips box */
+.tips-box {
+    background: #f8f9fa;
+    border-left: 4px solid #1F8FFF;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.tips-box ul {
+    margin: 0;
+    padding-left: 18px;
+    line-height: 2;
+}
+
+.tips-box .tips-label {
+    display: block;
+    color: #1F8FFF;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: .35rem;
+}
+
+/* Submit button */
+.btn-identity-submit {
+    font-size: 1rem;
+    border-radius: 12px;
+    font-weight: 700;
+    padding: .75rem 1rem;
+}
+
+/* ── Tazkira preview (pending page) ── */
+.tazkira-preview {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tazkira-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.tazkira-preview .preview-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: .5rem;
+}

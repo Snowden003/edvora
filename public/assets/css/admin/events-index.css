@@ -1,0 +1,87 @@
+.admin-sidebar {
+    min-height: calc(100vh - 60px);
+    background: #1a1a2e;
+    color: white;
+}
+.admin-sidebar .nav-link {
+    color: rgba(255,255,255,0.7);
+    padding: 12px 20px;
+    border-radius: 0;
+    transition: all 0.3s;
+}
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    color: white;
+    background: rgba(31, 143, 255, 0.2);
+    border-left: 3px solid #1F8FFF;
+}
+.admin-sidebar .nav-link i {
+    width: 24px;
+    margin-right: 10px;
+}
+.events-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.events-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    border: none;
+    padding: 16px;
+}
+.events-table td {
+    padding: 16px;
+    vertical-align: middle;
+}
+.event-thumbnail {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.badge-type {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+.badge-workshop { background: #e3f2fd; color: #1565c0; }
+.badge-webinar { background: #f3e5f5; color: #7b1fa2; }
+.badge-conference { background: #e8f5e9; color: #2e7d32; }
+.badge-meetup { background: #fff3e0; color: #ef6c00; }
+.action-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+}
+.stats-card.events {
+    background: linear-gradient(135deg, #1F8FFF 0%, #00F0FF 100%);
+}
+.stats-card.upcoming {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+.stats-card.past {
+    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+}
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+.stats-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}

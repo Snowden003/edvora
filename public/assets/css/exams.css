@@ -1,0 +1,784 @@
+/* Exams Page Specific Styles */
+
+/* Header controls and filters */
+.exams-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.exams-filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    color: #475569;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* Exam Card Styling */
+.exam-card-wrapper {
+    margin-bottom: 25px;
+}
+
+.exam-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.exam-card:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+}
+
+/* Top decoration bar based on status */
+.exam-card.status-upcoming::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.exam-card.status-completed::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.exam-card-header {
+    padding: 25px 25px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.exam-course-tag {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.exam-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+    line-height: 1.3;
+}
+
+.exam-status-badge {
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-upcoming .exam-status-badge {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.status-completed .exam-status-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.exam-card-body {
+    padding: 0 25px 20px;
+    flex-grow: 1;
+}
+
+.exam-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.exam-detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.exam-detail-icon {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.exam-detail-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.exam-detail-value {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.exam-card-footer {
+    padding: 20px 25px;
+    background: rgba(248, 250, 252, 0.5);
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    display: flex;
+    gap: 10px;
+}
+
+.exam-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.exam-btn-primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.exam-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+.exam-btn-secondary {
+    background: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.exam-btn-secondary:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
+}
+
+.exam-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+    flex: 0 0 auto;
+    width: 44px;
+    padding: 10px 0;
+}
+
+.exam-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+    color: white;
+}
+
+/* Exam Students Avatar Group */
+.student-avatar-group {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.student-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: -10px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.student-avatar:first-child {
+    margin-left: 0;
+}
+
+.student-avatar-more {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: -10px;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 5;
+}
+
+/* Results mini-chart/progress */
+.result-progress-container {
+    margin-top: 15px;
+}
+
+.result-progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.result-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 10px;
+}
+
+.result-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    /* Disable expensive blur effects on mobile */
+    .exam-card {
+        background: #ffffff;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        transition: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .exam-card:hover {
+        transform: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Remove blur from filter buttons */
+    .filter-btn {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        transition: none;
+        white-space: nowrap;
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+
+    /* Compact card layout */
+    .exam-card-header {
+        padding: 15px 15px 10px;
+    }
+
+    .exam-card-body {
+        padding: 0 15px 12px;
+    }
+
+    .exam-card-footer {
+        padding: 12px 15px;
+        gap: 8px;
+    }
+
+    .exam-title {
+        font-size: 1rem;
+    }
+
+    .exam-course-tag {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+    }
+
+    /* Simplify buttons */
+    .exam-btn {
+        padding: 8px;
+        font-size: 0.8rem;
+        transition: none;
+        border-radius: 8px;
+    }
+
+    .exam-btn-primary:hover,
+    .exam-btn-secondary:hover {
+        transform: none;
+    }
+
+    /* Disable heavy animations */
+    .exam-card-wrapper {
+        transition: none;
+    }
+
+    .exam-card-wrapper.hidden {
+        opacity: 0;
+        transform: none;
+    }
+
+    /* Grid layout for mobile */
+    .exam-details-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .exams-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .exams-filters {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        gap: 6px;
+    }
+
+    /* Remove shadow from avatars for performance */
+    .student-avatar,
+    .student-avatar-more {
+        box-shadow: none;
+    }
+
+    /* Stat icons simpler on mobile */
+    .stat-icon-premium {
+        transition: none !important;
+    }
+}
+
+/* Global Stat Icon Overrides for Exams Page */
+.stat-icon-premium {
+    width: 55px !important;
+    height: 55px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    flex-shrink: 0 !important;
+}
+
+/* Filtering Animations */
+.exam-card-wrapper {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.exam-card-wrapper.hidden {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+/* Force Fix for Stats Cards (Preventing 'Circle' issue) */
+.stat-hover-premium.card {
+    border-radius: 25px !important;
+    aspect-ratio: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+}
+
+.stat-hover-premium.card .card-body {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   QUIZ ENHANCEMENTS
+═══════════════════════════════════════════════════════════════ */
+
+/* Stat icons for quizzes */
+.accent-purple { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important; }
+.accent-blue { background: linear-gradient(135deg, #1F8FFF 0%, #6366f1 100%) !important; }
+.accent-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; }
+
+.quiz-stat-card {
+    border-radius: 20px !important;
+    transition: all 0.3s ease;
+}
+
+.quiz-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Quiz Controls */
+.quiz-controls {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px 20px;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.quiz-filters {
+    display: flex;
+    gap: 10px;
+}
+
+.quiz-search .input-group-text {
+    border-radius: 50px 0 0 50px;
+    background: #fff;
+    border-color: #e2e8f0;
+}
+
+.quiz-search .form-control {
+    border-radius: 0 50px 50px 0;
+    background: #fff;
+    border-color: #e2e8f0;
+}
+
+/* Empty State */
+.quiz-empty-state {
+    padding: 60px 20px;
+}
+
+.quiz-empty-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.quiz-empty-icon i {
+    font-size: 3rem;
+    color: #94a3b8;
+}
+
+/* Enhanced Filter Buttons */
+.filter-btn {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.filter-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #1F8FFF 0%, #6366f1 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(31, 143, 255, 0.3);
+}
+
+/* Exam card status improvements */
+.exam-card.status-draft::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #64748b, #94a3b8);
+}
+
+.exam-card.status-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* Quiz-specific mobile improvements */
+@media (max-width: 768px) {
+    .quiz-controls {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .quiz-filters {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .quiz-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        white-space: nowrap;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .quiz-search {
+        width: 100%;
+        max-width: 100% !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   QUIZ CLASS ALIASES (duplicate styles for quiz-* classes)
+═══════════════════════════════════════════════════════════════ */
+
+/* Quiz Card Aliases - same styles as exam-card */
+.quiz-card-wrapper {
+    margin-bottom: 25px;
+}
+
+.quiz-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-card:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+}
+
+.quiz-card.status-draft::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #64748b, #94a3b8);
+}
+
+.quiz-card.status-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* Quiz Card Header */
+.quiz-card-header {
+    padding: 25px 25px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.quiz-course-tag {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quiz-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+    line-height: 1.3;
+}
+
+.quiz-status-badge {
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Quiz Card Body */
+.quiz-card-body {
+    padding: 0 25px 20px;
+    flex-grow: 1;
+}
+
+.quiz-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.quiz-detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.quiz-detail-icon {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.quiz-detail-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.quiz-detail-value {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Quiz Card Footer */
+.quiz-card-footer {
+    padding: 20px 25px;
+    background: rgba(248, 250, 252, 0.5);
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    display: flex;
+    gap: 10px;
+}
+
+.quiz-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.quiz-btn-primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.quiz-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+.quiz-btn-secondary {
+    background: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.quiz-btn-secondary:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
+}
+
+.quiz-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+    flex: 0 0 auto;
+    width: 44px;
+    padding: 10px 0;
+}
+
+.quiz-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+    color: white;
+}
+
+/* Quiz Controls */
+.quiz-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.quiz-filters {
+    display: flex;
+    gap: 10px;
+}

@@ -1,0 +1,66 @@
+.profile-section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #e8ecf0;
+    transition: box-shadow 0.3s ease;
+}
+
+.profile-section-card:hover {
+    box-shadow: 0 4px 20px rgba(31, 143, 255, 0.08);
+}
+
+.profile-section-card .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #eef5ff);
+    border-bottom: 1px solid #e8ecf0;
+}
+
+.profile-section-card .section-header i {
+    font-size: 1.4rem;
+    color: #1F8FFF;
+}
+
+.profile-section-card .section-header h5 {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.profile-section-card .section-body {
+    padding: 1.5rem;
+}
+
+.profile-section-card .form-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #475569;
+    margin-bottom: 0.4rem;
+}
+
+.profile-section-card .form-control,
+.profile-section-card .form-select {
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 0.6rem 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-section-card .form-control:focus,
+.profile-section-card .form-select:focus {
+    border-color: #1F8FFF;
+    box-shadow: 0 0 0 0.2rem rgba(31, 143, 255, 0.12);
+}
+
+.profile-section-card .form-control.is-invalid,
+.profile-section-card .form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.profile-section-card textarea.form-control {
+    resize: vertical;
+    min-height: 60px;
+}

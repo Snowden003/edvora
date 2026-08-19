@@ -1,0 +1,372 @@
+/* Your Courses Page Specific Styles */
+
+:root {
+    --primary-blue: #1F8FFF;
+    --accent-cyan: #00F0FF;
+    --primary-black: #0D0D0D;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+/* Hub Banner */
+.courses-hub-banner {
+    background: linear-gradient(135deg, #061E3E 0%, #1F8FFF 100%);
+    border-radius: 30px;
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.hub-bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-hub-icon {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.1);
+    font-size: 3rem;
+    animation: hubIconFloat 10s infinite ease-in-out;
+}
+
+.hub-icon-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.hub-icon-2 {
+    bottom: 20%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.hub-icon-3 {
+    top: 40%;
+    right: 5%;
+    animation-delay: 4s;
+}
+
+@keyframes hubIconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-30px) rotate(15deg);
+    }
+}
+
+.hub-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+
+/* Quick Stats Row */
+.quick-stat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.quick-stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 25px rgba(31, 143, 255, 0.15);
+}
+
+.stat-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+/* Control Bar (Search & Filter) */
+.glass-control-bar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(31, 143, 255, 0.05);
+}
+
+.search-input-premium {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-select-premium {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-weight: 600;
+    color: var(--primary-black);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Course Card Premium */
+.course-card-premium {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 25px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+}
+
+.course-card-premium:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-blue);
+}
+
+.card-image-top {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-image-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.course-card-premium:hover .card-image-top img {
+    transform: scale(1.1);
+}
+
+.category-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    z-index: 2;
+}
+
+.status-badge-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card-body-premium {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-title-premium {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    color: var(--primary-black);
+}
+
+.student-count-mini {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 1.25rem;
+}
+
+.card-footer-premium {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Ensure actions-wrapper from teacher-dashboard.css works well here */
+.card-footer-premium .actions-wrapper {
+    margin-left: auto;
+}
+
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.course-card-premium {
+    animation: fadeInUp 0.5s ease backwards;
+}
+
+/* Grid Layout */
+#coursesGrid {
+    padding-bottom: 5rem;
+}
+
+/* Sidebar Specific for Dashboard */
+.sidebar-premium {
+    height: calc(100vh - 70px) !important;
+}
+
+.main-content {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+}
+
+/* ── Progress Bar ── */
+.progress-bar-track {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fill-success { background: linear-gradient(90deg, #28a745, #20c997); }
+.fill-primary { background: linear-gradient(90deg, #1F8FFF, #00bfff); }
+.fill-warning { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+
+/* ── Continue Button ── */
+.btn-continue-course {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #1F8FFF, #0070e0);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(31, 143, 255, 0.3);
+    white-space: nowrap;
+}
+
+.btn-continue-course:hover {
+    background: linear-gradient(135deg, #0070e0, #005bb5);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(31, 143, 255, 0.45);
+}
+
+/* ── Meta Chips ── */
+.course-meta-mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.meta-chip i {
+    font-size: 0.7rem;
+    color: var(--primary-blue);
+}
+
+/* ── Empty State ── */
+.empty-courses-state {
+    padding: 4rem 2rem;
+}
+
+.empty-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8f2ff, #d0e8ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+}
+
+.btn-premium-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1F8FFF, #0070e0);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(31, 143, 255, 0.35);
+}
+
+.btn-premium-cta:hover {
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 35px rgba(31, 143, 255, 0.5);
+}

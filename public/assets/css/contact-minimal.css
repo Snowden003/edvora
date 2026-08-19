@@ -1,0 +1,275 @@
+/* Contact Page - Minimal Clean Design */
+
+/* Hero Section */
+.hero-animated {
+    background: linear-gradient(135deg, #060d1a 0%, #145cb3 50%, #0f3d7a 100%) !important;
+    background-size: 300% 300% !important;
+    animation: edvoraGradientFlow 14s ease-in-out infinite !important;
+}
+
+@keyframes edvoraGradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.hero-highlight-text {
+    background: linear-gradient(135deg, #a8daff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Hero Stats */
+.hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+.hero-stat {
+    min-width: 180px;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.hero-stat .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.hero-stat .label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+/* Contact Form Card */
+.premium-contact-form {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e8ecf1;
+}
+
+.premium-info-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e8ecf1;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-icon {
+    width: 60px;
+    height: 60px;
+    background: #1F8FFF;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Contact Info */
+.premium-info-card h4 {
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.premium-info-card h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #1F8FFF;
+    border-radius: 2px;
+}
+
+.contact-item {
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.contact-item h6 {
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.contact-item p {
+    color: #555 !important;
+}
+
+.contact-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* Form Inputs */
+.premium-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.premium-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.optional {
+    color: #999;
+    font-weight: 400;
+}
+
+.input-container,
+.select-container,
+.textarea-container {
+    position: relative;
+}
+
+.premium-input,
+.premium-select,
+.premium-textarea {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    border: 1.5px solid #dce0e5;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: #f9fafb;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-input:focus,
+.premium-select:focus,
+.premium-textarea:focus {
+    outline: none;
+    border-color: #1F8FFF;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(31, 143, 255, 0.08);
+}
+
+/* Hide all animation elements */
+.input-border,
+.select-border,
+.textarea-border,
+.input-focus-effect,
+.textarea-focus-effect,
+.form-floating-bg {
+    display: none !important;
+}
+
+.input-icon {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+}
+
+/* Submit Button */
+.form-submit-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.premium-submit-btn {
+    padding: 0.9rem 2.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: #1F8FFF;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-submit-btn:hover {
+    background: #0070E0;
+    box-shadow: 0 4px 14px rgba(31, 143, 255, 0.3);
+}
+
+/* Hide button animation layers */
+.btn-bg-layers,
+.btn-layer,
+.btn-ripple,
+.btn-glow {
+    display: none !important;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-text,
+.btn-icon {
+    display: inline-flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .premium-contact-form,
+    .premium-info-card {
+        padding: 2rem;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,283 @@
+/* Profile Page Specific Styles */
+.profile-cover {
+    height: 250px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(147, 51, 234, 0.8)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2000') center/cover;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-cover-edit {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.profile-cover-edit:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.profile-avatar-container {
+    padding: 0 40px;
+    display: flex;
+    align-items: flex-end;
+    margin-top: -60px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    margin-right: 20px;
+}
+
+.profile-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 5px solid #ffffff;
+    object-fit: cover;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.avatar-edit-btn:hover {
+    transform: scale(1.1);
+}
+
+.profile-user-info {
+    padding-bottom: 10px;
+}
+
+.profile-user-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.profile-user-role {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.glass-card-premium {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.glass-card-premium:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #9333ea);
+    border-radius: 3px;
+}
+
+.form-label-premium {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control-premium {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+    color: #1e293b;
+}
+
+.form-control-premium:focus {
+    background-color: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.form-control-premium::placeholder {
+    color: #94a3b8;
+}
+
+.required-asterisk {
+    color: #ef4444;
+    margin-left: 3px;
+    font-weight: bold;
+}
+
+.btn-premium-solid {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-premium-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3);
+    color: white;
+}
+
+.btn-premium-outline-alt {
+    background: transparent;
+    color: #475569;
+    border: 2px solid #e2e8f0;
+    padding: 0.7rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-premium-outline-alt:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.social-input-group {
+    display: flex;
+    align-items: center;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.social-input-group:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    background-color: #ffffff;
+}
+
+.social-icon-wrapper {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #64748b;
+    font-size: 1.2rem;
+    border-right: 1px solid #e2e8f0;
+}
+
+.social-input-group input {
+    border: none;
+    background: transparent;
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+}
+
+.social-input-group input:focus {
+    outline: none;
+}
+
+/* Badge selector for tags like specializations */
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.premium-tag {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.premium-tag i {
+    cursor: pointer;
+}
+
+.premium-tag i:hover {
+    color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .profile-cover {
+        height: 180px;
+    }
+
+    .profile-avatar-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -70px;
+        padding: 0 20px;
+    }
+
+    .profile-avatar-wrapper {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+}

@@ -1,0 +1,42 @@
+/* ============================
+   NOTIFICATIONS PAGE
+   ============================ */
+.notification-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+  background-color: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.notification-item.unread:hover {
+  background-color: #bbdefb;
+}
+
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.notif-delete-btn {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+}
+
+.notification-item:hover .notif-delete-btn {
+  opacity: 1;
+}

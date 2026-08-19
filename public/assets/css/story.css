@@ -1,0 +1,1001 @@
+/* ===== MODERN STORY PAGE - CLEAN & RESPONSIVE ===== */
+
+:root {
+    --primary: #1F8FFF;
+    --primary-dark: #0070E0;
+    --secondary: #00F0FF;
+    --dark: #0D0D0D;
+    --light: #f8fafc;
+    --gray: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.95);
+}
+
+/* ===== HERO SECTION ===== */
+.story-hero-section {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark) 0%, #1e293b 50%, var(--primary-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.story-hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231F8FFF' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+}
+
+.story-hero-section::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(31, 143, 255, 0.3) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Badge */
+.story-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.story-badge .bi-gem {
+    color: var(--secondary);
+    font-size: 1rem;
+    animation: spin 4s linear infinite;
+}
+
+.story-badge span {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Title */
+.story-title {
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.story-title .highlight {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Subtitle */
+.story-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+/* ===== CONTENT SECTION ===== */
+.story-content-section {
+    background: linear-gradient(180deg, #f1f5f9 0%, #fff 100%);
+    padding: 5rem 0;
+}
+
+/* Story Cards */
+.story-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.story-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -10px rgba(31, 143, 255, 0.2);
+}
+
+.story-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.story-icon i {
+    color: var(--primary);
+    font-size: 2.5rem;
+}
+
+.story-card h3 {
+    color: var(--dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.para-lg {
+    color: var(--gray);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 0;
+}
+
+/* Visual Block */
+.story-visual {
+    height: 100%;
+    min-height: 300px;
+    background: linear-gradient(135deg, #fff 0%, #f1f5f9 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.story-visual i {
+    font-size: 5rem;
+    color: var(--primary);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.visual-elements {
+    position: absolute;
+    inset: 0;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    opacity: 0.1;
+}
+
+.bubble.white {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    left: 20%;
+    animation: float2 4s ease-in-out infinite;
+}
+
+.bubble.orange {
+    width: 50px;
+    height: 50px;
+    bottom: 30%;
+    right: 25%;
+    animation: float2 5s ease-in-out infinite 1s;
+}
+
+.bubble.deep-orange {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    right: 15%;
+    animation: float2 6s ease-in-out infinite 0.5s;
+}
+
+@keyframes float2 {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.z-top {
+    position: relative;
+    z-index: 10;
+}
+
+/* ===== MISSION SECTION ===== */
+.mission-card {
+    background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
+    border-radius: 32px;
+    padding: 4rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(31, 143, 255, 0.15) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+.mission-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.mission-icon i {
+    color: #fff;
+    font-size: 2.5rem;
+}
+
+.mission-title {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.mission-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.mission-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-item .value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--secondary) 0%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-item .label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation utility classes */
+.anim-slide-in-left {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.anim-slide-in-right {
+    animation: slideInRight 0.8s ease-out;
+}
+
+.anim-both {
+    animation-fill-mode: both;
+}
+
+.anim-delay-03 {
+    animation-delay: 0.3s;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== UTILITIES ===== */
+.text-brand-blue {
+    color: var(--primary) !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+    .story-content-section {
+        padding: 3rem 0;
+    }
+
+    .story-card {
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .story-visual {
+        min-height: 250px;
+        margin-bottom: 1.5rem;
+    }
+
+    .mission-card {
+        padding: 3rem 1.5rem;
+    }
+
+    .mission-stats {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .story-hero-section {
+        min-height: 80vh;
+        padding: 2rem 1rem;
+    }
+
+    .story-badge {
+        padding: 0.6rem 1.2rem;
+    }
+
+    .story-badge span {
+        font-size: 0.85rem;
+    }
+
+    .story-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .para-lg {
+        font-size: 1rem;
+    }
+
+    .story-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .story-icon i {
+        font-size: 1.5rem;
+    }
+
+    .story-visual i {
+        font-size: 3.5rem;
+    }
+
+    .mission-card {
+        padding: 2.5rem 1.25rem;
+    }
+
+    .mission-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .mission-icon i {
+        font-size: 2rem;
+    }
+
+    .mission-title {
+        font-size: 1.5rem;
+    }
+
+    .mission-text {
+        font-size: 1rem;
+    }
+
+    .mission-stats {
+        gap: 1.5rem;
+    }
+
+    .stat-item .value {
+        font-size: 2rem;
+    }
+
+    .stat-item .label {
+        font-size: 0.85rem;
+    }
+
+    .row.mb-5 {
+        margin-bottom: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .story-content-section {
+        padding: 2rem 0;
+    }
+
+    .story-card {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+
+    .story-visual {
+        min-height: 200px;
+        border-radius: 20px;
+    }
+
+    .mission-card {
+        padding: 2rem 1rem;
+        border-radius: 24px;
+    }
+
+    .mission-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .stat-item {
+        padding: 0.5rem;
+    }
+}
+
+/* Animations */
+@keyframes techFloat {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-12px)
+    }
+}
+
+@keyframes badgeGlow {
+    from {
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0)
+    }
+
+    to {
+        box-shadow: 0 0 30px rgba(255, 255, 255, .25)
+    }
+}
+
+@keyframes gemSpin {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes edvoraGradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes cardGradientMove {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@keyframes visualGradientFlow {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0)
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0)
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+@keyframes rocketFloat {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-10px)
+    }
+}
+
+@keyframes globeRotate {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes missionPulse {
+
+    0%,
+    100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(1.05)
+    }
+}
+
+@keyframes missionGradientPulse {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+        opacity: .9
+    }
+
+    25% {
+        background-position: 50% 0%;
+        opacity: 1
+    }
+
+    50% {
+        background-position: 100% 50%;
+        opacity: .95
+    }
+
+    75% {
+        background-position: 50% 100%;
+        opacity: 1
+    }
+}
+
+
+/* Decorative bubbles in visual */
+.float1 {
+    animation: float1 6s ease-in-out infinite
+}
+
+.float2 {
+    animation: float2 8s ease-in-out infinite
+}
+
+.float3 {
+    animation: float3 7s ease-in-out infinite
+}
+
+@keyframes float1 {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-10px)
+    }
+}
+
+@keyframes float2 {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-14px)
+    }
+}
+
+@keyframes float3 {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-12px)
+    }
+}
+
+/* Heart beat animation */
+@keyframes heartBeat {
+
+    0%,
+    100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(1.1)
+    }
+}
+
+
+/* Animations */
+@keyframes techFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.7;
+    }
+}
+
+@keyframes storyParticleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translateY(-30px);
+        opacity: 1;
+    }
+}
+
+@keyframes badgeGlow {
+    from {
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0)
+    }
+
+    to {
+        box-shadow: 0 0 30px rgba(255, 255, 255, .25)
+    }
+}
+
+@keyframes gemSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 40px rgba(31, 143, 255, 0.8);
+    }
+}
+
+@keyframes titleGlow2 {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px rgba(31, 143, 255, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 40px rgba(31, 143, 255, 0.8);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes cardGradientMove {
+
+    0%,
+    100% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+}
+
+@keyframes visualGradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    25% {
+        background-position: 100% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    75% {
+        background-position: 0% 100%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes missionGradientPulse {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+        opacity: 0.9;
+    }
+
+    25% {
+        background-position: 50% 0%;
+        opacity: 1;
+    }
+
+    50% {
+        background-position: 100% 50%;
+        opacity: 0.95;
+    }
+
+    75% {
+        background-position: 50% 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float1 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes float2 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes float3 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes rocketFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(-10deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(10deg);
+    }
+}
+
+@keyframes globeRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes missionPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 20px 50px rgba(31, 143, 255, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 25px 60px rgba(31, 143, 255, 0.5);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .story-title {
+        font-size: 2.5rem !important;
+    }
+
+    .story-subtitle {
+        font-size: 1.1rem !important;
+    }
+
+    .story-card {
+        padding: 2rem !important;
+    }
+
+    .mission-card {
+        padding: 2.5rem !important;
+    }
+
+    .mission-stats {
+        gap: 2rem !important;
+    }
+}
