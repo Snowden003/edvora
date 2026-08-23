@@ -80,8 +80,8 @@
                                 <label for="password" class="form-label fw-semibold">Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create a password (min 8 chars)" required>
-                                    <button class="btn togglePass" type="button" id="togglePassword">
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create a password (min 8 chars)" required autocomplete="new-password">
+                                    <button class="btn togglePass" type="button" id="togglePassword" aria-label="Toggle password visibility" tabindex="-1">
                                         <i class="bi bi-eye" id="togglePasswordIcon"></i>
                                     </button>
                                 </div>
@@ -93,7 +93,10 @@
                                 <label for="password_confirmation" class="form-label fw-semibold">Confirm Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Repeat your password" required>
+                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Repeat your password" required autocomplete="new-password">
+                                    <button class="btn togglePass" type="button" id="toggleConfirmPassword" aria-label="Toggle password visibility" tabindex="-1">
+                                        <i class="bi bi-eye" id="toggleConfirmPasswordIcon"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -113,6 +116,10 @@
                                 <i class="bi bi-person-plus-fill me-2"></i>Create Account
                             </button>
 
+                            <a href="{{ route('google.redirect') }}?role=student" id="google-auth-link" class="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-google me-2 text-danger"></i>Continue with Google
+                            </a>
+
                             <p class="text-center text-muted small mb-0">
                                 Already have an account?
                                 <a href="{{ route('login') }}" class="auth-link">Sign in here</a>
@@ -124,4 +131,31 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleRadios = document.querySelectorAll('input[name="role"]');
+        const googleLink = document.getElementById('google-auth-link');
+        
+        function updateGoogleLink() {
+            const selectedRadio = document.querySelector('input[name="role"]:checked');
+            if (selectedRadio) {
+                const selectedRole = selectedRadio.value;
+                const baseUrl = "{{ route('google.redirect') }}";
+                googleLink.href = baseUrl + '?role=' + selectedRole;
+            }
+        }
+
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', updateGoogleLink);
+        });
+
+        if(googleLink) {
+            updateGoogleLink();
+        }
+    });
+</script>
+@endpush
+
 @endsection

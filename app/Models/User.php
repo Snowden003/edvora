@@ -11,7 +11,7 @@ use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'status', 'avatar', 'cover_image', 'bio', 'xp', 'phone', 'department', 'experience_years', 'cv_path', 'tazkira_image', 'identity_status', 'identity_rejection_reason'])]
+#[Fillable(['name', 'email', 'password', 'role', 'status', 'avatar', 'cover_image', 'bio', 'xp', 'phone', 'department', 'experience_years', 'cv_path'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -26,7 +26,6 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name', 'email', 'password', 'role', 'status', 'avatar', 'cover_image', 'bio', 'xp',
         'phone', 'department', 'experience_years', 'cv_path',
-        'tazkira_image', 'identity_status', 'identity_rejection_reason',
     ];
 
     /**
@@ -134,21 +133,6 @@ class User extends Authenticatable implements FilamentUser
     public function isPendingApproval(): bool
     {
         return $this->status === 'pending';
-    }
-
-    public function isIdentityApproved(): bool
-    {
-        return $this->identity_status === 'approved';
-    }
-
-    public function isIdentityPending(): bool
-    {
-        return $this->identity_status === 'pending';
-    }
-
-    public function hasSubmittedIdentity(): bool
-    {
-        return in_array($this->identity_status, ['pending', 'approved', 'rejected']);
     }
 
     public function isActiveTeacher(): bool
@@ -269,5 +253,16 @@ class User extends Authenticatable implements FilamentUser
             && filled($teacherProfile->specialization)
             && filled($teacherProfile->expertise)
             && $hasPublishedCourses;
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
     }
 }

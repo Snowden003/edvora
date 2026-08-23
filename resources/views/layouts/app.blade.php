@@ -43,6 +43,17 @@
     @auth
     @vite('resources/js/app.js')
     @endauth
+    @if(app()->environment('production'))
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKLFPS4011"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-GKLFPS4011');
+        </script>
+    @endif
 </head>
 
 <body class="edvora-theme {{ $isHomePage ? 'page-home' : '' }} @yield('body-class')" data-user-role="{{ Auth::check() ? Auth::user()->role : 'guest' }}">

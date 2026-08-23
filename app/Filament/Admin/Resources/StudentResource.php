@@ -80,22 +80,6 @@ class StudentResource extends Resource
                     ->placeholder('—')
                     ->icon('heroicon-m-phone'),
 
-                Tables\Columns\BadgeColumn::make('identity_status')
-                    ->label('ID Status')
-                    ->colors([
-                        'gray'    => 'not_submitted',
-                        'warning' => 'pending',
-                        'success' => 'approved',
-                        'danger'  => 'rejected',
-                    ])
-                    ->formatStateUsing(fn ($state) => match($state) {
-                        'not_submitted' => 'Not Submitted',
-                        'pending'       => 'Pending',
-                        'approved'      => 'Approved',
-                        'rejected'      => 'Rejected',
-                        default         => $state,
-                    }),
-
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Account')
                     ->colors([
@@ -117,15 +101,6 @@ class StudentResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                SelectFilter::make('identity_status')
-                    ->label('ID Status')
-                    ->options([
-                        'not_submitted' => 'Not Submitted',
-                        'pending'       => 'Pending',
-                        'approved'      => 'Approved',
-                        'rejected'      => 'Rejected',
-                    ]),
-
                 SelectFilter::make('status')
                     ->label('Account Status')
                     ->options([
@@ -204,6 +179,54 @@ class StudentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('bulk_activate')
+                        ->label('Activate Selected / تایید و فعال‌سازی')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Activate Selected Students')
+                        ->modalDescription('Are you sure you want to activate/approve the selected students?')
+                        ->modalSubmitActionLabel('Yes, activate')
+                        ->action(function (Collection $records): void {
+                            $records->each(fn (User $user) => $user->update(['status' => 'active']));
+                            Notification::make()
+                                ->title($records->count() . ' student(s) activated successfully.')
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('bulk_ban')
+                        ->label('Ban / Reject Selected / رد و مسدودسازی')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Ban Selected Students')
+                        ->modalDescription('Are you sure you want to ban/reject the selected student accounts?')
+                        ->modalSubmitActionLabel('Yes, ban')
+                        ->action(function (Collection $records): void {
+                            $records->each(fn (User $user) => $user->update(['status' => 'banned']));
+                            Notification::make()
+                                ->title($records->count() . ' student(s) banned successfully.')
+                                ->danger()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('bulk_pending')
+                        ->label('Set as Pending / تبدیل به در انتظار')
+                        ->icon('heroicon-o-clock')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records): void {
+                            $records->each(fn (User $user) => $user->update(['status' => 'pending']));
+                            Notification::make()
+                                ->title($records->count() . ' student(s) set to pending.')
+                                ->warning()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
                     BulkAction::make('bulk_email')
                         ->label('Send Email to Selected')
                         ->icon('heroicon-o-envelope')

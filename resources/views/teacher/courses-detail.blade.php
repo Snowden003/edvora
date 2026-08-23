@@ -339,9 +339,9 @@
                                 @endif
 
                                 {{-- Join Button --}}
-                                <a href="{{ route('teacher.courses.sessions.join', $course->id) }}" 
+                                <a href="{{ $activeSession->meet_link }}" target="_blank"
                                    style="display: block; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; text-decoration: none; padding: 14px; border-radius: 10px; text-align: center; font-weight: 600; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
-                                    <i class="bi bi-box-arrow-up-right" style="margin-right: 8px;"></i>Join as Teacher (Full Controls)
+                                    <i class="bi bi-box-arrow-up-right" style="margin-right: 8px;"></i>Join Google Meet (Teacher)
                                 </a>
 
                                 {{-- Features --}}
@@ -389,9 +389,9 @@
                                     <div class="live-class-icon-wrapper">
                                         <i class="bi bi-camera-video-fill" style="font-size:2rem;color:#fff;"></i>
                                     </div>
-                                    <h6 class="live-class-title">Start MiroTalk SFU Class</h6>
+                                    <h6 class="live-class-title">Start Google Meet Class</h6>
                                     <p class="live-class-description">
-                                        Click below to create a secure meeting room. Students will be notified automatically.
+                                        Enter your Google Meet link below to start the class. Students will be notified automatically.
                                     </p>
                                 </div>
 
@@ -419,8 +419,14 @@
                                         </select>
                                         <small class="text-white-50">Students will see which lesson is being taught.</small>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="meet_link" class="form-label" style="color: #fff; font-size: 0.9rem;">
+                                            <i class="bi bi-link-45deg me-1"></i>Google Meet Link
+                                        </label>
+                                        <input type="text" name="meet_link" id="meet_link" class="form-control" required style="background: #fff; color: #333; border: 1px solid rgba(255,255,255,0.5);" placeholder="https://meet.google.com/xxx-xxxx-xxx">
+                                    </div>
                                     <button type="submit" class="btn live-class-btn-start">
-                                        <i class="bi bi-camera-video-fill me-2"></i>Start MiroTalk SFU Class
+                                        <i class="bi bi-camera-video-fill me-2"></i>Start Class
                                     </button>
                                 </form>
                                 @else
@@ -432,7 +438,7 @@
                                 <div class="live-class-info-box mt-3">
                                     <small>
                                         <i class="bi bi-info-circle me-1"></i>
-                                        A unique secure room will be created. You will have full presenter controls.
+                                        Please make sure you have the correct Google Meet link before starting the class.
                                     </small>
                                 </div>
                                 @endif

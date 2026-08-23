@@ -22,7 +22,7 @@
         <x-teacher-sidebar />
 
         <!-- Main Dashboard Content -->
-        <main class="main-content">
+        <main class="main-content" id="mainContent">
             <div class="container-fluid py-5">
                 <!-- Welcome Section -->
                 <div class="row mb-5">

@@ -21,7 +21,7 @@ class CourseController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -35,16 +35,16 @@ class CourseController extends Controller
 
         $sort = $request->get('sort', 'popular');
         match ($sort) {
-            'newest'  => $query->latest(),
-            'rating'  => $query->orderByDesc('rating'),
-            default   => $query->orderByDesc('enrolled_count'),
+            'newest' => $query->latest(),
+            'rating' => $query->orderByDesc('rating'),
+            default => $query->orderByDesc('enrolled_count'),
         };
 
-        $courses    = $query->paginate(6)->withQueryString();
+        $courses = $query->paginate(6)->withQueryString();
         $categories = Category::all();
 
-        $totalStudents    = User::where('role', 'student')->count();
-        $totalCourses     = Course::where('status', 'published')->count();
+        $totalStudents = User::where('role', 'student')->count();
+        $totalCourses = Course::where('status', 'published')->count();
         $totalCertificates = Certificate::count();
 
         return view('courses.index', compact('courses', 'categories', 'totalStudents', 'totalCourses', 'totalCertificates'));

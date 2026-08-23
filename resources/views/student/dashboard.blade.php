@@ -1106,7 +1106,7 @@
                     const notifData = {
                         course_title: notif.course_title,
                         message: notif.message,
-                        room_url: notif.data?.room_url || '#',
+                        room_url: notif.data?.room_url || notif.data?.meet_link || '#',
                         started_at: notif.created_at
                     };
                     showToastNotification(notifData);

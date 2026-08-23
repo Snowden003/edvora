@@ -36,7 +36,6 @@ class FileManager extends Page
         'covers'           => ['label' => 'Cover Images',     'icon' => 'image'],
         'courses'          => ['label' => 'Course Images',    'icon' => 'book'],
         'instructors'      => ['label' => 'Instructors',      'icon' => 'academic-cap'],
-        'tazkira'          => ['label' => 'Tazkira (ID)',     'icon' => 'identification'],
         'cvs'              => ['label' => 'CVs',              'icon' => 'document'],
         'course-documents' => ['label' => 'Course Documents', 'icon' => 'document-text'],
         'events'           => ['label' => 'Events',           'icon' => 'calendar'],
@@ -57,15 +56,13 @@ class FileManager extends Page
     {
         $paths = collect();
 
-        // users: avatar, cover_image, cv_path, tazkira_image
+        // users: avatar, cover_image, cv_path
         $paths = $paths->merge(
             User::whereNotNull('avatar')->pluck('avatar')
         )->merge(
             User::whereNotNull('cover_image')->pluck('cover_image')
         )->merge(
             User::whereNotNull('cv_path')->pluck('cv_path')
-        )->merge(
-            User::whereNotNull('tazkira_image')->pluck('tazkira_image')
         );
 
         // courses: thumbnail

@@ -178,6 +178,7 @@ class NotificationController extends Controller
             'data' => [
                 'course_slug' => $courseSlug,
                 'meet_link' => $meetLink,
+                'room_url' => $meetLink,
             ],
         ]);
     }

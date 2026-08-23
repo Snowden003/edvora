@@ -358,26 +358,75 @@ class TeacherApplicationResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('bulk_approve')
-                        ->label('Approve Selected')
+                        ->label('Approve Selected / تایید انتخاب‌شده‌ها')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
+                        ->modalHeading('Approve Selected Teacher Applications')
+                        ->modalDescription('Are you sure you want to approve the selected teacher applications? Approved teachers will be verified and sent confirmation emails.')
+                        ->modalSubmitActionLabel('Yes, approve all')
+                        ->deselectRecordsAfterCompletion()
                         ->action(function ($records) {
-                            $records->each(function (User $record) {
+                            $count = 0;
+                            $records->each(function (User $record) use (&$count) {
                                 $record->update(['status' => 'active']);
                                 $record->teacher?->update(['is_verified' => true]);
+                                try {
+                                    if ($record->email) {
+                                        Mail::to($record->email)->send(new TeacherApplicationApproved($record));
+                                    }
+                                } catch (\Throwable $e) {
+                                    // Ignore mail errors if mail server is offline
+                                }
+                                $count++;
                             });
-                            Notification::make()->title('Selected teachers approved.')->success()->send();
+                            Notification::make()
+                                ->title("{$count} teacher applications approved successfully.")
+                                ->success()
+                                ->send();
                         }),
 
                     Tables\Actions\BulkAction::make('bulk_reject')
-                        ->label('Reject Selected')
+                        ->label('Reject Selected / رد انتخاب‌شده‌ها')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
+                        ->modalHeading('Reject Selected Teacher Applications')
+                        ->modalDescription('Are you sure you want to reject the selected teacher applications?')
+                        ->modalSubmitActionLabel('Yes, reject all')
+                        ->deselectRecordsAfterCompletion()
                         ->action(function ($records) {
-                            $records->each(fn(User $r) => $r->update(['status' => 'rejected']));
-                            Notification::make()->title('Selected teachers rejected.')->danger()->send();
+                            $count = 0;
+                            $records->each(function (User $record) use (&$count) {
+                                $record->update(['status' => 'rejected']);
+                                $record->teacher?->update(['is_verified' => false]);
+                                $count++;
+                            });
+                            Notification::make()
+                                ->title("{$count} teacher applications rejected.")
+                                ->danger()
+                                ->send();
+                        }),
+
+                    Tables\Actions\BulkAction::make('bulk_suspend')
+                        ->label('Suspend Selected / تعلیق انتخاب‌شده‌ها')
+                        ->icon('heroicon-o-no-symbol')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Suspend Selected Teachers')
+                        ->modalDescription('Are you sure you want to suspend the selected teacher accounts?')
+                        ->modalSubmitActionLabel('Yes, suspend all')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function ($records) {
+                            $count = 0;
+                            $records->each(function (User $record) use (&$count) {
+                                $record->update(['status' => 'suspended']);
+                                $count++;
+                            });
+                            Notification::make()
+                                ->title("{$count} teacher accounts suspended.")
+                                ->warning()
+                                ->send();
                         }),
 
                     Tables\Actions\DeleteBulkAction::make(),

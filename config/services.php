@@ -35,9 +35,15 @@ return [
         ],
     ],
 
-    'mirotalk' => [
-        'url'        => env('MIROTALK_URL', 'https://meet.edvoratech.com'),
-        'api_secret' => env('MIROTALK_API_SECRET'),
+
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+        'guzzle' => [
+            'verify' => false,
+        ],
     ],
 
 ];

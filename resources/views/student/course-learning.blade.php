@@ -156,7 +156,7 @@
                     <span class="badge bg-warning text-dark me-2"><i class="bi bi-book me-1"></i>Lesson {{ $activeSession->lesson->order }}</span>
                     {{ $activeSession->lesson->title }}
                   @else
-                    MiroTalk SFU
+                    Google Meet
                   @endif
                   @if($activeSession && $activeSession->room_name)
                     • Room: <span id="live-room-name">{{ $activeSession->room_name }}</span>
@@ -165,10 +165,10 @@
               </div>
             </div>
             <div>
-              {{-- Student Join via server-side JWT --}}
-              <a id="join-class-btn" href="{{ $activeSession ? route('student.courses.sessions.join', $course->slug) : '#' }}"
+              <a id="join-class-btn" href="{{ $activeSession ? $activeSession->meet_link : '#' }}"
                  class="btn fw-bold px-4 py-2 {{ $activeSession ? '' : 'disabled' }}"
-                 onclick="if(this.classList.contains('disabled')) return false; openClassPopup(this.href); return false;"
+                 target="_blank"
+                 onclick="if(this.classList.contains('disabled')) return false;"
                  style="background:#fff;color:#1F8FFF;border:none;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);">
                 <i class="bi bi-box-arrow-up-right me-2"></i>Join Class
               </a>
@@ -482,7 +482,7 @@
                 </div>
                 <div class="session-info">
                   <div class="session-title">
-                    <span class="badge me-1" style="background:#1F8FFF;color:#fff;font-size:.65rem;">MiroTalk SFU</span>
+                    <span class="badge me-1" style="background:#1F8FFF;color:#fff;font-size:.65rem;">Google Meet</span>
                     Session {{ $loop->remaining + 1 }}
                     @if($session->note)
                       <span class="text-muted">&mdash; {{ Str::limit($session->note, 40) }}</span>
@@ -504,7 +504,7 @@
                     {{ $session->status === 'active' ? 'Live Now' : 'Ended' }}
                   </span>
                   @if($session->status === 'active')
-                    <a href="{{ route('student.courses.sessions.join', $course->slug) }}"
+                    <a href="{{ $session->meet_link }}" target="_blank"
                        class="btn btn-sm fw-bold px-3"
                        style="background:#1F8FFF;color:#fff;border:none;border-radius:8px;font-size:.75rem;">
                       <i class="bi bi-box-arrow-up-right me-1"></i>Join
@@ -1195,15 +1195,17 @@
 
             // Enable button
             btn.classList.remove('disabled');
-            // Handle both object with room_url property and direct string URL
-            const joinUrl = (typeof data === 'object' && data.room_url) ? data.room_url : 
-                           (typeof data === 'string' ? data : '{{ route('student.courses.sessions.join', $course->slug) }}');
+            // Directly use room_url for Google Meet link
+            const joinUrl = data.room_url ? data.room_url : '#';
             btn.href = joinUrl;
+            btn.target = '_blank';
 
             // Update room name if exists
-            if (typeof data === 'object' && data.room_name && info) {
-                info.innerHTML = `MiroTalk SFU • Room: ${data.room_name}`;
-            }
+            if (data.room_name && data.room_name !== 'Google Meet') {
+                info.innerHTML = `Google Meet • Room: ${data.room_name}`;
+              } else {
+                info.innerHTML = `Google Meet`;
+              }
 
             // Play sound
             try {
@@ -1273,7 +1275,7 @@
             if (data.is_active && banner && banner.classList.contains('d-none')) {
                 showLiveClassBanner({
                     course_title: data.course_title,
-                    room_url: null,
+                    room_url: data.room_url,
                     room_name: data.room_name
                 });
             }

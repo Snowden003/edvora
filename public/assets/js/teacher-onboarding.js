@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const invalidFields = document.querySelectorAll('.is-invalid');
     if (invalidFields.length > 0) {
         const firstInvalid = invalidFields[0];
-        const step2Fields = ['department', 'experience_years', 'specialization', 'expertise', 'linkedin', 'github'];
+        const step2Fields = ['department', 'experience_years', 'specialization', 'expertise', 'linkedin', 'github', 'website'];
         const fieldName = firstInvalid.getAttribute('name');
         if (step2Fields.includes(fieldName)) {
             goToStep(2);
@@ -165,7 +165,16 @@ function showCvName(input) {
 }
 
 // Submit with loading state
-document.getElementById('onboardingForm')?.addEventListener('submit', function () {
+document.getElementById('onboardingForm')?.addEventListener('submit', function (e) {
+    // Validate all steps before actual submission
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+        e.preventDefault();
+        if (!validateStep(1)) goToStep(1);
+        else if (!validateStep(2)) goToStep(2);
+        else goToStep(3);
+        return;
+    }
+
     clearFormStorage();
     const overlay = document.getElementById('onboardingLoadingOverlay');
     if (overlay) {
@@ -174,8 +183,10 @@ document.getElementById('onboardingForm')?.addEventListener('submit', function (
 
     const btn = document.getElementById('submitBtn');
     if (btn) {
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
-        btn.disabled = true;
+        setTimeout(() => {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+            btn.disabled = true;
+        }, 10);
     }
 });
 

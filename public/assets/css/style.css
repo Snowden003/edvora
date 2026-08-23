@@ -4418,23 +4418,18 @@ section.gray form .form-control {
   background-color: var(--primary-blue-dark);
 }
 
-/* Log in page, Sign in page and forgot password page */
+/* Log in page, Sign in page and auth pages */
 .togglePass {
-  position: absolute;
-  top: 50%;
-  right: 15px;
-  transform: translateY(-50%);
   cursor: pointer;
   color: rgba(31, 143, 255, 0.7);
   transition: color 0.3s ease;
   border: none;
   background-color: inherit;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .togglePass:hover {
   color: rgba(31, 143, 255, 1);
-  font-size: 1.22rem;
 }
 
 .link {

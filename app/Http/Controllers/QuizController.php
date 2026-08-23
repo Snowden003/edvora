@@ -61,7 +61,7 @@ class QuizController extends Controller
             }
         }
 
-        return view('exams', compact('quizzes', 'totalQuizzes', 'avgCompletion'));
+        return view('exams.index', compact('quizzes', 'totalQuizzes', 'avgCompletion'));
     }
 
     public function show(Quiz $quiz)

@@ -13,9 +13,6 @@
 @endpush
 
 @section('content')
-<!-- Header -->
-    
-
     <!-- Dashboard Layout Wrapper -->
     <div class="dashboard-wrapper">
         <!-- Sidebar Navigation -->
@@ -196,9 +193,9 @@
                                             </form>
                                         @endif
                                     @else
-                                        <a href="{{ route('student.quizs.show', $quiz) }}" class="quiz-btn quiz-btn-primary"><i class="bi bi-eye"></i> View Quiz</a>
+                                        <a href="{{ route('student.exams.show', $quiz) }}" class="quiz-btn quiz-btn-primary"><i class="bi bi-eye"></i> View Quiz</a>
                                         @if($quiz->is_published)
-                                            <a href="{{ route('student.quizs.take', $quiz) }}" class="quiz-btn quiz-btn-secondary"><i class="bi bi-play-fill"></i> Start Quiz</a>
+                                            <a href="{{ route('student.exams.take', $quiz) }}" class="quiz-btn quiz-btn-secondary"><i class="bi bi-play-fill"></i> Start Quiz</a>
                                         @endif
                                     @endif
                                 </div>
@@ -225,13 +222,6 @@
             </div>
         </main>
     </div>
-
-    <!-- Modern Footer -->
-    
-
-    <!-- Bootstrap 5 JS -->
-    
-    <!-- Custom JS -->
 @endsection
 
 @push('scripts')

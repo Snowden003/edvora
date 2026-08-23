@@ -46,7 +46,7 @@
                 </div>
                 @endif
 
-                <form method="POST" action="{{ route('teacher.onboarding.submit') }}" enctype="multipart/form-data" id="onboardingForm">
+                <form method="POST" action="{{ route('teacher.onboarding.submit') }}" enctype="multipart/form-data" id="onboardingForm" novalidate>
                     @csrf
 
                     {{-- ===== STEP 1: Personal Info ===== --}}

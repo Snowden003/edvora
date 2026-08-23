@@ -18,7 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'teacher.onboarded' => \App\Http\Middleware\EnsureTeacherOnboarded::class,
-            'student.verified' => \App\Http\Middleware\EnsureStudentVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

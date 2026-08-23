@@ -66,51 +66,62 @@
                 <div class="carousel-item">
                     <div class="hero2__glow hero2__glow--a"></div>
                     <div class="hero2__glow hero2__glow--b"></div>
-                    <div class="container hero2__inner hero2__inner--featured">
+                    <div class="container hero2__inner">
+                        @php $fc = $featuredCourses->first(); @endphp
+                        @if($fc)
+                        <div class="hero2__content">
+                            <span class="hero2__eyebrow"><i class="bi bi-stars"></i> {{ $fc->category->name ?? 'Featured' }}</span>
+                            <h1 class="hero2__title">{{ \Illuminate\Support\Str::limit($fc->title, 40) }}<br><span>Special Course.</span></h1>
+                            <p class="hero2__desc">{{ \Illuminate\Support\Str::limit($fc->description, 140) }}</p>
 
-                        @forelse ($featuredCourses as $fc)
-                            <div class="hero2__spotlight">
-                                <div class="hero2__spotlight-media">
-                                    @if($fc->thumbnail)
-                                        <img src="{{ asset('storage/' . $fc->thumbnail) }}" alt="{{ $fc->title }}" loading="lazy" decoding="async">
-                                    @else
-                                        <div class="hero2__spotlight-media--fallback"><i class="bi bi-{{ $fc->category->icon ?? 'mortarboard-fill' }}"></i></div>
-                                    @endif
-                                    <span class="hero2__spotlight-ribbon"><i class="bi bi-award-fill"></i> Special</span>
-                                </div>
-
-                                <div class="hero2__spotlight-body">
-                                    <span class="hero2__eyebrow"><i class="bi bi-stars"></i> {{ $fc->category->name ?? 'Featured' }}</span>
-                                    <h1 class="hero2__title hero2__title--sm">{{ $fc->title }}</h1>
-                                    <p class="hero2__desc">{{ \Illuminate\Support\Str::limit($fc->description, 140) }}</p>
-
-                                    <div class="hero2__spotlight-badges">
-                                        <span class="hero2__spotlight-badge"><i class="bi bi-bar-chart-fill"></i> {{ ucfirst($fc->level) }}</span>
-                                        <span class="hero2__spotlight-badge"><i class="bi bi-clock-fill"></i> {{ $fc->duration_hours }}h</span>
-                                        <span class="hero2__spotlight-badge"><i class="bi bi-people-fill"></i> {{ $fc->enrolled_count }} Students</span>
-                                        @if($fc->rating > 0)
-                                            <span class="hero2__spotlight-badge"><i class="bi bi-star-fill"></i> {{ number_format($fc->rating, 1) }}</span>
-                                        @endif
-                                        @if($fc->has_certificate)
-                                            <span class="hero2__spotlight-badge"><i class="bi bi-patch-check-fill"></i> Certificate</span>
-                                        @endif
-                                        @if($fc->teacher)
-                                            <span class="hero2__spotlight-badge"><i class="bi bi-person-fill"></i> {{ $fc->teacher->name }}</span>
-                                        @endif
-                                    </div>
-
-                                    <a href="{{ route('courses.detail', $fc->slug) }}" class="hero2__spotlight-cta">
-                                        Explore Course <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
+                            <div class="hero2__features">
+                                <div class="hero2__feature"><i class="bi bi-bar-chart-fill"></i><span>{{ ucfirst($fc->level) }}</span></div>
+                                <div class="hero2__feature"><i class="bi bi-clock-fill"></i><span>{{ $fc->duration_hours }}h</span></div>
+                                <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>{{ $fc->enrolled_count }} Students</span></div>
+                                @if($fc->has_certificate)
+                                    <div class="hero2__feature"><i class="bi bi-patch-check-fill"></i><span>Certificate</span></div>
+                                @endif
                             </div>
-                        @empty
-                            <div class="hero2__content" style="margin: 0 auto; text-align:center;">
-                                <span class="hero2__eyebrow"><i class="bi bi-award-fill"></i> Special Courses</span>
-                                <h1 class="hero2__title">No Special Courses Yet.<br><span>Check Back Soon.</span></h1>
-                                <p class="hero2__desc">An admin hasn't marked any course as featured yet.</p>
+
+                            <div class="hero2__buttons" style="margin-top: 2rem;">
+                                <a href="{{ route('courses.detail', $fc->slug) }}" class="btn-hero-primary">
+                                    Explore Course <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
                             </div>
-                        @endforelse
+                        </div>
+
+                        <div class="hero2__visual">
+                            <div class="hero2__ring hero2__ring--1"></div>
+                            <div class="hero2__ring hero2__ring--2"></div>
+                            <div class="hero2__badge"><i class="bi bi-award-fill"></i></div>
+                            <img src="{{ $fc->thumbnail ? asset('storage/' . $fc->thumbnail) : asset('assets/images/hero_logo_design.png') }}" alt="{{ $fc->title }}" class="hero2__logo" style="object-fit: cover;" decoding="async">
+                            <div class="hero2__particle hero2__particle--1"></div>
+                            <div class="hero2__particle hero2__particle--2"></div>
+                            <div class="hero2__particle hero2__particle--3"></div>
+                        </div>
+                        @else
+                        <div class="hero2__content">
+                            <span class="hero2__eyebrow"><i class="bi bi-award-fill"></i> Special Courses</span>
+                            <h1 class="hero2__title">No Special Courses Yet.<br><span>Check Back Soon.</span></h1>
+                            <p class="hero2__desc">An admin hasn't marked any course as featured yet. Browse our full library to find amazing free courses.</p>
+                            
+                            <div class="hero2__buttons" style="margin-top: 2rem;">
+                                <a href="{{ route('courses.index') }}" class="btn-hero-primary">
+                                    Browse All Courses <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="hero2__visual">
+                            <div class="hero2__ring hero2__ring--1"></div>
+                            <div class="hero2__ring hero2__ring--2"></div>
+                            <div class="hero2__badge"><i class="bi bi-shield-lock-fill"></i></div>
+                            <img src="{{ asset('assets/images/hero_logo_design.png') }}" alt="Edvora Tech" class="hero2__logo" fetchpriority="high" decoding="async">
+                            <div class="hero2__particle hero2__particle--1"></div>
+                            <div class="hero2__particle hero2__particle--2"></div>
+                            <div class="hero2__particle hero2__particle--3"></div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -118,41 +129,51 @@
                 <div class="carousel-item">
                     <div class="hero2__glow hero2__glow--a"></div>
                     <div class="hero2__glow hero2__glow--b"></div>
-                    <div class="container hero2__inner hero2__inner--actions">
+                    <div class="container hero2__inner">
                         <div class="hero2__content">
                             <span class="hero2__eyebrow"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</span>
                             <h1 class="hero2__title">Jump Right Back In.<br><span>Everything's One Click Away.</span></h1>
-                            <p class="hero2__desc">Browse the library, enroll in a new course, or continue where you left off.</p>
+                            <p class="hero2__desc">Browse the library, enroll in a new course, or continue where you left off. Start your learning journey today.</p>
+                            
+                            <div class="hero2__features">
+                                <div class="hero2__feature"><i class="bi bi-play-circle-fill"></i><span>Instant Access</span></div>
+                                <div class="hero2__feature"><i class="bi bi-person-workspace"></i><span>My Dashboard</span></div>
+                                <div class="hero2__feature"><i class="bi bi-clock-history"></i><span>Self Paced</span></div>
+                                <div class="hero2__feature"><i class="bi bi-bookmark-star-fill"></i><span>Saved Courses</span></div>
+                            </div>
+
+                            <div class="hero2__buttons" style="margin-top: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap;">
+                                <a href="{{ route('courses.index') }}" class="btn-hero-primary">
+                                    <i class="bi bi-book-half me-2"></i> Course Library
+                                </a>
+                                <a href="{{ auth()->check() ? (auth()->user()->role === 'teacher' ? route('teacher.your-courses') : route('student.courses')) : route('login') }}" class="btn-hero-secondary">
+                                    <i class="bi bi-collection-play me-2"></i> My Current Courses
+                                </a>
+                            </div>
                         </div>
 
-                        <div class="hero2__actions-grid">
-                            <a href="{{ route('courses.index') }}" class="hero2__action-card">
-                                <span class="hero2__action-icon"><i class="bi bi-book-half"></i></span>
-                                <h3>Course Library</h3>
-                                <p>Browse free courses & resources</p>
-                            </a>
-                            <a href="{{ route('courses.index') }}" class="hero2__action-card">
-                                <span class="hero2__action-icon"><i class="bi bi-journal-plus"></i></span>
-                                <h3>Register New Course</h3>
-                                <p>Enroll in a course today</p>
-                            </a>
-                            <a href="{{ auth()->check() ? (auth()->user()->role === 'teacher' ? route('teacher.your-courses') : route('student.courses')) : route('login') }}" class="hero2__action-card">
-                                <span class="hero2__action-icon"><i class="bi bi-collection-play"></i></span>
-                                <h3>My Current Courses</h3>
-                                <p>Continue your learning</p>
-                            </a>
+                        <div class="hero2__visual">
+                            <div class="hero2__ring hero2__ring--1"></div>
+                            <div class="hero2__ring hero2__ring--2"></div>
+                            <div class="hero2__badge"><i class="bi bi-rocket-fill"></i></div>
+                            <img src="{{ asset('assets/images/hero_logo_design.png') }}" alt="Quick Actions" class="hero2__logo" fetchpriority="high" decoding="async">
+                            <div class="hero2__particle hero2__particle--1"></div>
+                            <div class="hero2__particle hero2__particle--2"></div>
+                            <div class="hero2__particle hero2__particle--3"></div>
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <button class="hero2__arrow hero2__arrow--prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-            <button class="hero2__arrow hero2__arrow--next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next">
-                <i class="bi bi-chevron-right"></i>
-            </button>
+            <div class="hero2__navigation-container container">
+                <button class="hero2__arrow hero2__arrow--prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="hero2__arrow hero2__arrow--next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
             <div class="carousel-indicators hero2__indicators">
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>

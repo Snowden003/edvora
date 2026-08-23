@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\IdentityVerificationController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\EnrollmentRequestController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Route;
 
 // Home
 Route::get('/', [HomePageController::class, 'index'])->name('home');
+
+// Google OAuth
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 
 Route::get('/sitemap.xml', function () {
     $courses = Course::query()
@@ -113,15 +117,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/profile', [ProfileController::class, 'saveProfile'])->name('profile.save');
     });
 
-    // ─── STUDENT IDENTITY VERIFICATION ───
-    Route::prefix('student')->name('student.')->middleware(['role:student'])->group(function () {
-        Route::get('/identity/verify',   [IdentityVerificationController::class, 'show'])->name('identity.show');
-        Route::post('/identity/verify',  [IdentityVerificationController::class, 'upload'])->name('identity.upload');
-        Route::get('/identity/pending',  [IdentityVerificationController::class, 'pending'])->name('identity.pending');
-    });
-
     // ─── STUDENT AREA ─── prefix: /student
-    Route::prefix('student')->name('student.')->middleware(['role:student', 'verified', 'student.verified'])->group(function () {
+    Route::prefix('student')->name('student.')->middleware(['role:student', 'verified'])->group(function () {
         Route::get('/dashboard',         [StudentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/courses',           [StudentDashboardController::class, 'yourCourses'])->name('courses');
         Route::get('/courses/{slug}/learn', [StudentDashboardController::class, 'courseLearning'])->name('courses.learn');

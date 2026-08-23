@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use App\Models\User;
-use App\Models\Enrollment;
-use App\Models\Event;
 use App\Models\Competition;
-use App\Models\Review;
+use App\Models\Course;
 use App\Models\Donation;
+use App\Models\Event;
+use App\Models\Enrollment;
+use App\Models\Review;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,60 +18,111 @@ class HomePageController extends Controller
 {
     public function index()
     {
-        $homeData = Cache::remember('home:page-data', now()->addMinutes(10), function () {
+        $homeData = Cache::remember('home:page-data:v2', now()->addMinutes(10), function () {
             return [
                 'totalCourses' => Course::where('status', 'published')->count(),
                 'totalTeachers' => User::where('role', 'teacher')->count(),
                 'totalStudents' => User::where('role', 'student')->count(),
                 'completedCourses' => Enrollment::where('status', 'completed')->count(),
-                'featuredCourses' => Course::with(['teacher', 'category'])
-                    ->where('status', 'published')
+                'featuredCourseIds' => Course::where('status', 'published')
                     ->where('is_featured', true)
                     ->latest()
                     ->limit(1)
-                    ->get(),
-                'popularCourses' => Course::withCount(['enrollments' => function ($query) {
+                    ->pluck('id')
+                    ->all(),
+                'popularCourseIds' => Course::withCount(['enrollments' => function ($query) {
                         $query->where('status', 'active');
                     }])
-                    ->with(['teacher', 'category'])
                     ->where('status', 'published')
                     ->orderByDesc('enrollments_count')
                     ->orderByDesc('rating')
                     ->orderByDesc('total_reviews')
                     ->latest()
                     ->limit(3)
-                    ->get(),
-                'recentCourses' => Course::with(['teacher', 'category'])
-                    ->where('status', 'published')
+                    ->pluck('id')
+                    ->all(),
+                'recentCourseIds' => Course::where('status', 'published')
                     ->latest()
                     ->limit(6)
-                    ->get(),
-                'upcomingEvents' => Event::where('start_date', '>=', now())
+                    ->pluck('id')
+                    ->all(),
+                'upcomingEventIds' => Event::where('start_date', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_date')
                     ->limit(3)
-                    ->get(),
-                'upcomingCompetitions' => Competition::where('start_date', '>=', now())
+                    ->pluck('id')
+                    ->all(),
+                'upcomingCompetitionIds' => Competition::where('start_date', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_date')
                     ->limit(3)
-                    ->get(),
-                'approvedReviews' => Review::where('is_approved', true)
-                    ->with(['user', 'course'])
+                    ->pluck('id')
+                    ->all(),
+                'approvedReviewIds' => Review::where('is_approved', true)
                     ->latest()
                     ->limit(6)
-                    ->get(),
-                'topStudents' => User::where('role', 'student')
+                    ->pluck('id')
+                    ->all(),
+                'topStudentIds' => User::where('role', 'student')
                     ->where('xp', '>', 0)
                     ->orderByDesc('xp')
                     ->limit(3)
-                    ->get(),
+                    ->pluck('id')
+                    ->all(),
                 'totalDonations' => Donation::where('status', 'completed')->sum('amount'),
                 'totalSupporters' => Donation::where('status', 'completed')->distinct('email')->count(),
             ];
         });
 
-        extract($homeData);
+        $totalCourses = $homeData['totalCourses'];
+        $totalTeachers = $homeData['totalTeachers'];
+        $totalStudents = $homeData['totalStudents'];
+        $completedCourses = $homeData['completedCourses'];
+        $totalDonations = $homeData['totalDonations'];
+        $totalSupporters = $homeData['totalSupporters'];
+
+        $featuredCourses = $this->loadOrderedModels(
+            Course::class,
+            $homeData['featuredCourseIds'],
+            fn (Builder $query) => $query->with(['teacher', 'category'])
+        );
+
+        $popularCourses = $this->loadOrderedModels(
+            Course::class,
+            $homeData['popularCourseIds'],
+            fn (Builder $query) => $query
+                ->withCount(['enrollments' => function ($enrollmentsQuery) {
+                    $enrollmentsQuery->where('status', 'active');
+                }])
+                ->with(['teacher', 'category'])
+        );
+
+        $recentCourses = $this->loadOrderedModels(
+            Course::class,
+            $homeData['recentCourseIds'],
+            fn (Builder $query) => $query->with(['teacher', 'category'])
+        );
+
+        $upcomingEvents = $this->loadOrderedModels(
+            Event::class,
+            $homeData['upcomingEventIds']
+        );
+
+        $upcomingCompetitions = $this->loadOrderedModels(
+            Competition::class,
+            $homeData['upcomingCompetitionIds']
+        );
+
+        $approvedReviews = $this->loadOrderedModels(
+            Review::class,
+            $homeData['approvedReviewIds'],
+            fn (Builder $query) => $query->with(['user', 'course'])
+        );
+
+        $topStudents = $this->loadOrderedModels(
+            User::class,
+            $homeData['topStudentIds']
+        );
 
         // Get courses that the logged-in student is currently learning
         $continueLearning = collect();
@@ -86,7 +139,7 @@ class HomePageController extends Controller
 
         return view('home', compact(
             'totalCourses',
-            'totalTeachers', 
+            'totalTeachers',
             'totalStudents',
             'completedCourses',
             'featuredCourses',
@@ -101,5 +154,28 @@ class HomePageController extends Controller
             'totalDonations',
             'totalSupporters'
         ));
+    }
+
+    private function loadOrderedModels(string $modelClass, array $ids, ?callable $configure = null): EloquentCollection
+    {
+        if ($ids === []) {
+            return new EloquentCollection();
+        }
+
+        $query = $modelClass::query()->whereIn('id', $ids);
+
+        if ($configure !== null) {
+            $configure($query);
+        }
+
+        $modelsById = $query->get()->keyBy('id');
+
+        return new EloquentCollection(
+            collect($ids)
+                ->map(fn ($id) => $modelsById->get($id))
+                ->filter()
+                ->values()
+                ->all()
+        );
     }
 }

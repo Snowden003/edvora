@@ -48,8 +48,8 @@
                                 <label for="password" class="form-label fw-semibold">Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password" required>
-                                    <button class="btn togglePass" type="button" id="togglePassword">
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                                    <button class="btn togglePass" type="button" id="togglePassword" aria-label="Toggle password visibility" tabindex="-1">
                                         <i class="bi bi-eye" id="togglePasswordIcon"></i>
                                     </button>
                                 </div>
@@ -67,6 +67,10 @@
                             <button type="submit" class="btn btn-primary auth-submit-btn w-100 mb-3">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
                             </button>
+
+                            <a href="{{ route('google.redirect') }}" class="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-google me-2 text-danger"></i>Sign In with Google
+                            </a>
 
                             <p class="text-center text-muted small mb-0">
                                 Don't have an account?

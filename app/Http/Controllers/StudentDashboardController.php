@@ -12,7 +12,6 @@ use App\Models\QuizAttempt;
 use App\Models\SessionAttendance;
 use App\Models\User;
 use App\Services\ScoreService;
-use App\Services\MiroTalkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -409,19 +408,20 @@ class StudentDashboardController extends Controller
     public function joinClass($slug)
     {
         $user   = Auth::user();
-        $course = \App\Models\Course::where('slug', $slug)->firstOrFail();
+        $course = Course::where('slug', $slug)->firstOrFail();
 
         // Verify enrollment and check not banned
         $enrollment = $user->enrollments()->where('course_id', $course->id)->firstOrFail();
 
         abort_if($enrollment->status === 'banned', 403, 'You have been removed from this course.');
 
-        $session = \App\Models\ClassSession::where('course_id', $course->id)
+        // Find the active session for this course
+        $session = ClassSession::where('course_id', $course->id)
             ->where('status', 'active')
             ->latest('started_at')
             ->first();
 
-        abort_if(is_null($session), 404, 'No active class session found.');
+        abort_if(is_null($session), 404, 'No active class session currently.');
 
         // Record attendance - joined session
         SessionAttendance::updateOrCreate(
@@ -435,11 +435,7 @@ class StudentDashboardController extends Controller
             ]
         );
 
-        $mirotalk    = new MiroTalkService();
-        $redirectUrl = route('student.courses.sessions.leave', $course->slug);
-        $joinUrl     = $mirotalk->buildJoinUrl($session->room_name, $user->name, false, $redirectUrl);
-
-        return redirect()->away($joinUrl);
+        return redirect()->away($session->meet_link);
     }
 
     public function leaveClass($slug)
@@ -505,7 +501,8 @@ class StudentDashboardController extends Controller
                 'has_active_class' => true,
                 'course_slug'  => $session->course->slug ?? null,
                 'course_title' => $session->course->title ?? null,
-                'room_name'    => $session->room_name,
+                'room_name'    => 'Google Meet',
+                'room_url'     => $session->meet_link,
                 'started_at'   => $session->started_at,
             ]);
         }
@@ -529,7 +526,8 @@ class StudentDashboardController extends Controller
             'is_active' => !is_null($session),
             'course_slug' => $slug,
             'course_title' => $course->title,
-            'room_name' => $session ? $session->room_name : null,
+            'room_name' => $session ? 'Google Meet' : null,
+            'room_url' => $session ? $session->meet_link : null,
             'started_at' => $session ? $session->started_at : null,
         ]);
     }

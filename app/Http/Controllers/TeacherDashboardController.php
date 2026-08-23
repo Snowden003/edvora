@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use App\Services\MiroTalkService;
 use App\Services\ScoreService;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -385,13 +384,17 @@ class TeacherDashboardController extends Controller
 
     public function startClass(Request $request, $id)
     {
+        $request->validate([
+            'meet_link' => 'required|string'
+        ]);
+
         $user   = Auth::user();
         $course = Course::where('teacher_id', $user->id)->findOrFail($id);
 
-        $mirotalk = new MiroTalkService();
-
-        $roomName = $mirotalk->generateRoomName($course->slug);
-        $roomUrl  = $mirotalk->getRoomUrl($roomName);
+        $roomUrl = trim($request->input('meet_link'));
+        if (!preg_match("~^(?:f|ht)tps?://~i", $roomUrl)) {
+            $roomUrl = "https://" . $roomUrl;
+        }
 
         // End any active sessions first
         \App\Models\ClassSession::where('course_id', $course->id)
@@ -406,7 +409,7 @@ class TeacherDashboardController extends Controller
             'lesson_id'  => $lessonId,
             'started_by' => $user->id,
             'meet_link'  => $roomUrl,
-            'room_name'  => $roomName,
+            'room_name'  => 'Google Meet',
             'status'     => 'active',
             'started_at' => now(),
         ]);
@@ -426,7 +429,7 @@ class TeacherDashboardController extends Controller
             }
         }
 
-        return back()->with('session_success', "Class started with MiroTalk SFU!{$lessonInfo} Students notified.");
+        return back()->with('session_success', "Class started with Google Meet!{$lessonInfo} Students notified.");
     }
 
     public function joinClass(Request $request, $id)
@@ -441,11 +444,7 @@ class TeacherDashboardController extends Controller
 
         abort_if(is_null($session), 404, 'No active session found.');
 
-        $mirotalk    = new MiroTalkService();
-        $redirectUrl = route('teacher.courses.sessions.leave', $course->id);
-        $joinUrl     = $mirotalk->buildJoinUrl($session->room_name, $user->name, true, $redirectUrl);
-
-        return redirect()->away($joinUrl);
+        return redirect()->away($session->meet_link);
     }
 
     public function leaveClass(Request $request, $id)

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize all components
   initMobileNavbar();
   initThemeToggle();
+  initPasswordToggle();
   loadPopularCourses();
   initCoursesSlider();
   loadUpcomingEvents();
@@ -95,6 +96,44 @@ function initThemeToggle() {
     } else {
       icon.className = "bi bi-sun-fill";
       localStorage.setItem("theme", "light");
+    }
+  });
+}
+
+// Password Visibility Toggle
+function initPasswordToggle() {
+  document.addEventListener("click", function (e) {
+    const toggleBtn = e.target.closest(".togglePass, #togglePassword, #toggleConfirmPassword, .toggle-password");
+    if (!toggleBtn) return;
+
+    e.preventDefault();
+
+    let input = null;
+    const inputGroup = toggleBtn.closest(".input-group, .password-wrapper, .auth-input-group");
+    if (inputGroup) {
+      input = inputGroup.querySelector('input[type="password"], input[type="text"]');
+    }
+
+    if (!input) {
+      const targetId = toggleBtn.id === "toggleConfirmPassword" ? "password_confirmation" : "password";
+      input = document.getElementById(targetId) || document.getElementById("confirmPassword");
+    }
+
+    if (!input) return;
+
+    const icon = toggleBtn.querySelector("i");
+    if (input.type === "password") {
+      input.type = "text";
+      if (icon) {
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+      }
+    } else {
+      input.type = "password";
+      if (icon) {
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+      }
     }
   });
 }

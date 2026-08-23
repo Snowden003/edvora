@@ -40,7 +40,7 @@ class RequestCoursesController extends Controller
 
         $categories = \DB::table('categories')->orderBy('name')->get();
 
-        return view('request-courses', compact('availableCourses', 'myRequests', 'categories'));
+        return view('teacher.request-courses', compact('availableCourses', 'myRequests', 'categories'));
     }
 
     public function store(\Illuminate\Http\Request $request)

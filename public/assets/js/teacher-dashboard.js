@@ -47,8 +47,8 @@ function initSidebar() {
         });
     }
 
-    // Mobile: close sidebar when a nav link is clicked
-    sidebar.querySelectorAll('.edvora-nav-link, .edvora-sublink').forEach(function (link) {
+    // Mobile: close sidebar when any nav link or action is clicked
+    sidebar.querySelectorAll('.edvora-nav-link, .edvora-sublink, .edvora-sublink-all, .edvora-course-title, .edvora-action-btn, .edvora-view-all-link').forEach(function (link) {
         link.addEventListener('click', function () {
             if (window.innerWidth < 992) {
                 sidebar.classList.remove('active');
