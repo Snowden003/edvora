@@ -106,7 +106,9 @@
                                 </a>
                                 <a href="{{ route('courses.chat.show', $course) }}" 
                                    class="edvora-action-btn action-chat {{ $isChatActive ? 'active' : '' }}" 
-                                   title="Course Live Chat">
+                                   title="Course Live Chat"
+                                   data-bg-chat-course="{{ $course->id }}"
+                                   data-bg-chat-user="{{ auth()->id() }}">
                                     <i class="bi bi-chat-dots"></i>
                                     <span>Chat</span>
                                 </a>

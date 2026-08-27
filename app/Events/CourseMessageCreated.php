@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\CourseMessage;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -19,7 +20,10 @@ class CourseMessageCreated implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        return [new PresenceChannel('course-chat.'.$this->message->course_id)];
+        return [
+            new PresenceChannel('course-chat.'.$this->message->course_id),
+            new Channel('course-chat-bg.'.$this->message->course_id),
+        ];
     }
 
     public function broadcastAs(): string

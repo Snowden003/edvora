@@ -16,6 +16,7 @@
         "laravel/reverb": "^1.0",
         "laravel/socialite": "^5.30",
         "laravel/tinker": "^3.0",
+        "pusher/pusher-php-server": "^7.3",
         "spatie/laravel-pdf": "2.0"
     },
     "require-dev": {

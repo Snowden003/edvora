@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/edvokttv/public_html/
-    - rsync -a --exclude='.env' --exclude='storage/' --exclude='bootstrap/cache/' --exclude='.git/' --exclude='node_modules/' ./ $DEPLOYPATH
+    - rsync -av --exclude='.env' --exclude='storage/' --exclude='bootstrap/cache/' --exclude='.git/' --exclude='node_modules/' ./ $DEPLOYPATH

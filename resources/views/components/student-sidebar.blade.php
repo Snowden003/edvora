@@ -68,7 +68,10 @@
                                     <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-action-btn action-view {{ request()->is('student/courses/'.$enrollment->course->slug.'/learn') && !request()->has('tab') ? 'active' : '' }}">
                                         <i class="bi bi-play-circle"></i> Learn
                                     </a>
-                                    <a href="{{ route('courses.chat.show', $enrollment->course) }}" class="edvora-action-btn action-chat {{ request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id ? 'active' : '' }}">
+                                    <a href="{{ route('courses.chat.show', $enrollment->course) }}" 
+                                       class="edvora-action-btn action-chat {{ request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id ? 'active' : '' }}"
+                                       data-bg-chat-course="{{ $enrollment->course->id }}"
+                                       data-bg-chat-user="{{ auth()->id() }}">
                                         <i class="bi bi-chat-dots"></i> Chat
                                     </a>
                                 </div>
