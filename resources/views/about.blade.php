@@ -12,6 +12,8 @@
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
 @endpush
 
+
+<!-- This is a comment for test -->
 @section('content')
     @php
         $hero = $content['hero'] ?? [];
