@@ -398,7 +398,7 @@ class StudentDashboardController extends Controller
         ));
     }
 
-    public function joinClass($slug)
+    public function joinClass(\Illuminate\Http\Request $request, $slug)
     {
         $user   = Auth::user();
         $course = Course::where('slug', $slug)->firstOrFail();
@@ -414,19 +414,28 @@ class StudentDashboardController extends Controller
             ->latest('started_at')
             ->first();
 
-        abort_if(is_null($session), 404, 'No active class session currently.');
+        if (is_null($session)) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'No active class session currently.'], 404);
+            }
+            abort(404, 'No active class session currently.');
+        }
 
         // Record attendance - joined session
         SessionAttendance::updateOrCreate(
             [
                 'session_id' => $session->id,
-                'user_id' => $user->id,
+                'user_id'    => $user->id,
             ],
             [
-                'status' => 'present',
+                'status'    => 'present',
                 'joined_at' => now(),
             ]
         );
+
+        if ($request->ajax()) {
+            return response()->json(['url' => $session->meet_link]);
+        }
 
         return redirect()->away($session->meet_link);
     }

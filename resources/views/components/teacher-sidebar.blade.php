@@ -3,6 +3,9 @@
     <i class="bi bi-list"></i>
 </button>
 
+@section('hide_header', true)
+@section('hide_footer', true)
+
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -45,7 +48,14 @@
         <li class="edvora-nav-section-title">TEACHING</li>
 
         @php
-            $teacherCourses = auth()->user()->courses()->latest()->take(6)->get();
+            $currentCourseId = request()->route('id') ?? (is_object(request()->route('course')) ? request()->route('course')->id : request()->route('course')) ?? (request()->segment(2) === 'courses' ? request()->segment(3) : null);
+            $teacherCourses = auth()->user()->courses()->latest()->take(10)->get();
+            if ($currentCourseId && !$teacherCourses->contains('id', (int)$currentCourseId)) {
+                $extraCourse = auth()->user()->courses()->find($currentCourseId);
+                if ($extraCourse) {
+                    $teacherCourses->prepend($extraCourse);
+                }
+            }
             $totalTeacherCourses = auth()->user()->courses()->count();
             $isCoursesRoute = request()->is('teacher/courses*') || request()->routeIs('teacher.your-courses', 'courses.chat.show');
         @endphp
@@ -75,12 +85,12 @@
                     <!-- Courses List -->
                     @forelse($teacherCourses as $course)
                         @php
-                            $isDetailActive = request()->is('teacher/courses/'.$course->id) && !request()->has('tab');
-                            $isChatActive = request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $course->id;
-                            $isPointsActive = request()->routeIs('teacher.courses.points*') && request()->route('id') == $course->id;
-                            $isCurrentCourse = request()->is('teacher/courses/'.$course->id.'*') || $isChatActive;
+                            $isThisCourse = ($currentCourseId && (int)$currentCourseId === (int)$course->id) || request()->is('teacher/courses/'.$course->id.'*');
+                            $isDetailActive = (request()->is('teacher/courses/'.$course->id) || (request()->routeIs('teacher.courses.detail') && $isThisCourse)) && !request()->has('tab');
+                            $isChatActive = request()->routeIs('courses.chat.show') && (optional(request()->route('course'))->id === $course->id || (int)$currentCourseId === (int)$course->id);
+                            $isPointsActive = (request()->routeIs('teacher.courses.points*') || request()->is('teacher/courses/'.$course->id.'/points*')) && $isThisCourse;
                         @endphp
-                        <div class="edvora-course-item {{ $isCurrentCourse ? 'active' : '' }}">
+                        <div class="edvora-course-item {{ $isThisCourse ? 'active' : '' }}">
                             <div class="edvora-course-header">
                                 <a href="{{ route('teacher.courses.detail', $course->id) }}" class="edvora-course-title" title="{{ $course->title }}">
                                     <span class="edvora-course-icon"><i class="bi bi-book-half"></i></span>
@@ -100,13 +110,53 @@
                                     <i class="bi bi-chat-dots"></i>
                                     <span>Chat</span>
                                 </a>
-                                <a href="{{ route('teacher.courses.points', $course->id) }}" 
-                                   class="edvora-action-btn action-points {{ $isPointsActive ? 'active' : '' }}" 
-                                   title="Student Points & Scoring">
-                                    <i class="bi bi-star"></i>
-                                    <span>Points</span>
-                                </a>
                             </div>
+
+                            @if($isThisCourse && request()->routeIs('teacher.courses.detail'))
+                            <!-- Course Detail Tabs in Sidebar -->
+                            <div class="edvora-course-tabs-menu">
+                                <button type="button" class="edvora-sidebar-tab-btn active" data-tab="syllabus" onclick="if(window.switchCourseTab){switchCourseTab('syllabus', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-syllabus';}">
+                                    <i class="bi bi-list-ol"></i>
+                                    <span>Syllabus</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="students" onclick="if(window.switchCourseTab){switchCourseTab('students', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-students';}">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>Students & Access</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="points" onclick="if(window.switchCourseTab){switchCourseTab('points', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-points';}">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span>Student Scoring</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="reviews" onclick="if(window.switchCourseTab){switchCourseTab('reviews', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-reviews';}">
+                                    <i class="bi bi-star"></i>
+                                    <span>Reviews</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="documents" onclick="if(window.switchCourseTab){switchCourseTab('documents', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-documents';}">
+                                    <i class="bi bi-folder2-open"></i>
+                                    <span>Documents</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="history" onclick="if(window.switchCourseTab){switchCourseTab('history', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-history';}">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Session History</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="attendance" onclick="if(window.switchCourseTab){switchCourseTab('attendance', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-attendance';}">
+                                    <i class="bi bi-person-check"></i>
+                                    <span>Attendance</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="classnotes" onclick="if(window.switchCourseTab){switchCourseTab('classnotes', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-classnotes';}">
+                                    <i class="bi bi-journal-text"></i>
+                                    <span>Class Notes</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="chat" onclick="if(window.switchCourseTab){switchCourseTab('chat', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-chat';}">
+                                    <i class="bi bi-chat-heart"></i>
+                                    <span>Course Chat</span>
+                                </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="curriculum" onclick="if(window.switchCourseTab){switchCourseTab('curriculum', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-curriculum';}">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Curriculum</span>
+                                </button>
+                            </div>
+                            @endif
                         </div>
                     @empty
                         <div class="edvora-submenu-empty">
@@ -186,7 +236,7 @@
         </li>
 
         <!-- Logout -->
-        <li class="edvora-nav-item" style="margin-top: auto; padding-top: 0.5rem;">
+        <li class="edvora-nav-item">
             <a href="{{ route('logout') }}" class="edvora-nav-link danger" title="Logout"
                onclick="event.preventDefault(); document.getElementById('teacher-logout-form').submit();">
                 <span class="edvora-nav-icon"><i class="bi bi-box-arrow-right"></i></span>

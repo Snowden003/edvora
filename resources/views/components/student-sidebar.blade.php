@@ -41,52 +41,82 @@
                 <i class="bi bi-chevron-down edvora-chevron"></i>
             </button>
             <ul class="edvora-submenu">
-                <li>
-                    <a href="{{ route('student.courses') }}" class="edvora-sublink {{ request()->routeIs('student.courses') ? 'active' : '' }}">
-                        <i class="bi bi-grid"></i> All Courses
+                <div class="edvora-submenu-inner">
+                    <a href="{{ route('student.courses') }}" class="edvora-sublink-all {{ request()->routeIs('student.courses') ? 'active' : '' }}">
+                        <span><i class="bi bi-grid"></i> All Courses</span>
                     </a>
-                </li>
 
-                @php
-                    $studentCourses = auth()->user()->enrollments()
-                        ->where('status', '!=', 'banned')
-                        ->with('course')
-                        ->latest()
-                        ->take(6)
-                        ->get();
-                @endphp
+                    @php
+                        $studentCourses = auth()->user()->enrollments()
+                            ->where('status', '!=', 'banned')
+                            ->with('course')
+                            ->latest()
+                            ->take(6)
+                            ->get();
+                    @endphp
 
-                @forelse($studentCourses as $enrollment)
-                    @if($enrollment->course)
-                        <li>
-                            <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-sublink {{ request()->is('student/courses/'.$enrollment->course->slug.'*') || (request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id) ? 'active' : '' }}">
-                                <i class="bi bi-book"></i> {{ Str::limit($enrollment->course->title, 20) }}
-                            </a>
-                            <ul class="edvora-sub-actions">
-                                <li>
-                                    <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-sub-action {{ request()->is('student/courses/'.$enrollment->course->slug.'/learn') && !request()->has('tab') ? 'active' : '' }}">
+                    @forelse($studentCourses as $enrollment)
+                        @if($enrollment->course)
+                            <div class="edvora-course-item {{ request()->is('student/courses/'.$enrollment->course->slug.'*') || (request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id) ? 'active' : '' }}">
+                                <div class="edvora-course-header">
+                                    <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-course-title">
+                                        <i class="bi bi-book edvora-course-icon"></i>
+                                        <span class="edvora-course-name">{{ Str::limit($enrollment->course->title, 20) }}</span>
+                                    </a>
+                                </div>
+                                <div class="edvora-course-actions">
+                                    <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-action-btn action-view {{ request()->is('student/courses/'.$enrollment->course->slug.'/learn') && !request()->has('tab') ? 'active' : '' }}">
                                         <i class="bi bi-play-circle"></i> Learn
                                     </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('courses.chat.show', $enrollment->course) }}" class="edvora-sub-action {{ request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id ? 'active' : '' }}">
+                                    <a href="{{ route('courses.chat.show', $enrollment->course) }}" class="edvora-action-btn action-chat {{ request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id ? 'active' : '' }}">
                                         <i class="bi bi-chat-dots"></i> Chat
                                     </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
-                @empty
-                    <li class="edvora-submenu-empty">No enrolled courses</li>
-                @endforelse
+                                </div>
+                                
+                                @if(request()->is('student/courses/'.$enrollment->course->slug.'/learn'))
+                                <div class="edvora-course-tabs-menu">
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab active" data-tab="curriculum">
+                                        <i class="bi bi-list-check"></i>
+                                        <span>Curriculum</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="documents">
+                                        <i class="bi bi-folder"></i>
+                                        <span>Files & Documents</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="notes">
+                                        <i class="bi bi-sticky"></i>
+                                        <span>Class Notes</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="sessions">
+                                        <i class="bi bi-camera-video"></i>
+                                        <span>Sessions</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="quizzes">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <span>Quizzes</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="reviews">
+                                        <i class="bi bi-star"></i>
+                                        <span>Reviews</span>
+                                    </button>
+                                    <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="chat">
+                                        <i class="bi bi-chat-heart"></i>
+                                        <span>Course Chat</span>
+                                    </button>
+                                </div>
+                                @endif
+                            </div>
+                        @endif
+                    @empty
+                        <div class="edvora-submenu-empty">No enrolled courses</div>
+                    @endforelse
 
-                @if(auth()->user()->enrollments()->where('status', '!=', 'banned')->count() > 6)
-                    <li>
-                        <a href="{{ route('student.courses') }}" class="edvora-sublink edvora-view-all">
-                            <i class="bi bi-arrow-right-circle"></i> View All Courses
+                    @if(auth()->user()->enrollments()->where('status', '!=', 'banned')->count() > 6)
+                        <a href="{{ route('student.courses') }}" class="edvora-view-all-link">
+                            View All Courses <i class="bi bi-arrow-right-circle"></i>
                         </a>
-                    </li>
-                @endif
+                    @endif
+                </div>
             </ul>
         </li>
 
@@ -160,7 +190,7 @@
             </a>
         </li>
 
-        <li class="edvora-nav-item" style="margin-top:auto;">
+        <li class="edvora-nav-item">
             <a href="{{ route('logout') }}" class="edvora-nav-link danger"
                onclick="event.preventDefault(); document.getElementById('student-logout-form').submit();">
                 <i class="bi bi-box-arrow-right"></i>

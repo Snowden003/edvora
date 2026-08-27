@@ -57,11 +57,15 @@
 </head>
 
 <body class="edvora-theme {{ $isHomePage ? 'page-home' : '' }} @yield('body-class')" data-user-role="{{ Auth::check() ? Auth::user()->role : 'guest' }}">
-    @include('layouts.partials.header')
+    @if (!View::hasSection('hide_header'))
+        @include('layouts.partials.header')
+    @endif
 
     @yield('content')
 
-    @include('layouts.partials.footer')
+    @if (!View::hasSection('hide_footer'))
+        @include('layouts.partials.footer')
+    @endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{{ asset('assets/js/main.js') }}" defer></script>

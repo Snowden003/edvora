@@ -7,6 +7,9 @@
 <link href="{{ asset('assets/css/certificates.css') }}" rel="stylesheet" />
 @endpush
 
+@section('hide_header', true)
+@section('hide_footer', true)
+
 @section('content')
 
 <div class="dashboard-wrapper">

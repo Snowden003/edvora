@@ -13,6 +13,9 @@
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
 @endpush
 
+@section('hide_header', true)
+@section('hide_footer', true)
+
 @section('content')
 <!-- Navbar -->
     

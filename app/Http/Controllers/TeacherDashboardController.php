@@ -170,10 +170,23 @@ class TeacherDashboardController extends Controller
         $completedLessonsCount = count($completedLessonIds);
         $progressPercent = $totalLessons > 0 ? round(($completedLessonsCount / $totalLessons) * 100) : 0;
 
+        // Student Scoring / Gamification
+        $scoringRules = \App\Models\ScoringRule::active()->orderBy('label')->get();
+        $studentIds = $enrollments->pluck('id');
+        $coursePoints = \App\Models\Point::with('creator')
+            ->whereIn('user_id', $studentIds)
+            ->where(function ($q) use ($course) {
+                $q->where('course_id', $course->id)->orWhereNull('course_id');
+            })
+            ->latest()
+            ->take(50)
+            ->get();
+
         return view('teacher.courses-detail', compact(
             'course', 'user', 'enrollments', 'reviews', 'documents',
             'activeSession', 'pastSessions', 'attendanceSummary', 'classNotes', 'lessons',
-            'completedLessonIds', 'completedLessonsCount', 'totalLessons', 'progressPercent'
+            'completedLessonIds', 'completedLessonsCount', 'totalLessons', 'progressPercent',
+            'scoringRules', 'coursePoints'
         ));
     }
 

@@ -126,11 +126,11 @@ class CourseController extends Controller
     {
         $course = Course::with(['category', 'teacher', 'lessons'])
             ->where('slug', $slug)
-            ->where('status', 'published')
+            ->where('status', '!=', 'draft')
             ->firstOrFail();
 
         $related = Course::with('category')
-            ->where('status', 'published')
+            ->where('status', '!=', 'draft')
             ->where('category_id', $course->category_id)
             ->where('id', '!=', $course->id)
             ->limit(3)

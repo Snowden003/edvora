@@ -1,5 +1,9 @@
 @extends('layouts.app')
+@section('hide_header')
+@endsection
 
+@section('hide_footer')
+@endsection
 @section('title', $course->title . ' - Learning - Edvora Tech')
 
 @push('styles')
@@ -165,13 +169,9 @@
               </div>
             </div>
             <div>
-              <a id="join-class-btn" href="{{ $activeSession ? $activeSession->meet_link : '#' }}"
-                 class="btn fw-bold px-4 py-2 {{ $activeSession ? '' : 'disabled' }}"
-                 target="_blank"
-                 onclick="if(this.classList.contains('disabled')) return false;"
-                 style="background:#fff;color:#1F8FFF;border:none;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+              <button id="join-class-btn" class="btn fw-bold px-4 py-2" onclick="joinClass('{{ $activeSession->id ?? '' }}')" style="background:#fff;color:#1F8FFF;border:none;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);">
                 <i class="bi bi-box-arrow-up-right me-2"></i>Join Class
-              </a>
+              </button>
             </div>
           </div>
           <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.2);">
@@ -222,53 +222,6 @@
           </div>
         </div>
 
-        {{-- Tab Navigation --}}
-        <div class="learning-tabs">
-          <button class="learning-tab active" data-tab="curriculum">
-            <i class="bi bi-list-check"></i> Curriculum
-            <span class="tab-count">{{ $stats['total_lessons'] }}</span>
-          </button>
-          <button class="learning-tab" data-tab="documents">
-            <i class="bi bi-folder"></i> Files & Documents
-            <span class="tab-count">{{ $stats['total_documents'] }}</span>
-          </button>
-          <button class="learning-tab" data-tab="notes">
-            <i class="bi bi-sticky"></i> Class Notes
-            <span class="tab-count">{{ $stats['total_notes'] }}</span>
-          </button>
-          <button class="learning-tab" data-tab="sessions">
-            <i class="bi bi-camera-video"></i> Sessions
-            <span class="tab-count">{{ $stats['total_sessions'] }}</span>
-          </button>
-          <button class="learning-tab" data-tab="quizzes">
-            <i class="bi bi-pencil-square"></i> Quizzes
-            <span class="tab-count">{{ $stats['total_quizzes'] }}</span>
-          </button>
-          <button class="learning-tab" data-tab="reviews">
-            <i class="bi bi-star"></i> Reviews
-            <span class="tab-count">{{ $reviews->count() }}</span>
-          </button>
-          <button class="learning-tab" data-tab="chat">
-            <i class="bi bi-chat-heart"></i> Course Chat
-          </button>
-        </div>
-
-        {{-- Mobile Tab Dropdown --}}
-        <div class="learning-tabs-mobile">
-          <label for="mobile-tab-select" class="mobile-tab-label">
-            <i class="bi bi-grid-3x3-gap"></i> Section
-          </label>
-          <select id="mobile-tab-select" class="mobile-tab-select">
-            <option value="curriculum" selected>Curriculum ({{ $stats['total_lessons'] }})</option>
-            <option value="documents">Files & Documents ({{ $stats['total_documents'] }})</option>
-            <option value="notes">Class Notes ({{ $stats['total_notes'] }})</option>
-            <option value="sessions">Sessions ({{ $stats['total_sessions'] }})</option>
-            <option value="quizzes">Quizzes ({{ $stats['total_quizzes'] }})</option>
-            <option value="reviews">Reviews ({{ $reviews->count() }})</option>
-            <option value="chat">Course Chat</option>
-          </select>
-          <i class="bi bi-chevron-down mobile-tab-chevron"></i>
-        </div>
 
         {{-- ===================== CURRICULUM TAB ===================== --}}
         <div class="tab-panel active" id="panel-curriculum">
@@ -1287,5 +1240,41 @@
     setInterval(checkClassStarted, 10000);
     // Initial check after 2 seconds
     setTimeout(checkClassStarted, 2000);
+
+    // ─── Join Class via AJAX ─────────────────────────────────────────────────
+    window.joinClass = function(sessionId) {
+        const btn = document.getElementById('join-class-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Joining...';
+        }
+
+        fetch('{{ route('courses.sessions.join', $course->slug) }}', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.url) {
+                window.open(data.url, '_blank');
+            } else if (data.error) {
+                alert(data.error);
+            }
+        })
+        .catch(err => {
+            console.error('Join class error:', err);
+            alert('Something went wrong. Please try again.');
+        })
+        .finally(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-box-arrow-up-right me-2"></i>Join Class';
+            }
+        });
+    };
 </script>
 @endpush

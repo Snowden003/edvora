@@ -27,9 +27,6 @@ aside#sidebar.edvora-sidebar {
     width: var(--sb-width);
     max-width: var(--sb-width);
     min-width: var(--sb-width);
-    height: calc(100vh - 70px);
-    position: sticky;
-    top: 70px;
     background: var(--sb-bg);
     border-right: 1px solid var(--sb-border);
     box-shadow: 4px 0 24px rgba(15, 23, 42, 0.03);
@@ -473,6 +470,61 @@ aside#sidebar.edvora-sidebar.collapsed .sidebar-collapse-toggle i {
     color: #f59e0b;
     background: #fffbeb;
     border-color: #fde68a;
+}
+
+/* Course Tabs inside active course item in Sidebar */
+.edvora-course-tabs-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-top: 6px;
+    margin-top: 4px;
+    border-top: 1px dashed rgba(148, 163, 184, 0.35);
+}
+
+.edvora-sidebar-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #475569;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: all 0.15s ease;
+}
+
+.edvora-sidebar-tab-btn i {
+    font-size: 0.88rem;
+    color: #64748b;
+    width: 16px;
+    text-align: center;
+    transition: color 0.15s ease;
+}
+
+.edvora-sidebar-tab-btn:hover {
+    background: #eff6ff;
+    color: #1f8fff;
+}
+
+.edvora-sidebar-tab-btn:hover i {
+    color: #1f8fff;
+}
+
+.edvora-sidebar-tab-btn.active {
+    background: linear-gradient(135deg, #1f8fff, #0070e0);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(31, 143, 255, 0.25);
+}
+
+.edvora-sidebar-tab-btn.active i {
+    color: #ffffff;
 }
 
 /* Empty courses message */

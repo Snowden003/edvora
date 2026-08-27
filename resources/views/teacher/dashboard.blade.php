@@ -11,11 +11,47 @@
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
 @endpush
 
-@section('content')
-<!-- Header -->
-    <!-- Header -->
-    
+@section('hide_header', true)
+@section('hide_footer', true)
 
+@section('content')
+
+    @if($user->isPendingApproval() || session('onboarding_submitted') || request()->has('show_status'))
+    <!-- Clean Full-Screen Modal Overlay -->
+    <div style="position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(2, 8, 17, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+        <div style="background: linear-gradient(145deg, #0f172a, #020811); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 2.5rem; max-width: 480px; width: 92%; box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(31, 143, 255, 0.2); text-align: center; color: white;">
+            
+            <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: rgba(31, 143, 255, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(31, 143, 255, 0.2);">
+                <i class="bi bi-shield-check" style="font-size: 2.8rem; color: #00F0FF;"></i>
+            </div>
+            
+            <h3 style="font-weight: 700; margin-bottom: 0.75rem; letter-spacing: -0.5px;">Application Under Review</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
+                Thank you, <strong style="color: white;">{{ $user->name }}</strong>! Your teacher profile has been received and is currently being verified by our team.
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.25rem; text-align: left; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; color: #cbd5e1;">
+                    <i class="bi bi-check2-circle" style="color: #10B981; font-size: 1.2rem;"></i>
+                    <span>Profile information successfully submitted</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; color: #cbd5e1;">
+                    <i class="bi bi-hourglass-split" style="color: #FBBF24; font-size: 1.2rem;"></i>
+                    <span>Admin review in progress (1–2 business days)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: #cbd5e1;">
+                    <i class="bi bi-envelope-check" style="color: #00F0FF; font-size: 1.2rem;"></i>
+                    <span>You'll be notified via email once approved</span>
+                </div>
+            </div>
+            
+            <a href="{{ route('home') }}" style="display: block; width: 100%; padding: 0.85rem; background: linear-gradient(135deg, #1F8FFF, #0070E0); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem; box-shadow: 0 8px 20px rgba(31, 143, 255, 0.3);">
+                Return to Homepage
+            </a>
+        </div>
+    </div>
+    @endif
+    
     <!-- Dashboard Layout Wrapper -->
     <div class="dashboard-wrapper">
         <!-- Sidebar Navigation -->
@@ -41,41 +77,6 @@
                         <i class="bi bi-clock me-1"></i>Pending Approval
                     </span>
                 </div>
-
-                <!-- Pending Approval Small Popup Modal -->
-                @if(session('onboarding_submitted') || request()->has('show_status'))
-                <div class="modal fade show" id="pendingSubmissionModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); z-index: 9999;" aria-modal="true" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" style="max-width: 460px;">
-                        <div class="modal-content border-0 rounded-4 shadow-lg text-center p-4" style="background: #111827; color: #fff; border: 1px solid rgba(255,255,255,0.1) !important;">
-                            <div class="modal-body p-2">
-                                <div class="mb-3">
-                                    <div style="width: 75px; height: 75px; margin: 0 auto; background: rgba(31, 143, 255, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(31, 143, 255, 0.3);">
-                                        <i class="bi bi-check-circle-fill text-primary" style="font-size: 2.5rem; color: #00F0FF !important;"></i>
-                                    </div>
-                                </div>
-                                <h4 class="fw-bold mb-2 text-white">Application Received!</h4>
-                                <p class="text-white-50 small mb-4">
-                                    Thank you, <strong>{{ $user->name }}</strong>! Your teacher profile has been submitted successfully and is currently under review by our admin team.
-                                </p>
-                                <div class="p-3 rounded-3 mb-4 text-start" style="background: rgba(255,255,255,0.05); font-size: 0.85rem; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.06);">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check2-circle text-success me-2 fs-5"></i> Profile information received
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-hourglass-split text-warning me-2 fs-5"></i> Admin review in progress (1–2 days)
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-envelope-check text-info me-2 fs-5"></i> Email notification upon activation
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold" onclick="document.getElementById('pendingSubmissionModal').style.display='none'" style="background: linear-gradient(135deg, #1F8FFF, #0070E0); border: none;">
-                                    Got it! Go to Dashboard
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
                 @endif
 
                 <!-- Welcome Section -->

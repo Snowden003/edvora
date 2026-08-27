@@ -19,11 +19,11 @@ class HomePageController extends Controller
     {
         $homeData = Cache::remember('home:page-data:v2', now()->addMinutes(10), function () {
             return [
-                'totalCourses' => Course::where('status', 'published')->count(),
+                'totalCourses' => Course::where('status', '!=', 'draft')->count(),
                 'totalTeachers' => User::where('role', 'teacher')->count(),
                 'totalStudents' => User::where('role', 'student')->count(),
                 'completedCourses' => Enrollment::where('status', 'completed')->count(),
-                'featuredCourseIds' => Course::where('status', 'published')
+                'featuredCourseIds' => Course::where('status', '!=', 'draft')
                     ->where('is_featured', true)
                     ->latest()
                     ->limit(1)
@@ -32,7 +32,7 @@ class HomePageController extends Controller
                 'popularCourseIds' => Course::withCount(['enrollments' => function ($query) {
                         $query->where('status', 'active');
                     }])
-                    ->where('status', 'published')
+                    ->where('status', '!=', 'draft')
                     ->orderByDesc('enrollments_count')
                     ->orderByDesc('rating')
                     ->orderByDesc('total_reviews')
@@ -40,7 +40,7 @@ class HomePageController extends Controller
                     ->limit(3)
                     ->pluck('id')
                     ->all(),
-                'recentCourseIds' => Course::where('status', 'published')
+                'recentCourseIds' => Course::where('status', '!=', 'draft')
                     ->latest()
                     ->limit(6)
                     ->pluck('id')

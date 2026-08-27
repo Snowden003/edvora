@@ -9,6 +9,9 @@
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
 @endpush
 
+@section('hide_header', true)
+@section('hide_footer', true)
+
 @section('content')
 <div class="dashboard-wrapper">
     <x-teacher-sidebar />
@@ -215,8 +218,8 @@
                 </div>
             </div>
 
-            {{-- ── TABS ─────────────────────────────────────── --}}
-            <div class="cd-tabs" id="cdTabs">
+            {{-- ── TABS (Moved to Sidebar) ────────────────── --}}
+            <div class="cd-tabs d-none" id="cdTabs">
                 <button class="cd-tab-btn active" onclick="switchTab('syllabus',this)">
                     <i class="bi bi-list-ol"></i> Syllabus
                     <span class="badge rounded-pill ms-1" style="background:#e0f2fe;color:#0369a1;font-size:.7rem;">{{ $totalLessons }}</span>
@@ -697,6 +700,200 @@
                     </div>
                 </div>
                 @endif
+            </div>
+
+            {{-- STUDENT SCORING & GAMIFICATION --}}
+            <div class="cd-tab-pane" id="tab-points">
+                @if(session('points_success'))
+                <div class="alert alert-success border-0 rounded-4 shadow-sm d-flex align-items-center justify-content-between p-3 mb-4" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        <span class="fw-medium">{{ session('points_success') }}</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                @endif
+
+                <!-- Quick Points Adjustment Form -->
+                <div class="cd-card mb-4">
+                    <div class="cd-card-header">
+                        <h6 class="cd-card-title"><i class="bi bi-plus-slash-minus me-2 text-primary"></i>Adjust Student Points</h6>
+                        <span class="text-muted small">Award or deduct XP/points directly</span>
+                    </div>
+                    <div class="cd-card-body p-4">
+                        <form action="{{ route('teacher.courses.points.store', $course->id) }}" method="POST">
+                            @csrf
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-dark">Select Student</label>
+                                    <select name="user_id" class="form-select rounded-3 shadow-none border" required>
+                                        <option value="">Choose enrolled student...</option>
+                                        @foreach($enrollments as $en)
+                                        <option value="{{ $en->id }}" {{ old('user_id') == $en->id ? 'selected' : '' }}>
+                                            {{ $en->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-dark">Points (+ / -)</label>
+                                    <input type="number" name="amount" class="form-control rounded-3 shadow-none border" placeholder="e.g. 10 or -5" required>
+                                    <span class="text-muted" style="font-size: 0.72rem;">Positive adds, negative deducts.</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold text-dark">Scoring Category</label>
+                                    <select name="type" class="form-select rounded-3 shadow-none border">
+                                        @if(isset($scoringRules))
+                                            @foreach($scoringRules->groupBy('type') as $type => $group)
+                                            <optgroup label="{{ ucfirst($type) }}">
+                                                @foreach($group as $rule)
+                                                <option value="{{ $rule->action_name }}">{{ $rule->label }} ({{ $rule->default_score >= 0 ? '+' : '' }}{{ $rule->default_score }})</option>
+                                                @endforeach
+                                            </optgroup>
+                                            @endforeach
+                                        @endif
+                                        <option value="manual">Manual Custom Adjustment</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold shadow-sm">
+                                        <i class="bi bi-check-lg me-1"></i> Apply
+                                    </button>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-dark">Reason / Note for Student</label>
+                                    <input type="text" name="reason" class="form-control rounded-3 shadow-none border" placeholder="e.g. Great participation in live class session" required maxlength="500">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Students Overview Table -->
+                <div class="cd-card mb-4">
+                    <div class="cd-card-header">
+                        <h6 class="cd-card-title"><i class="bi bi-people-fill me-2 text-primary"></i>Enrolled Students Scores & Rankings</h6>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">{{ $enrollments->count() }} Students</span>
+                    </div>
+                    <div class="p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                                <thead class="table-light text-muted" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <tr>
+                                        <th class="ps-4 py-3">Student</th>
+                                        <th class="py-3">Total Score</th>
+                                        <th class="py-3">Earned</th>
+                                        <th class="py-3">Deducted</th>
+                                        <th class="py-3">Rank</th>
+                                        <th class="pe-4 py-3 text-end">History</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($enrollments as $en)
+                                    @php
+                                        $studentModel = \App\Models\User::find($en->id);
+                                        $earned = $studentModel ? $studentModel->earnedPoints() : 0;
+                                        $deducted = $studentModel ? $studentModel->deductedPoints() : 0;
+                                        $total = $studentModel ? $studentModel->totalScore() : 0;
+                                        $rank = $studentModel ? $studentModel->leaderboardRank($course->id) : null;
+                                    @endphp
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="{{ $avatarUrl($en->avatar, $en->name) }}" class="rounded-circle shadow-sm" width="38" height="38" style="object-fit:cover" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($en->name) }}&background=1f8fff&color=fff'">
+                                                <div>
+                                                    <div class="fw-bold text-dark small">{{ $en->name }}</div>
+                                                    <small class="text-muted" style="font-size: 0.75rem;">Enrolled {{ \Carbon\Carbon::parse($en->enrolled_at)->diffForHumans() }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge {{ $total >= 0 ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger' }} px-3 py-1 rounded-pill fw-bold fs-6">
+                                                {{ number_format($total) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-success fw-semibold">+{{ number_format($earned) }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-danger fw-semibold">-{{ number_format($deducted) }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning bg-opacity-15 text-dark px-3 py-1 rounded-pill fw-bold">
+                                                #{{ $rank ?? '—' }}
+                                            </span>
+                                        </td>
+                                        <td class="pe-4 text-end">
+                                            <a href="{{ route('teacher.courses.points.student', [$course->id, $en->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                                <i class="bi bi-clock-history me-1"></i> Logs
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="bi bi-people fs-2 d-block mb-2 opacity-25"></i>
+                                            <p class="small mb-0">No students enrolled in this course yet.</p>
+                                        </td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Point Changes Table -->
+                <div class="cd-card mb-4">
+                    <div class="cd-card-header">
+                        <h6 class="cd-card-title"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Point Changes Log</h6>
+                        <a href="{{ route('scoring.help') }}" class="btn-header-link">How Scoring Works →</a>
+                    </div>
+                    <div class="p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                                <thead class="table-light text-muted" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <tr>
+                                        <th class="ps-4 py-3">Student</th>
+                                        <th class="py-3">Points</th>
+                                        <th class="py-3">Reason</th>
+                                        <th class="py-3">Category</th>
+                                        <th class="py-3">Awarded By</th>
+                                        <th class="pe-4 py-3">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(isset($coursePoints))
+                                        @forelse($coursePoints as $point)
+                                        @php
+                                            $ptStudent = $enrollments->firstWhere('id', $point->user_id);
+                                        @endphp
+                                        <tr>
+                                            <td class="ps-4 fw-semibold text-dark">{{ $ptStudent->name ?? 'Student' }}</td>
+                                            <td>
+                                                <span class="badge {{ $point->amount >= 0 ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger' }} px-2 py-1 fw-bold">
+                                                    {{ $point->amount >= 0 ? '+' : '' }}{{ number_format($point->amount) }}
+                                                </span>
+                                            </td>
+                                            <td class="text-dark">{{ $point->reason ?? '—' }}</td>
+                                            <td><span class="text-muted text-capitalize">{{ str_replace('_', ' ', $point->type) }}</span></td>
+                                            <td class="text-muted small">{{ $point->creator?->name ?? 'System' }}</td>
+                                            <td class="pe-4 text-muted small">{{ $point->created_at->format('M d, Y H:i') }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5 text-muted">
+                                                <i class="bi bi-journal-x fs-2 d-block mb-2 opacity-25"></i>
+                                                <p class="small mb-0">No point entries recorded yet.</p>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {{-- REVIEWS --}}
@@ -1643,28 +1840,45 @@ function addVideoLink() {
 }
 </script>
 <script>
-function switchTab(id, btn) {
+window.switchCourseTab = function(id, btn) {
     document.querySelectorAll('.cd-tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.cd-tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    if (btn) btn.classList.add('active');
-}
+    document.querySelectorAll('.edvora-sidebar-tab-btn').forEach(b => b.classList.remove('active'));
+    
+    const target = document.getElementById('tab-' + id);
+    if (target) target.classList.add('active');
+    
+    if (btn) {
+        btn.classList.add('active');
+    } else {
+        const sidebarBtn = document.querySelector(`.edvora-sidebar-tab-btn[data-tab="${id}"]`);
+        if (sidebarBtn) sidebarBtn.classList.add('active');
+    }
+};
+
+window.switchTab = function(id, btn) {
+    window.switchCourseTab(id, btn);
+};
 
 // Activate tab from URL ?tab=... or #...
 document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
-    const hash = window.location.hash.replace('#', '');
+    const hash = window.location.hash.replace('#tab-', '').replace('#', '');
     const tabFromUrl = params.get('tab') || hash;
     if (tabFromUrl) {
-        const btn = document.querySelector('.cd-tab-btn[onclick*="switchTab(\'' + tabFromUrl + '\'"');
-        if (btn) switchTab(tabFromUrl, btn);
+        window.switchCourseTab(tabFromUrl);
     }
 });
 
 @if(session('student_action'))
 document.addEventListener('DOMContentLoaded', function () {
-    const studentsBtn = document.querySelector('[onclick*="switchTab(\'students\'"]');
-    if (studentsBtn) switchTab('students', studentsBtn);
+    window.switchCourseTab('students');
+});
+@endif
+
+@if(session('points_success'))
+document.addEventListener('DOMContentLoaded', function () {
+    window.switchCourseTab('points');
 });
 @endif
 

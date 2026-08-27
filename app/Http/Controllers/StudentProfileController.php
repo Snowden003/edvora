@@ -39,9 +39,9 @@ class StudentProfileController extends Controller
             'district'         => ['required', 'string', 'max:100'],
             'postal_code'       => ['nullable', 'string', 'max:20'],
 
-            // Education (Required)
+            // Education
             'last_education_level' => ['required', 'string', 'max:100'],
-            'last_school_name'     => ['required', 'string', 'max:200'],
+            'last_school_name'     => ['nullable', 'string', 'max:200'],
 
 
             // Emergency Contact (Required)

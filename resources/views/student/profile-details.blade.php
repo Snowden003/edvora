@@ -7,6 +7,9 @@
 <link href="{{ asset('assets/css/student-profile-details.css') }}" rel="stylesheet" />
 @endpush
 
+@section('hide_header', true)
+@section('hide_footer', true)
+
 @section('content')
 <div class="dashboard-wrapper">
     <x-student-sidebar />
@@ -165,11 +168,12 @@
                                         @error('last_education_level')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Last School/Institute Name <span class="text-danger">*</span></label>
-                                        <input type="text" name="last_school_name" class="form-control @error('last_school_name') is-invalid @enderror"
-                                               value="{{ old('last_school_name', $profile->last_school_name ?? '') }}" required>
-                                        @error('last_school_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                    </div>
+                                         <label class="form-label">Last School/Institute Name</label>
+                                         <input type="text" name="last_school_name" class="form-control @error('last_school_name') is-invalid @enderror"
+                                                value="{{ old('last_school_name', $profile->last_school_name ?? '') }}"
+                                                placeholder="e.g. Kabul High School (Optional)">
+                                         @error('last_school_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                     </div>
                                 </div>
                             </div>
                         </div>
