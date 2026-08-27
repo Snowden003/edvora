@@ -1249,7 +1249,7 @@
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Joining...';
         }
 
-        fetch('{{ route('courses.sessions.join', $course->slug) }}', {
+        fetch('{{ route('student.courses.sessions.join', $course->slug) }}', {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
