@@ -479,9 +479,9 @@
           </div>
         </div>
 
-        <!-- Upcoming Events & Competitions -->
+        <!-- Upcoming Events -->
         <div class="row g-4 mb-4 justify-content-center">
-          <div class="col-lg-5">
+          <div class="col-lg-10">
             <div class="card border-0 shadow-sm h-100">
               <div class="card-header bg-white border-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center">
@@ -513,42 +513,6 @@
                 </div>
                 @empty
                 <p class="text-muted text-center py-3">No upcoming events.</p>
-                @endforelse
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100">
-              <div class="card-header bg-white border-0 pb-0">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h4 class="fw-bold mb-0 primary-blue-text">
-                    Active Competitions
-                  </h4>
-                  <a href="{{ route('competitions.index') }}" class="btn btn-sm btn-outline-primary white-hover">
-                    View All
-                  </a>
-                </div>
-              </div>
-              <div class="card-body">
-                @forelse($activeCompetitions as $comp)
-                <div class="d-flex align-items-center p-2 border-bottom">
-                  <div class="flex-shrink-0 me-3">
-                    <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
-                      <i class="bi bi-trophy"></i>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <h6 class="mb-1">{{ $comp->title }}</h6>
-                    <p class="small text-muted mb-1">
-                      <i class="bi bi-people me-1"></i>{{ number_format($comp->participants_count) }} participants
-                    </p>
-                    <p class="small text-muted mb-2">Deadline: {{ $comp->end_date->format('M d, Y') }}</p>
-                    <a href="{{ route('competitions.detail', $comp->slug) }}" class="btn btn-outline-warning btn-sm">View</a>
-                  </div>
-                </div>
-                @empty
-                <p class="text-muted text-center py-3">No active competitions.</p>
                 @endforelse
               </div>
             </div>

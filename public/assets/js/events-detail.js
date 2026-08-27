@@ -121,7 +121,6 @@ const eventsData = {
         features: [
             { icon: 'bi-mic', text: 'Live Pitch Presentations' },
             { icon: 'bi-people', text: 'Investor Networking' },
-            { icon: 'bi-trophy', text: 'Pitch Competition' },
             { icon: 'bi-cup-hot', text: 'Refreshments & Cocktails' }
         ]
     }

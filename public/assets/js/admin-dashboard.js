@@ -296,13 +296,6 @@ function loadRecentActivity() {
             message: 'New teacher Emma Rodriguez joined the platform',
             time: '2 hours ago',
             color: 'primary'
-        },
-        {
-            type: 'competition',
-            icon: 'bi-trophy',
-            message: 'Coding Challenge 2024 competition started',
-            time: '3 hours ago',
-            color: 'danger'
         }
     ];
 
@@ -354,7 +347,6 @@ function updatePageContent(section) {
         'teachers': 'Teacher Management',
         'courses': 'Course Management',
         'events': 'Event Management',
-        'competitions': 'Competition Management',
         'analytics': 'Analytics & Reports',
         'settings': 'System Settings'
     };

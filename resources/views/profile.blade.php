@@ -258,12 +258,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label-premium">Years of Experience</label>
-                                            <select name="experience_years" class="form-select form-control-premium">
-                                                <option value="">Select experience</option>
-                                                @foreach(['1-3','3-5','5-10','10+'] as $exp)
-                                                <option value="{{ $exp }}" {{ old('experience_years', $user->experience_years) == $exp ? 'selected' : '' }}>{{ $exp }} Years</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" name="experience_years" class="form-control form-control-premium @error('experience_years') is-invalid @enderror" value="{{ old('experience_years', $user->experience_years) }}" placeholder="e.g. 5 Years">
+                                            @error('experience_years')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                         </div>
                                         @endif
                                     </div>

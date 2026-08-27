@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'How We Work - Edvora Tech')
+@section('title', 'How We Work - ' . ($siteSettings->get('company_name', 'Edvora Tech')))
 
 @push('styles')
 <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet" />
@@ -8,221 +8,309 @@
 <link href="{{ asset('assets/css/courses-pages.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/auth-pages.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/about.css') }}" rel="stylesheet" />
+<link href="{{ asset('assets/css/glass-panel.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
+
+<style>
+/* Modern How-We-Work Redesign Styles */
+.hww-hero {
+    background: radial-gradient(circle at 50% 30%, rgba(31, 143, 255, 0.18) 0%, rgba(13, 27, 62, 0.95) 70%, #060d1f 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hww-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    margin-bottom: 24px;
+}
+
+.hww-pill-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 36px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04), 0 5px 15px rgba(31, 143, 255, 0.05);
+    border: 1px solid rgba(31, 143, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hww-pill-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 50px rgba(31, 143, 255, 0.12);
+    border-color: rgba(31, 143, 255, 0.3);
+}
+
+.hww-pill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, #1F8FFF, #00D2FF);
+    border-radius: 4px 0 0 4px;
+}
+
+.hww-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(31, 143, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #1F8FFF;
+    margin-bottom: 20px;
+}
+
+.hww-value-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+}
+
+.hww-value-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(31, 143, 255, 0.1);
+}
+
+.hww-value-card.blue .val-icon { background: rgba(31, 143, 255, 0.12); color: #1F8FFF; }
+.hww-value-card.orange .val-icon { background: rgba(255, 138, 0, 0.12); color: #ff8a00; }
+.hww-value-card.purple .val-icon { background: rgba(155, 81, 224, 0.12); color: #9b51e0; }
+.hww-value-card.green .val-icon { background: rgba(39, 174, 96, 0.12); color: #27ae60; }
+
+.val-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin-bottom: 24px;
+    transition: transform 0.3s ease;
+}
+
+.hww-value-card:hover .val-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.bullet-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(31, 143, 255, 0.1);
+    color: #1F8FFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+</style>
 @endpush
 
 @section('content')
-<!-- Header -->
-    
+    @php
+        $hero = $content['hero'] ?? [];
+        $mission = $content['mission'] ?? [];
+        $values = $content['values'] ?? [];
+        $pillars = $content['pillars'] ?? [];
+        $impactSection = $content['impact_section'] ?? [];
+        $cta = $content['cta'] ?? [];
+    @endphp
 
-    <!-- Hero Section -->
-    <section class="hero-animated">
-        <!-- Background Effects -->
-        <div class="story-bg-effects">
-        </div>
-
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-12 text-center">
+    <!-- Modern Hero Section -->
+    <section class="hww-hero text-white text-center">
+        <div class="container position-relative z-index-2">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
                     <!-- Badge -->
-                    <div class="story-badge">
-                        <i class="bi bi-heart-fill text-brand-yellow heart-beat me-2"></i>
-                        <span class="text-white fw-semibold" style="font-size:1.1rem">Non-Profit Organization</span>
+                    <div class="hww-badge">
+                        <i class="bi bi-heart-fill text-danger me-1"></i>
+                        <span class="text-white fw-semibold small">{{ $hero['badge'] ?? 'Non-Profit Organization' }}</span>
                     </div>
 
                     <!-- Title -->
-                    <h1 class="story-title">
-                        <span>How We</span><br>
-                        <span class="highlight">Work</span>
+                    <h1 class="display-3 fw-bold mb-3">
+                        <span>{{ $hero['title_prefix'] ?? 'How We' }}</span>
+                        <span class="text-primary">{{ $hero['highlight'] ?? 'Work' }}</span>
                     </h1>
 
                     <!-- Subtitle -->
-                    <p class="story-subtitle">
-                        Empowering youth through education, community, and technology
+                    <p class="lead text-white-50 mb-4 mx-auto" style="max-width: 680px;">
+                        {{ $hero['subtitle'] ?? 'Empowering youth through education, community, and technology' }}
                     </p>
+
                     <!-- CTA Buttons -->
-                    <div class="hero-cta">
-                        <a href="{{ route('courses.index') }}" class="btn-hero-primary">
-                            <i class="bi bi-collection-play me-2"></i>Explore Programs
+                    <div class="d-flex justify-content-center gap-3 mb-5">
+                        <a href="{{ $hero['cta_url'] ?? route('courses.index') }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
+                            <i class="bi bi-collection-play me-2"></i>{{ $hero['cta_text'] ?? 'Explore Programs' }}
+                        </a>
+                        <a href="{{ route('about') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            <i class="bi bi-info-circle me-2"></i>About Us
                         </a>
                     </div>
 
-                    <!-- Hero Stats -->
-                    <div class="hero-stats">
+                    <!-- Hero Stats Grid -->
+                    @if(isset($heroStats) && count($heroStats) > 0)
+                    <div class="row g-3 justify-content-center pt-3">
                         @foreach($heroStats as $stat)
-                        <div class="hero-stat">
-                            <div class="value">{{ $stat->value }}{{ $stat->suffix }}</div>
-                            <div class="label">{{ $stat->label }}</div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="h2 fw-bold text-white mb-0">{{ $stat->value }}{{ $stat->suffix }}</div>
+                                <div class="small text-white-50">{{ $stat->label }}</div>
+                            </div>
                         </div>
                         @endforeach
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Mission Section -->
-    <section class="py-5 section-alt-1">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="text-brand-blue fw-bold mb-4" style="font-size:2.5rem">Our Non-Profit Mission</h2>
-                    <p class="para-lg" style="max-width:800px; margin:0 auto;">
-                        Edvora is a dedicated non-profit organization committed to empowering young minds through
-                        accessible, quality education and innovative technology solutions.
+    <!-- Mission Statement Section -->
+    <section class="py-5" style="background-color: #f8fbff;">
+        <div class="container py-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-3">Our Purpose</span>
+                    <h2 class="fw-bold text-dark mb-4" style="font-size: 2.3rem;">
+                        {{ $mission['title'] ?? 'Our Non-Profit Mission' }}
+                    </h2>
+                    <p class="lead text-muted mx-auto" style="line-height: 1.8;">
+                        {{ $mission['description'] ?? 'Edvora is a dedicated non-profit organization committed to empowering young minds through accessible, quality education and innovative technology solutions.' }}
                     </p>
                 </div>
             </div>
 
-            <!-- Core Values -->
-            <div class="row g-4 mb-5">
-                <div class="col-lg-4">
-                    <div class="story-card text-center h-100">
-                        <div class="story-icon mx-auto">
-                            <i class="bi bi-people-fill"></i>
+            <!-- Core Values Grid -->
+            @if(!empty($values))
+            <div class="row g-4 mt-4">
+                @foreach($values as $val)
+                <div class="col-lg-4 col-md-6">
+                    <div class="hww-value-card {{ $val['color'] ?? 'blue' }} h-100">
+                        <div class="val-icon">
+                            <i class="bi {{ $val['icon'] ?? 'bi-people-fill' }}"></i>
                         </div>
-                        <h4 class="text-brand-blue fw-bold mb-3">Youth Empowerment</h4>
-                        <p class="para-lg">We believe in the potential of every young person and work tirelessly to
-                            provide them with the tools and opportunities they need to succeed.</p>
+                        <h4 class="fw-bold text-dark mb-3">{{ $val['title'] ?? '' }}</h4>
+                        <p class="text-muted mb-0" style="line-height: 1.7;">
+                            {{ $val['description'] ?? '' }}
+                        </p>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="story-card alt-1 text-center h-100">
-                        <div class="story-icon orange mx-auto">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <h4 class="text-dark fw-bold mb-3">Community Impact</h4>
-                        <p class="para-lg">Our work extends beyond individual learning to create positive change in
-                            communities and society as a whole.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="story-card alt-2 text-center h-100">
-                        <div class="story-icon mx-auto">
-                            <i class="bi bi-shield-check"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3 text-brand-blue">Accessibility</h4>
-                        <p class="para-lg">We ensure that quality education is accessible to all, regardless of economic
-                            background or geographical location.</p>
-                    </div>
-                </div>
+                @endforeach
             </div>
+            @endif
         </div>
     </section>
 
-    <!-- How We Operate -->
-    <section class="py-5 section-alt-2">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="text-brand-blue fw-bold mb-5" style="font-size:2.5rem">How We Operate</h2>
-                </div>
+    <!-- Operational Pillars (How We Operate) -->
+    @if(!empty($pillars))
+    <section class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Operations</span>
+                <h2 class="fw-bold text-dark display-6">How We Operate</h2>
+                <p class="text-muted">A look inside our transparent, community-driven workflow.</p>
             </div>
 
-            <div class="row g-5 align-items-center mb-5">
-                <div class="col-lg-6">
-                    <div class="story-card">
-                        <h3 class="text-brand-blue fw-bold mb-4" style="font-size:2rem">
-                            <i class="bi bi-gear-fill me-3 text-dark"></i>
-                            Volunteer-Driven Model
-                        </h3>
-                        <p class="para-lg mb-4">
-                            Our organization thrives on the dedication of passionate volunteers - educators,
-                            technologists,
-                            and youth advocates who believe in our mission.
-                        </p>
-                        <ul class="operate-list">
-                            <li><strong>Expert Educators:</strong> Professional teachers volunteer their time</li>
-                            <li><strong>Tech Innovators:</strong> Developers contribute to platform development</li>
-                            <li><strong>Community Leaders:</strong> Local advocates help reach underserved communities
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="story-visual visual-alt-1">
-                        <div class="visual-elements">
-                            <div class="bubble white float1" style="top: 20%; left: 20%; width: 60px; height: 60px;">
-                            </div>
-                            <div class="bubble orange float2"
-                                style="bottom: 30%; right: 25%; width: 40px; height: 40px;"></div>
-                            <div class="bubble white float3"
-                                style="top: 10%; right: 10%; width: 50px; height: 50px; opacity: 0.1"></div>
-                        </div>
-                        <i class="bi bi-people z-top" style="font-size:6rem"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-5 align-items-center mb-5">
-                <div class="col-lg-6 order-lg-2">
-                    <div class="story-card alt-1">
-                        <h3 class="text-dark fw-bold mb-4" style="font-size:2rem">
-                            <i class="bi bi-currency-dollar me-3 text-brand-blue"></i>
-                            Funding & Sustainability
-                        </h3>
-                        <p class="para-lg mb-4">
-                            As a non-profit organization, we operate through grants, donations, and partnerships with
-                            educational institutions and technology companies.
-                        </p>
-                        <ul class="operate-list">
-                            <li><strong>Educational Grants:</strong> Government and foundation funding</li>
-                            <li><strong>Corporate Partnerships:</strong> Tech companies supporting our mission</li>
-                            <li><strong>Community Donations:</strong> Individual supporters who believe in our cause
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-6 order-lg-1">
-                    <div class="story-visual visual-alt-1">
-                        <div class="visual-elements">
-                            <div class="bubble orange float1" style="top: 25%; left: 25%; width: 70px; height: 70px;">
-                            </div>
-                            <div class="bubble white float3"
-                                style="bottom: 15%; right: 15%; width: 50px; height: 50px;"></div>
-                            <div class="bubble blue float2"
-                                style="top: 15%; right: 20%; width: 60px; height: 60px; background: rgba(31, 143, 255, 0.1)">
-                            </div>
-                        </div>
-                        <i class="bi bi-heart-fill z-top" style="font-size:6rem"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Impact Statistics -->
-    <section class="py-5 impact-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="text-brand-blue fw-bold mb-4" style="font-size:2.5rem">Our Impact</h2>
-                    <p class="para-lg" style="max-width:600px; margin:0 auto;">
-                        Together, we're making a difference in young lives across the globe
-                    </p>
-                </div>
-            </div>
             <div class="row g-4">
-                @foreach($impactStats as $stat)
-                <div class="col-lg-3 col-md-6">
-                    <div class="impact-card">
-                        <div class="impact-value">{{ $stat->value }}{{ $stat->suffix }}</div>
-                        <div class="impact-label">{{ $stat->label }}</div>
+                @foreach($pillars as $idx => $pillar)
+                <div class="col-lg-4 col-md-6">
+                    <div class="hww-pill-card h-100">
+                        <div class="hww-icon-wrapper">
+                            <i class="bi {{ $pillar['icon'] ?? 'bi-gear-fill' }}"></i>
+                        </div>
+                        <span class="badge bg-light text-primary fw-semibold mb-2">Pillar 0{{ $idx + 1 }}</span>
+                        <h4 class="fw-bold text-dark mb-1">{{ $pillar['title'] ?? '' }}</h4>
+                        @if(!empty($pillar['subtitle']))
+                        <p class="text-primary small fw-semibold mb-3">{{ $pillar['subtitle'] }}</p>
+                        @endif
+                        <p class="text-muted small mb-4" style="line-height: 1.6;">
+                            {{ $pillar['description'] ?? '' }}
+                        </p>
+
+                        @if(!empty($pillar['bullets']))
+                        <div class="space-y-3 pt-2 border-top">
+                            @foreach($pillar['bullets'] as $b)
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <div class="bullet-badge mt-1"><i class="bi bi-check2"></i></div>
+                                <div>
+                                    <strong class="d-block text-dark small">{{ $b['title'] ?? '' }}</strong>
+                                    <span class="text-muted" style="font-size: 0.82rem;">{{ $b['desc'] ?? '' }}</span>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
                     </div>
                 </div>
                 @endforeach
             </div>
         </div>
     </section>
+    @endif
 
-    <!-- Modern Footer -->
-    
+    <!-- Impact Section -->
+    @if(isset($impactStats) && count($impactStats) > 0)
+    <section class="py-5" style="background: linear-gradient(135deg, #091a3e 0%, #1F8FFF 100%); color: #fff;">
+        <div class="container py-4">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold text-white mb-2">{{ $impactSection['title'] ?? 'Our Global Impact' }}</h2>
+                    <p class="text-white-50 lead">{{ $impactSection['subtitle'] ?? "Together, we're making a difference in young lives across the globe" }}</p>
+                </div>
+            </div>
 
-    <!-- Bootstrap 5 JS -->
-    
+            <div class="row g-4 justify-content-center text-center">
+                @foreach($impactStats as $stat)
+                <div class="col-lg-3 col-6">
+                    <div class="p-4 rounded-4" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);">
+                        <div class="display-5 fw-bold text-warning mb-1">{{ $stat->value }}{{ $stat->suffix }}</div>
+                        <div class="text-white-50 fw-semibold">{{ $stat->label }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
-
-    <!-- Custom JS -->
+    <!-- CTA Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 text-center" style="background: #ffffff; border: 1px solid #edf2f7;">
+                <div class="mx-auto" style="max-width: 600px;">
+                    <div class="mb-3">
+                        <i class="bi bi-rocket-takeoff-fill text-primary display-4"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-3">{{ $cta['title'] ?? 'Join the Movement Today' }}</h3>
+                    <p class="text-muted mb-4 lead" style="font-size: 1.05rem;">
+                        {{ $cta['description'] ?? 'Whether you want to learn, teach, or support our non-profit mission, there is a place for you at Edvora.' }}
+                    </p>
+                    <a href="{{ $cta['button_url'] ?? route('register') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+                        <i class="bi bi-person-plus-fill me-2"></i>{{ $cta['button_text'] ?? 'Get Started' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection
 
 @push('scripts')

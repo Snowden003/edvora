@@ -30,7 +30,7 @@ class StudentResource extends Resource
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Students';
-    protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'User Management';
     protected static ?string $modelLabel = 'Student';
     protected static ?string $pluralModelLabel = 'Students';
     protected static ?int $navigationSort = 1;

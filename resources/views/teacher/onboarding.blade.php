@@ -118,12 +118,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Years of Experience <span class="text-danger">*</span></label>
-                                    <select class="form-select expertise-select @error('experience_years') is-invalid @enderror" name="experience_years" required>
-                                        <option value="">Select...</option>
-                                        @foreach(['1-2','3-5','6-10','11-15','15+'] as $exp)
-                                        <option value="{{ $exp }}" {{ old('experience_years', Auth::user()->experience_years) === $exp ? 'selected' : '' }}>{{ $exp }} years</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control expertise-select @error('experience_years') is-invalid @enderror" name="experience_years" value="{{ old('experience_years', Auth::user()->experience_years) }}" placeholder="e.g. 3 years, 5+ years" required>
                                     @error('experience_years')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-12">

@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Course;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +25,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Share site settings with all views
+        View::composer('*', function ($view) {
+            if (! $view->offsetExists('siteSettings')) {
+                try {
+                    if (Schema::hasTable('site_settings')) {
+                        $view->with('siteSettings', SiteSetting::allCached());
+                    } else {
+                        $view->with('siteSettings', collect());
+                    }
+                } catch (\Throwable) {
+                    $view->with('siteSettings', collect());
+                }
+            }
+        });
+
         View::composer('layouts.partials.footer', function ($view) {
             $footerStats = Cache::remember('footer:stats', now()->addMinutes(10), function () {
                 return [

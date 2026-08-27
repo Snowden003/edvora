@@ -28,12 +28,7 @@ class TeacherDashboardController extends Controller
             return view('teacher.onboarding');
         }
 
-        // Step 2: Submitted but pending → show pending popup (block dashboard)
-        if ($user->isPendingApproval()) {
-            return view('teacher.pending');
-        }
-
-        // Step 3: Active → show dashboard
+        // Step 2: Active or Pending → show dashboard (pending status will show modal popup)
         $teacher = $user->teacher;
         $courses = Course::where('teacher_id', $user->id)->get();
         $totalStudents = $courses->sum('enrolled_count');
@@ -714,7 +709,7 @@ class TeacherDashboardController extends Controller
 
         Mail::to($user->email)->send(new TeacherApplicationSubmitted($user));
 
-        return redirect()->route('teacher.dashboard');
+        return redirect()->route('teacher.dashboard')->with('onboarding_submitted', true);
     }
 
     public function storeClassNote(Request $request, $id)

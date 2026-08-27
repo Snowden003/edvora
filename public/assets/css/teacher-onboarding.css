@@ -3,7 +3,7 @@
 .onboarding-section {
     min-height: calc(100vh - 70px);
     background: #f0f4f8;
-    padding: 3rem 0;
+    padding: 110px 0 3rem 0; /* Extra top padding to clear the ultra-modern floating header */
 }
 
 /* Force readable text colors inside cards */

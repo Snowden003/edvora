@@ -20,7 +20,7 @@ class CertificateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
     protected static ?string $navigationLabel = 'Certificates';
-    protected static ?string $navigationGroup = 'Student Management';
+    protected static ?string $navigationGroup = 'Academic & Scoring';
     protected static ?string $modelLabel = 'Certificate';
     protected static ?string $pluralModelLabel = 'Certificates';
     protected static ?int $navigationSort = 5;

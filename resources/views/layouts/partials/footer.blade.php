@@ -20,28 +20,38 @@
             <div class="col-lg-4">
                 <div class="footer-brand">
                     <div class="brand-logo">
-                        <img src="{{ asset('assets/images/logo1.jpg') }}" alt="Edvora Tech Logo" class="footer-logo" />
-                        <h4>Edvora Tech</h4>
+                        <img src="{{ $siteSettings->get('company_logo') ? asset('storage/' . $siteSettings->get('company_logo')) : asset('assets/images/logo1.jpg') }}" alt="{{ $siteSettings->get('company_name', 'Edvora Tech') }} Logo" class="footer-logo" />
+                        <h4>{{ $siteSettings->get('company_name', 'Edvora Tech') }}</h4>
                     </div>
                     <p class="brand-description">
-                        Empowering learners worldwide with quality education and innovative teaching methods.
+                        {{ $siteSettings->get('company_tagline', 'Empowering learners worldwide with quality education and innovative teaching methods.') }}
                     </p>
                     <div class="social-links">
-                        <a href="#" class="social-link facebook">
+                        @if($siteSettings->get('social_facebook'))
+                        <a href="{{ $siteSettings->get('social_facebook') }}" class="social-link facebook" target="_blank" rel="noopener">
                             <i class="bi bi-facebook"></i>
                         </a>
-                        <a href="#" class="social-link twitter">
+                        @endif
+                        @if($siteSettings->get('social_twitter'))
+                        <a href="{{ $siteSettings->get('social_twitter') }}" class="social-link twitter" target="_blank" rel="noopener">
                             <i class="bi bi-twitter"></i>
                         </a>
-                        <a href="#" class="social-link instagram">
+                        @endif
+                        @if($siteSettings->get('social_instagram'))
+                        <a href="{{ $siteSettings->get('social_instagram') }}" class="social-link instagram" target="_blank" rel="noopener">
                             <i class="bi bi-instagram"></i>
                         </a>
-                        <a href="#" class="social-link linkedin">
+                        @endif
+                        @if($siteSettings->get('social_linkedin'))
+                        <a href="{{ $siteSettings->get('social_linkedin') }}" class="social-link linkedin" target="_blank" rel="noopener">
                             <i class="bi bi-linkedin"></i>
                         </a>
-                        <a href="#" class="social-link youtube">
+                        @endif
+                        @if($siteSettings->get('social_youtube'))
+                        <a href="{{ $siteSettings->get('social_youtube') }}" class="social-link youtube" target="_blank" rel="noopener">
                             <i class="bi bi-youtube"></i>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -77,7 +87,7 @@
                 <div class="footer-section">
                     <h6 class="footer-title">Stay Connected</h6>
                     <p class="newsletter-description">
-                        Get the latest updates on courses, events, and educational content.
+                        {{ $siteSettings->get('footer_newsletter_text', 'Get the latest updates on courses, events, and educational content.') }}
                     </p>
                     <form class="newsletter-form">
                         <div class="input-group">
@@ -109,7 +119,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <p class="copyright">
-                        &copy; {{ date('Y') }} Edvora Tech. All rights reserved.
+                        &copy; {{ date('Y') }} {{ $siteSettings->get('footer_copyright', 'Edvora Tech. All rights reserved.') }}
                     </p>
                 </div>
                 <div class="col-md-6">

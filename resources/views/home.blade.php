@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/courses.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/popular-courses.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/teachers.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/competitions.css') }}" />
     <link href="{{ asset('assets/css/events-pages.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/courses-pages.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('assets/css/home-roadmap.css') }}" />
@@ -62,70 +61,48 @@
                     </div>
                 </div>
 
-                {{-- Slide 2: Featured / Special courses (admin controlled) --}}
-                <div class="carousel-item">
-                    <div class="hero2__glow hero2__glow--a"></div>
-                    <div class="hero2__glow hero2__glow--b"></div>
-                    <div class="container hero2__inner">
-                        @php $fc = $featuredCourses->first(); @endphp
-                        @if($fc)
-                        <div class="hero2__content">
-                            <span class="hero2__eyebrow"><i class="bi bi-stars"></i> {{ $fc->category->name ?? 'Featured' }}</span>
-                            <h1 class="hero2__title">{{ \Illuminate\Support\Str::limit($fc->title, 40) }}<br><span>Special Course.</span></h1>
-                            <p class="hero2__desc">{{ \Illuminate\Support\Str::limit($fc->description, 140) }}</p>
+                {{-- Slide 2: Featured / Special courses (admin controlled) - Only render if available --}}
+                @if($featuredCourses->isNotEmpty())
+                    @php $fc = $featuredCourses->first(); @endphp
+                    <div class="carousel-item">
+                        <div class="hero2__glow hero2__glow--a"></div>
+                        <div class="hero2__glow hero2__glow--b"></div>
+                        <div class="container hero2__inner">
+                            <div class="hero2__content">
+                                <span class="hero2__eyebrow"><i class="bi bi-stars"></i> {{ $fc->category->name ?? 'Featured' }}</span>
+                                <h1 class="hero2__title">{{ \Illuminate\Support\Str::limit($fc->title, 40) }}<br><span>Special Course.</span></h1>
+                                <p class="hero2__desc">{{ \Illuminate\Support\Str::limit($fc->description, 140) }}</p>
 
-                            <div class="hero2__features">
-                                <div class="hero2__feature"><i class="bi bi-bar-chart-fill"></i><span>{{ ucfirst($fc->level) }}</span></div>
-                                <div class="hero2__feature"><i class="bi bi-clock-fill"></i><span>{{ $fc->duration_hours }}h</span></div>
-                                <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>{{ $fc->enrolled_count }} Students</span></div>
-                                @if($fc->has_certificate)
-                                    <div class="hero2__feature"><i class="bi bi-patch-check-fill"></i><span>Certificate</span></div>
-                                @endif
+                                <div class="hero2__features">
+                                    <div class="hero2__feature"><i class="bi bi-bar-chart-fill"></i><span>{{ ucfirst($fc->level) }}</span></div>
+                                    <div class="hero2__feature"><i class="bi bi-clock-fill"></i><span>{{ $fc->duration_hours }}h</span></div>
+                                    <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>{{ $fc->enrolled_count }} Students</span></div>
+                                    @if($fc->has_certificate)
+                                        <div class="hero2__feature"><i class="bi bi-patch-check-fill"></i><span>Certificate</span></div>
+                                    @endif
+                                </div>
+
+                                <div class="hero2__buttons" style="margin-top: 2rem;">
+                                    <a href="{{ route('courses.detail', $fc->slug) }}" class="btn-hero-primary">
+                                        Explore Course <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
                             </div>
 
-                            <div class="hero2__buttons" style="margin-top: 2rem;">
-                                <a href="{{ route('courses.detail', $fc->slug) }}" class="btn-hero-primary">
-                                    Explore Course <i class="bi bi-arrow-right ms-2"></i>
-                                </a>
+                            <div class="hero2__visual">
+                                <div class="hero2__ring hero2__ring--1"></div>
+                                <div class="hero2__ring hero2__ring--2"></div>
+                                <div class="hero2__badge"><i class="bi bi-award-fill"></i></div>
+                                <img src="{{ $fc->thumbnail ? asset('storage/' . $fc->thumbnail) : asset('assets/images/hero_logo_design.png') }}" alt="{{ $fc->title }}" class="hero2__logo" style="object-fit: cover;" decoding="async">
+                                <div class="hero2__particle hero2__particle--1"></div>
+                                <div class="hero2__particle hero2__particle--2"></div>
+                                <div class="hero2__particle hero2__particle--3"></div>
                             </div>
                         </div>
-
-                        <div class="hero2__visual">
-                            <div class="hero2__ring hero2__ring--1"></div>
-                            <div class="hero2__ring hero2__ring--2"></div>
-                            <div class="hero2__badge"><i class="bi bi-award-fill"></i></div>
-                            <img src="{{ $fc->thumbnail ? asset('storage/' . $fc->thumbnail) : asset('assets/images/hero_logo_design.png') }}" alt="{{ $fc->title }}" class="hero2__logo" style="object-fit: cover;" decoding="async">
-                            <div class="hero2__particle hero2__particle--1"></div>
-                            <div class="hero2__particle hero2__particle--2"></div>
-                            <div class="hero2__particle hero2__particle--3"></div>
-                        </div>
-                        @else
-                        <div class="hero2__content">
-                            <span class="hero2__eyebrow"><i class="bi bi-award-fill"></i> Special Courses</span>
-                            <h1 class="hero2__title">No Special Courses Yet.<br><span>Check Back Soon.</span></h1>
-                            <p class="hero2__desc">An admin hasn't marked any course as featured yet. Browse our full library to find amazing free courses.</p>
-                            
-                            <div class="hero2__buttons" style="margin-top: 2rem;">
-                                <a href="{{ route('courses.index') }}" class="btn-hero-primary">
-                                    Browse All Courses <i class="bi bi-arrow-right ms-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="hero2__visual">
-                            <div class="hero2__ring hero2__ring--1"></div>
-                            <div class="hero2__ring hero2__ring--2"></div>
-                            <div class="hero2__badge"><i class="bi bi-shield-lock-fill"></i></div>
-                            <img src="{{ asset('assets/images/hero_logo_design.png') }}" alt="Edvora Tech" class="hero2__logo" fetchpriority="high" decoding="async">
-                            <div class="hero2__particle hero2__particle--1"></div>
-                            <div class="hero2__particle hero2__particle--2"></div>
-                            <div class="hero2__particle hero2__particle--3"></div>
-                        </div>
-                        @endif
                     </div>
-                </div>
+                @endif
 
-                {{-- Slide 3: Quick actions --}}
+                {{-- Slide: Quick actions --}}
                 <div class="carousel-item">
                     <div class="hero2__glow hero2__glow--a"></div>
                     <div class="hero2__glow hero2__glow--b"></div>
@@ -174,10 +151,16 @@
                     <i class="bi bi-chevron-right"></i>
                 </button>
             </div>
+            @php
+                $hasFeatured = $featuredCourses->isNotEmpty();
+                $heroSlideNum = 0;
+            @endphp
             <div class="carousel-indicators hero2__indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $heroSlideNum++ }}" class="active" aria-label="Slide 1"></button>
+                @if($hasFeatured)
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $heroSlideNum++ }}" aria-label="Slide 2"></button>
+                @endif
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $heroSlideNum++ }}" aria-label="Slide 3"></button>
             </div>
         </div>
     </section>
@@ -193,6 +176,7 @@
         </div>
     </section>
 
+    @if($recentCourses->isNotEmpty())
     <section class="home-course-showcase">
         <div class="container">
             <div class="home-course-showcase__header">
@@ -201,50 +185,43 @@
                 <p>Start with the newest practical skills available on Edvora.</p>
             </div>
 
-            @if($recentCourses->count() > 0)
-                <div class="recent-courses-carousel" id="recentCoursesCarousel">
-                    <button class="recent-courses-carousel__nav recent-courses-carousel__nav--prev" type="button" aria-label="Previous" onclick="recentCoursesScroll(-1)"><i class="bi bi-chevron-left"></i></button>
-                    <button class="recent-courses-carousel__nav recent-courses-carousel__nav--next" type="button" aria-label="Next" onclick="recentCoursesScroll(1)"><i class="bi bi-chevron-right"></i></button>
-                    <div class="recent-courses-carousel__track" id="recentCoursesTrack">
-                        @foreach($recentCourses as $course)
-                            <div class="recent-courses-carousel__item">
-                                <article class="home-course-card">
-                                    <div class="home-course-card__image">
-                                        @if($course->thumbnail)
-                                            <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async">
-                                        @else
-                                            <i class="bi {{ $course->category?->icon ?? 'bi-code-slash' }}"></i>
-                                        @endif
-                                        <span class="home-course-card__tag">{{ $course->category->name ?? 'General' }}</span>
-                                        <span class="home-course-card__free">Free</span>
+            <div class="recent-courses-carousel" id="recentCoursesCarousel">
+                <button class="recent-courses-carousel__nav recent-courses-carousel__nav--prev" type="button" aria-label="Previous" onclick="recentCoursesScroll(-1)"><i class="bi bi-chevron-left"></i></button>
+                <button class="recent-courses-carousel__nav recent-courses-carousel__nav--next" type="button" aria-label="Next" onclick="recentCoursesScroll(1)"><i class="bi bi-chevron-right"></i></button>
+                <div class="recent-courses-carousel__track" id="recentCoursesTrack">
+                    @foreach($recentCourses as $course)
+                        <div class="recent-courses-carousel__item">
+                            <article class="home-course-card">
+                                <div class="home-course-card__image">
+                                    @if($course->thumbnail)
+                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async">
+                                    @else
+                                        <i class="bi {{ $course->category?->icon ?? 'bi-code-slash' }}"></i>
+                                    @endif
+                                    <span class="home-course-card__tag">{{ $course->category->name ?? 'General' }}</span>
+                                    <span class="home-course-card__free">Free</span>
+                                </div>
+                                <div class="home-course-card__body">
+                                    <div class="home-course-card__teacher"><i class="bi bi-person-circle"></i>{{ $course->teacher->name ?? 'Edvora Instructor' }}</div>
+                                    <h3 class="home-course-card__title"><a href="{{ route('courses.detail', $course->slug) }}">{{ $course->title }}</a></h3>
+                                    <p class="home-course-card__description">{{ Str::limit(strip_tags($course->description), 115) }}</p>
+                                    <div class="home-course-card__footer">
+                                        <span><i class="bi bi-clock"></i>{{ $course->duration_hours ? $course->duration_hours . ' hours' : 'Self-paced' }}</span>
+                                        <a href="{{ route('courses.detail', $course->slug) }}">View course <i class="bi bi-arrow-right"></i></a>
                                     </div>
-                                    <div class="home-course-card__body">
-                                        <div class="home-course-card__teacher"><i class="bi bi-person-circle"></i>{{ $course->teacher->name ?? 'Edvora Instructor' }}</div>
-                                        <h3 class="home-course-card__title"><a href="{{ route('courses.detail', $course->slug) }}">{{ $course->title }}</a></h3>
-                                        <p class="home-course-card__description">{{ Str::limit(strip_tags($course->description), 115) }}</p>
-                                        <div class="home-course-card__footer">
-                                            <span><i class="bi bi-clock"></i>{{ $course->duration_hours ? $course->duration_hours . ' hours' : 'Self-paced' }}</span>
-                                            <a href="{{ route('courses.detail', $course->slug) }}">View course <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
-                        @endforeach
-                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
                 </div>
-            @else
-                <div class="empty-section-placeholder empty-small">
-                    <div class="empty-section-icon"><i class="bi bi-compass"></i></div>
-                    <h4>Find Your Learning Path</h4>
-                    <p>Explore Edvora's learning opportunities and choose the practical skill you want to build next.</p>
-                    <a href="{{ route('courses.index') }}" class="btn btn-outline-primary btn-sm mt-3"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Explore Courses</a>
-                </div>
-            @endif
+            </div>
 
             <div class="home-course-showcase__cta"><a href="{{ route('courses.index') }}">Explore all courses <i class="bi bi-arrow-right"></i></a></div>
         </div>
     </section>
+    @endif
 
+    @if($popularCourses->isNotEmpty())
     <section class="home-course-showcase home-course-showcase--popular">
         <div class="container">
             <div class="home-course-showcase__header">
@@ -253,8 +230,7 @@
                 <p>The most enrolled and highest-rated courses on Edvora.</p>
             </div>
 
-            @if($popularCourses->count() > 0)
-                <div class="popular-courses-bordered">
+            <div class="popular-courses-bordered">
                 <div class="row g-4">
                     @foreach($popularCourses as $course)
                         <div class="col-lg-4 col-md-6">
@@ -300,19 +276,12 @@
                         </div>
                     @endforeach
                 </div>
-                </div>
-            @else
-                <div class="empty-section-placeholder empty-small">
-                    <div class="empty-section-icon"><i class="bi bi-journal-bookmark"></i></div>
-                    <h4>Explore Learning Paths</h4>
-                    <p>Discover the practical skills you can begin learning with Edvora.</p>
-                    <a href="{{ route('courses.index') }}" class="btn btn-outline-primary btn-sm mt-3"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Explore Courses</a>
-                </div>
-            @endif
+            </div>
 
             <div class="home-course-showcase__cta"><a href="{{ route('courses.index') }}">View all courses <i class="bi bi-arrow-right"></i></a></div>
         </div>
     </section>
+    @endif
 
     <section class="py-5 statistics-section">
         <div class="container">
@@ -393,11 +362,60 @@
                     </a>
                 </div>
                 <div class="col-lg-6">
-                    <div class="about-preview-visual">
-                        <div class="about-preview-visual__badge">
-                            <i class="bi bi-stars me-2"></i>Our Team
+                    <div class="about-visual-card">
+                        <div class="about-visual-card__bg-glow"></div>
+                        <div class="about-visual-card__badge">
+                            <i class="bi bi-stars"></i>
+                            <span>Created by Women, For Women</span>
                         </div>
-                        <i class="bi bi-people-fill"></i>
+                        
+                        <div class="about-visual-canvas">
+                            <div class="about-visual-centerpiece">
+                                <div class="about-avatar-circle about-avatar-circle--main">
+                                    <i class="bi bi-code-slash"></i>
+                                </div>
+                                <div class="about-orbit-ring about-orbit-ring--1"></div>
+                                <div class="about-orbit-ring about-orbit-ring--2"></div>
+                            </div>
+
+                            <div class="about-floating-pill about-floating-pill--top-left">
+                                <div class="pill-icon pill-icon--pink"><i class="bi bi-mortarboard-fill"></i></div>
+                                <div class="pill-text">
+                                    <strong>Practical Skills</strong>
+                                    <small>Free & Self-Paced</small>
+                                </div>
+                            </div>
+
+                            <div class="about-floating-pill about-floating-pill--bottom-left">
+                                <div class="pill-icon pill-icon--purple"><i class="bi bi-shield-lock-fill"></i></div>
+                                <div class="pill-text">
+                                    <strong>100% Safe Space</strong>
+                                    <small>Afghan Women Community</small>
+                                </div>
+                            </div>
+
+                            <div class="about-floating-pill about-floating-pill--top-right">
+                                <div class="pill-icon pill-icon--blue"><i class="bi bi-award-fill"></i></div>
+                                <div class="pill-text">
+                                    <strong>Verified Certificates</strong>
+                                    <small>Build Your Portfolio</small>
+                                </div>
+                            </div>
+
+                            <div class="about-code-snippet-box">
+                                <div class="code-snippet-header">
+                                    <span class="dot dot--red"></span>
+                                    <span class="dot dot--yellow"></span>
+                                    <span class="dot dot--green"></span>
+                                    <span class="code-title">empower.py</span>
+                                </div>
+                                <div class="code-snippet-body">
+                                    <code><span class="kw">class</span> <span class="cls">AfghanWomenLeader</span>:</code>
+                                    <code>&nbsp;&nbsp;<span class="prop">skills</span> = [<span class="str">"Coding"</span>, <span class="str">"Network"</span>]</code>
+                                    <code>&nbsp;&nbsp;<span class="prop">future</span> = <span class="str">"Bright & Free"</span> ✨</code>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -433,11 +451,39 @@
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <div class="about-preview-visual" style="min-height: 380px;">
-                        <div class="about-preview-visual__badge">
-                            <i class="bi bi-heart-fill me-2"></i>Our Purpose
+                    <div class="why-visual-showcase">
+                        <div class="why-visual-bg"></div>
+                        <div class="why-visual-card-main">
+                            <div class="why-portal-icon">
+                                <i class="bi bi-door-open-fill"></i>
+                            </div>
+                            <h3>Opening Doors to Tech</h3>
+                            <p>Democratizing computer science education with zero financial barriers.</p>
+                            
+                            <div class="why-feature-list">
+                                <div class="why-feature-item">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span>Zero tuition fees forever</span>
+                                </div>
+                                <div class="why-feature-item">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span>High-quality interactive labs</span>
+                                </div>
+                                <div class="why-feature-item">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span>Career & freelance pathways</span>
+                                </div>
+                            </div>
                         </div>
-                        <i class="bi bi-rocket-takeoff-fill"></i>
+
+                        <div class="why-floating-badge why-floating-badge--1">
+                            <i class="bi bi-globe2 text-primary"></i>
+                            <span>Global Network</span>
+                        </div>
+                        <div class="why-floating-badge why-floating-badge--2">
+                            <i class="bi bi-rocket-takeoff-fill text-warning"></i>
+                            <span>Infinite Growth</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -474,7 +520,7 @@
                         <i class="bi bi-chat-heart-fill"></i>
                     </div>
                     <h3>Confidence & Community</h3>
-                    <p>Through events, competitions, and peer support, women build confidence, find their voice, and connect with a community that believes in their potential.</p>
+                    <p>Through events and peer support, women build confidence, find their voice, and connect with a community that believes in their potential.</p>
                 </div>
                 <div class="impact-women-card">
                     <div class="impact-women-card__icon impact-women-card__icon--green">
@@ -655,43 +701,6 @@
         </div>
     </section>
 
-    @if($upcomingCompetitions->isNotEmpty())
-    <section class="py-5 gray">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold" style="color: #1f8fff">Upcoming Competitions</h2>
-                <a href="{{ route('competitions.index') }}" class="btn btn-outline-primary white-hover">View All</a>
-            </div>
-
-            <div class="row g-4">
-                @foreach($upcomingCompetitions as $competition)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 shadow-sm border-0">
-                            @if($competition->thumbnail)
-                                <img src="{{ asset('storage/' . $competition->thumbnail) }}" class="card-img-top" alt="{{ $competition->title }}" style="height: 200px; object-fit: cover;" loading="lazy" decoding="async">
-                            @else
-                                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
-                                    <i class="bi bi-trophy fs-1 text-muted"></i>
-                                </div>
-                            @endif
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold">{{ $competition->title }}</h5>
-                                <p class="text-muted small mb-2">
-                                    <i class="bi bi-calendar3 me-1"></i>{{ $competition->start_date->format('M d, Y') }}
-                                </p>
-                                <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($competition->description, 100) }}</p>
-                                <a href="{{ route('competitions.detail', $competition->id) }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-info-circle me-1"></i>View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
     @if($hasTopStudents)
     <section class="top-students-preview">
         <div class="container">
@@ -870,11 +879,39 @@
                     </a>
                 </div>
                 <div class="col-lg-5">
-                    <div class="about-preview-visual" style="min-height: 340px;">
-                        <div class="about-preview-visual__badge">
-                            <i class="bi bi-gem-fill me-2"></i>Edvora Foundation
+                    <div class="donation-visual-card">
+                        <div class="donation-visual-card__glow"></div>
+                        <div class="donation-card-content">
+                            <div class="donation-heart-icon">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+                            <h3>Edvora Foundation</h3>
+                            <p>Transparent & Direct Impact</p>
+                            <div class="donation-impact-bars">
+                                <div class="impact-bar-item">
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span class="text-light">Course & Curriculum</span>
+                                        <strong class="text-info">100% Free</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="impact-bar-item mt-3">
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span class="text-light">Servers & Platform Infra</span>
+                                        <strong class="text-warning">Funded by Donors</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                        <div class="progress-bar bg-info" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="donation-quote mt-4">
+                                <i class="bi bi-quote fs-3 text-primary opacity-50"></i>
+                                <p class="small mb-0">"Empowering one woman with education transforms an entire community."</p>
+                            </div>
                         </div>
-                        <i class="bi bi-heart-fill"></i>
                     </div>
                 </div>
             </div>

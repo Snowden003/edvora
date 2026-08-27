@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Terms of Service - Edvora Tech')
+@section('title', 'Terms of Service - ' . ($siteSettings->get('company_name', 'Edvora Tech')))
 
 @push('styles')
 <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet" />
@@ -12,8 +12,11 @@
 @endpush
 
 @section('content')
-<!-- Header -->
-    
+    @php
+        $hero = $content['hero'] ?? [];
+        $modules = $content['modules'] ?? [];
+        $support = $content['support'] ?? [];
+    @endphp
 
     <!-- Elite Refined Hero Section -->
     <section class="terms-hero-refined">
@@ -32,20 +35,20 @@
                 <div class="col-lg-10" data-aos="zoom-in">
                     <div class="title-glass-box">
                         <span class="terms-badge-unique">
-                            <i class="bi bi-shield-lock-fill me-2"></i>Edvora Legal Framework
+                            <i class="bi bi-shield-lock-fill me-2"></i>{{ $hero['badge'] ?? 'Edvora Legal Framework' }}
                         </span>
-                        <h1 class="display-2 fw-bold text-white mb-4" style="letter-spacing: -2px;">Terms of Service
+                        <h1 class="display-2 fw-bold text-white mb-4" style="letter-spacing: -2px;">
+                            {{ $hero['title'] ?? 'Terms of Service' }}
                         </h1>
                         <p class="lead text-white-50 mx-auto mb-4" style="max-width: 700px; font-weight: 300;">
-                            Our commitment to your privacy, security, and elite learning experience.
-                            We've refined our terms to be as transparent as our platform.
+                            {{ $hero['subtitle'] ?? "Our commitment to your privacy, security, and elite learning experience. We've refined our terms to be as transparent as our platform." }}
                         </p>
                         <div class="d-flex justify-content-center gap-5 text-white-50 small">
                             <span class="d-flex align-items-center gap-2">
-                                <i class="bi bi-calendar3 text-primary"></i> Last Updated: Dec 2024
+                                <i class="bi bi-calendar3 text-primary"></i> Last Updated: {{ $hero['last_updated'] ?? 'Dec 2024' }}
                             </span>
                             <span class="d-flex align-items-center gap-2">
-                                <i class="bi bi-patch-check text-info"></i> Version 2.4.0
+                                <i class="bi bi-patch-check text-info"></i> {{ $hero['version'] ?? 'Version 2.4.0' }}
                             </span>
                         </div>
                     </div>
@@ -58,157 +61,69 @@
     <section class="terms-content-section">
         <div class="container">
             <div class="bento-grid">
+                @foreach($modules as $mod)
+                    @php
+                        $sizeClass = match($mod['size'] ?? 'normal') {
+                            'wide' => 'bento-wide',
+                            'large' => 'bento-large',
+                            'tall' => 'bento-tall',
+                            'dark' => 'bento-dark',
+                            default => '',
+                        };
 
-                <!-- 1. Acceptance (Bento Wide) -->
-                <div class="bento-card card bento-wide" data-aos="fade-up">
-                    <div class="accent-line line-blue"></div>
-                    <div class="module-icon bg-blue-glass"><i class="bi bi-check2-circle"></i></div>
-                    <h3 class="module-title">1. Acceptance of Terms</h3>
-                    <p class="module-text">By accessing and using Edvora ("the Platform"), you accept and agree to be
-                        bound by the terms and provision of this agreement. Our platform is designed to be an elite,
-                        safe, and productive environment for all.</p>
-                    <div class="plain-english-min">
-                        <span class="tldr-pill">TL;DR</span>
-                        <span class="tldr-text">Using the site means you follow the rules. Simple.</span>
+                        $colorClass = match($mod['color'] ?? 'blue') {
+                            'teal' => 'line-teal',
+                            'violet' => 'line-violet',
+                            'amber' => 'line-amber',
+                            'dark' => 'line-dark',
+                            default => 'line-blue',
+                        };
+
+                        $iconBgClass = match($mod['color'] ?? 'blue') {
+                            'teal' => 'bg-teal-glass',
+                            'violet' => 'bg-violet-glass',
+                            'amber' => 'bg-amber-glass',
+                            default => 'bg-blue-glass',
+                        };
+                    @endphp
+
+                    <div class="bento-card card {{ $sizeClass }}" data-aos="fade-up">
+                        @if(($mod['size'] ?? '') !== 'dark')
+                            <div class="accent-line {{ $colorClass }}"></div>
+                            <div class="module-icon {{ $iconBgClass }}">
+                                <i class="bi {{ $mod['icon'] ?? 'bi-file-text' }}"></i>
+                            </div>
+                        @else
+                            <span class="bento-icon-main text-white"><i class="bi {{ $mod['icon'] ?? 'bi-shield-shaded' }}"></i></span>
+                        @endif
+
+                        <h3 class="module-title {{ ($mod['size'] ?? '') === 'dark' ? 'text-white' : '' }}">
+                            {{ $mod['number'] ?? '' }}. {{ $mod['title'] ?? '' }}
+                        </h3>
+
+                        <p class="module-text {{ ($mod['size'] ?? '') === 'dark' ? 'text-white opacity-75' : '' }}">
+                            {{ $mod['text'] ?? '' }}
+                        </p>
+
+                        @if(!empty($mod['tldr']))
+                        <div class="plain-english-min {{ ($mod['size'] ?? '') === 'dark' ? 'border-white border-opacity-10' : '' }}">
+                            <span class="tldr-pill {{ ($mod['size'] ?? '') === 'dark' ? 'bg-white text-dark' : '' }}">TL;DR</span>
+                            <span class="tldr-text {{ ($mod['size'] ?? '') === 'dark' ? 'text-white opacity-50' : '' }}">{{ $mod['tldr'] }}</span>
+                        </div>
+                        @endif
                     </div>
-                </div>
+                @endforeach
 
-                <!-- 2. Description (Bento Large) -->
-                <div class="bento-card card bento-large" data-aos="fade-up">
-                    <div class="accent-line line-teal"></div>
-                    <div class="module-icon bg-teal-glass"><i class="bi bi-cpu"></i></div>
-                    <h3 class="module-title">2. Our Services</h3>
-                    <p class="module-text">Edvora is a premium learning ecosystem providing expert-led courses,
-                        professional growth tools, and community discussion hubs. We specialize in:</p>
-                    <ul class="module-text mt-3">
-                        <li>High-quality interactive materials</li>
-                        <li>Global learner networking</li>
-                        <li>Industry-recognized certificates</li>
-                        <li>Personalized progress tracking</li>
-                    </ul>
-                    <div class="plain-english-min">
-                        <span class="tldr-pill">TL;DR</span>
-                        <span class="tldr-text">We provide the high-tech tools to help you learn and grow your
-                            professional career.</span>
-                    </div>
-                </div>
-
-                <!-- 3. User Accounts (Bento Tall) -->
-                <div class="bento-card card bento-tall" data-aos="fade-up">
-                    <div class="accent-line line-violet"></div>
-                    <div class="module-icon bg-violet-glass"><i class="bi bi-shield-lock"></i></div>
-                    <h3 class="module-title">3. Account Integrity</h3>
-                    <p class="module-text">Your account is personal. You must maintain the confidentiality of your
-                        credentials. You are responsible for all actions taken through your account.</p>
-                    <div class="plain-english-min">
-                        <span class="tldr-pill">TL;DR</span>
-                        <span class="tldr-text">Keep your password safe and don't share your login.</span>
-                    </div>
-                </div>
-
-                <!-- 4. Enrollment -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-amber"></div>
-                    <div class="module-icon bg-amber-glass"><i class="bi bi-mortarboard"></i></div>
-                    <h3 class="module-title small text-uppercase">4. Enrollment</h3>
-                    <p class="module-text small">Personal license to learn. Lifetime access to your enrolled courses and
-                        all future updates.</p>
-                </div>
-
-                <!-- 5. Payments -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-blue"></div>
-                    <div class="module-icon bg-blue-glass"><i class="bi bi-unlock"></i></div>
-                    <h3 class="module-title small text-uppercase">5. Free Access</h3>
-                    <p class="module-text small">Edvora courses are provided free of charge. No course payment or refund process applies.</p>
-                </div>
-
-                <!-- 6. Conduct (Bento Wide) -->
-                <div class="bento-card card bento-wide" data-aos="fade-up">
-                    <div class="accent-line line-teal"></div>
-                    <div class="module-icon bg-teal-glass"><i class="bi bi-person-lines-fill"></i></div>
-                    <h3 class="module-title">6. Community Conduct</h3>
-                    <p class="module-text">Respect is mandatory. No harassment, content scraping, or unauthorized
-                        redistribution of Edvora materials is allowed.</p>
-                    <div class="plain-english-min">
-                        <span class="tldr-pill">TL;DR</span>
-                        <span class="tldr-text">Be kind to others and don't steal or share our course videos.</span>
-                    </div>
-                </div>
-
-                <!-- 7. IP Rights -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-violet"></div>
-                    <div class="module-icon bg-violet-glass"><i class="bi bi-incognito"></i></div>
-                    <h3 class="module-title small text-uppercase">7. IP Rights</h3>
-                    <p class="module-text small">Content belongs to Edvora. You have a license to learn, not to own the
-                        intellectual property.</p>
-                </div>
-
-                <!-- 8. Privacy (Bento Dark) -->
-                <div class="bento-card card bento-dark" data-aos="fade-up">
-                    <span class="bento-icon-main text-white"><i class="bi bi-shield-shaded"></i></span>
-                    <h3 class="module-title text-white">8. Privacy Policy</h3>
-                    <p class="module-text text-white opacity-75">Your data is yours. We only use insights to improve
-                        your learning experience. We never sell your personal information.</p>
-                    <div class="plain-english-min border-white border-opacity-10">
-                        <span class="tldr-pill bg-white text-dark">SECURE</span>
-                        <span class="tldr-text text-white opacity-50">Your privacy is our biggest commitment.</span>
-                    </div>
-                </div>
-
-                <!-- 9. Disclaimers -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-amber"></div>
-                    <div class="module-icon bg-amber-glass"><i class="bi bi-exclamation-triangle"></i></div>
-                    <h3 class="module-title small text-uppercase">9. Disclaimers</h3>
-                    <p class="module-text small">Service provided "as is". We aim for 99.9% uptime and accurate content
-                        at all times.</p>
-                </div>
-
-                <!-- 10. Liability -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-blue"></div>
-                    <div class="module-icon bg-blue-glass"><i class="bi bi-file-earmark-lock"></i></div>
-                    <h3 class="module-title small text-uppercase">10. Liability</h3>
-                    <p class="module-text small">Limitation on indirect or incidental damages related to platform usage.
-                    </p>
-                </div>
-
-                <!-- 11. Termination -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-teal"></div>
-                    <div class="module-icon bg-teal-glass"><i class="bi bi-door-closed"></i></div>
-                    <h3 class="module-title small text-uppercase">11. Termination</h3>
-                    <p class="module-text small">We reserve the right to suspend accounts violating these terms with
-                        prior notice.</p>
-                </div>
-
-                <!-- 12. Changes -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-violet"></div>
-                    <div class="module-icon bg-violet-glass"><i class="bi bi-arrow-repeat"></i></div>
-                    <h3 class="module-title small text-uppercase">12. Changes</h3>
-                    <p class="module-text small">Terms may be updated. Continued use implies acceptance of new terms.
-                    </p>
-                </div>
-
-                <!-- 13. Governing Law -->
-                <div class="bento-card card" data-aos="fade-up">
-                    <div class="accent-line line-amber"></div>
-                    <div class="module-icon bg-amber-glass"><i class="bi bi-bank"></i></div>
-                    <h3 class="module-title small text-uppercase">13. Governing Law</h3>
-                    <p class="module-text small">These terms are governed by applicable law.</p>
-                </div>
-
-                <!-- 14. Support / Contact (Bento Wide) -->
+                <!-- Support Box -->
+                @if(!empty($support))
                 <div class="bento-card card bento-wide" data-aos="fade-up">
                     <div class="accent-line line-blue"></div>
                     <div class="module-icon bg-blue-glass"><i class="bi bi-headset"></i></div>
-                    <h3 class="module-title">Support & Inquiries</h3>
-                    <p class="small text-muted mt-2 mb-0">Use the Edvora contact form for legal and general inquiries.</p>
-                    <a href="{{ route('contact') }}" class="text-primary text-decoration-none fw-bold">Open contact form</a>
+                    <h3 class="module-title">{{ $support['title'] ?? 'Support & Inquiries' }}</h3>
+                    <p class="small text-muted mt-2 mb-0">{{ $support['description'] ?? 'Use the contact form for legal and general inquiries.' }}</p>
+                    <a href="{{ $support['link_url'] ?? route('contact') }}" class="text-primary text-decoration-none fw-bold">{{ $support['link_text'] ?? 'Open contact form' }}</a>
                 </div>
+                @endif
             </div>
 
             <!-- Visual Separator -->
@@ -220,18 +135,11 @@
 
             <div class="text-center text-muted small px-4">
                 <p class="mb-0">For legal inquiries, use the <a href="{{ route('contact') }}"
-                        class="text-primary text-decoration-none fw-bold">Edvora contact form</a>.</p>
-                <p>Edvora Tech Educational Platform © 2024</p>
+                        class="text-primary text-decoration-none fw-bold">{{ $siteSettings->get('company_name', 'Edvora') }} contact form</a>.</p>
+                <p>&copy; {{ date('Y') }} {{ $siteSettings->get('footer_copyright', 'Edvora Tech. All rights reserved.') }}</p>
             </div>
         </div>
     </section>
-
-    <!-- Modern Footer -->
-    
-
-    <!-- Bootstrap 5 JS -->
-    
-    <!-- Custom JS -->
 @endsection
 
 @push('scripts')

@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Widgets;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\Teacher;
-use App\Models\Competition;
 use App\Models\Event;
 use App\Models\ClassSession;
 use Carbon\Carbon;
@@ -48,18 +47,11 @@ class AdminStatsOverview extends StatsOverviewWidget
         $activeEvents = Event::where('status', 'active')->count();
         $totalEvents = Event::count();
 
-        // 5. Active Competitions
-        $activeCompetitions = Competition::where('status', 'active')->count();
-        $totalCompetitions = Competition::count();
-
         // 6. Classes in last 24 hours
         $classes24h = ClassSession::where('started_at', '>=', Carbon::now()->subHours(24))->count();
 
         // 7. Events in last week
         $eventsWeek = Event::where('created_at', '>=', Carbon::now()->subDays(7))->count();
-
-        // 8. Competitions in last week
-        $competitionsWeek = Competition::where('created_at', '>=', Carbon::now()->subDays(7))->count();
 
         return [
             Stat::make('Active Students', number_format($activeStudents))
@@ -82,11 +74,6 @@ class AdminStatsOverview extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('primary'),
 
-            Stat::make('Active Competitions', number_format($activeCompetitions))
-                ->description('Total: ' . number_format($totalCompetitions))
-                ->descriptionIcon('heroicon-m-trophy')
-                ->color('danger'),
-
             Stat::make('Classes (24h)', number_format($classes24h))
                 ->description('Sessions held today')
                 ->descriptionIcon('heroicon-m-clock')
@@ -96,11 +83,6 @@ class AdminStatsOverview extends StatsOverviewWidget
                 ->description('Recently added events')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('info'),
-
-            Stat::make('Competitions (7 days)', number_format($competitionsWeek))
-                ->description('Recently added competitions')
-                ->descriptionIcon('heroicon-m-trophy')
-                ->color('warning'),
         ];
     }
 }

@@ -228,18 +228,58 @@ body.dark-mode .card {
 
 /* Navbar */
 .glass-header {
-  background: rgba(6, 30, 62, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  position: fixed !important;
+  top: 16px;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  width: min(1340px, calc(100% - 32px)) !important;
+  margin: 0 auto !important;
+  border-radius: 20px;
+  background: rgba(6, 20, 44, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  padding: 0.6rem 1.25rem;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-header.scrolled {
+  background: rgba(5, 16, 36, 0.88) !important;
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(31, 143, 255, 0.3) !important;
+  top: 10px;
+}
+
+body.page-home {
+  background-color: #020811;
+}
+
+/* Page Heroes - Seamless Full Bleed under Floating Navbar */
+.courses-hero-section,
+.teachers-hero-section,
+.events-hero-section,
+.events-hero,
+.books-hero,
+.hero-animated,
+.story-hero-section,
+.terms-hero-refined,
+.roadmap-hero,
+.foundation-hero,
+.faq-hero,
+.hero-section,
+.about-hero-section {
+  padding-top: 120px !important;
+  position: relative;
 }
 
 .navbar-brand {
   font-size: 1.5rem;
   color: white !important;
-  text-shadow: 0 0 10px rgba(31, 143, 255, 0.5);
+  text-shadow: 0 0 12px rgba(31, 143, 255, 0.6);
 }
 
 .nav-link {
@@ -248,40 +288,45 @@ body.dark-mode .card {
   font-size: 0.95rem;
   position: relative;
   padding: 0.5rem 1rem !important;
+  border-radius: 10px;
 }
 
 .nav-link::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: 4px;
   left: 50%;
   width: 0;
   height: 2px;
   background: #00f0ff;
   transition: all 0.3s ease;
   transform: translateX(-50%);
+  box-shadow: 0 0 8px #00F0FF;
 }
 
 .nav-link:hover,
 .nav-link.active {
   color: white !important;
   text-shadow: 0 0 8px rgba(31, 143, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .nav-link:hover::after,
 .nav-link.active::after {
-  width: 80%;
+  width: 60%;
 }
 
 /* Premium Dropdown */
 .glass-dropdown {
-  background: #ffffff;
-  border: 1px solid rgba(31, 143, 255, 0.12);
+  background: rgba(8, 24, 52, 0.94) !important;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 18px;
-  padding: 0.6rem;
+  padding: 0.65rem;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.12),
-    0 4px 16px rgba(31, 143, 255, 0.08);
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 4px 20px rgba(31, 143, 255, 0.15) !important;
   margin-top: 12px;
   min-width: 220px;
   animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -306,9 +351,9 @@ body.dark-mode .card {
   left: 24px;
   width: 12px;
   height: 12px;
-  background: #ffffff;
-  border-top: 1px solid rgba(31, 143, 255, 0.12);
-  border-left: 1px solid rgba(31, 143, 255, 0.12);
+  background: rgba(8, 24, 52, 0.94) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.16) !important;
   transform: rotate(45deg);
   border-bottom-right-radius: 2px;
 }
@@ -323,15 +368,15 @@ body.dark-mode .card {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #aab2bd;
+  color: #78a6db;
   padding: 0.5rem 1rem 0.3rem;
 }
 
 .dropdown-item {
-  color: #2d3748;
-  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
   padding: 0.65rem 1rem;
-  transition: all 0.18s ease;
+  transition: all 0.2s ease;
   font-size: 0.9rem;
   font-weight: 500;
   display: flex;
@@ -342,7 +387,7 @@ body.dark-mode .card {
 
 .dropdown-item i {
   font-size: 1rem;
-  color: var(--primary-blue);
+  color: #00F0FF;
   width: 20px;
   text-align: center;
   flex-shrink: 0;
@@ -350,9 +395,9 @@ body.dark-mode .card {
 }
 
 .dropdown-item:hover {
-  background: linear-gradient(135deg, rgba(31, 143, 255, 0.07), rgba(0, 240, 255, 0.05));
-  color: var(--primary-blue);
-  transform: none;
+  background: rgba(31, 143, 255, 0.2) !important;
+  color: #00F0FF !important;
+  transform: translateX(4px);
 }
 
 .dropdown-item:hover i {

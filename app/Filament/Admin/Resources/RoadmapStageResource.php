@@ -16,7 +16,7 @@ class RoadmapStageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
     protected static ?string $navigationLabel = 'Roadmap Stages';
-    protected static ?string $navigationGroup = 'Website Management';
+    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $modelLabel = 'Roadmap Stage';
     protected static ?string $pluralModelLabel = 'Roadmap Stages';
     protected static ?int $navigationSort = 10;

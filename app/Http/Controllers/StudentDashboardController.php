@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Certificate;
 use App\Models\ClassSession;
-use App\Models\Competition;
 use App\Models\Course;
 use App\Models\Event;
 use App\Models\Point;
@@ -51,11 +50,6 @@ class StudentDashboardController extends Controller
 
         $upcomingEvents = Event::where('start_date', '>=', now())
             ->orderBy('start_date')
-            ->take(3)
-            ->get();
-
-        $activeCompetitions = Competition::where('status', 'active')
-            ->orderBy('end_date')
             ->take(3)
             ->get();
 
@@ -117,7 +111,6 @@ class StudentDashboardController extends Controller
             'user',
             'enrollments',
             'upcomingEvents',
-            'activeCompetitions',
             'leaderboard',
             'achievements',
             'activities',

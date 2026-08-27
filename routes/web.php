@@ -14,7 +14,6 @@ use App\Http\Controllers\TeacherDashboardController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\BookController;
-use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\CourseChatController;
 use App\Models\Course;
@@ -74,30 +73,20 @@ Route::prefix('events')->name('events.')->group(function () {
 });
 Route::post('/events/{id}/register', [EventController::class, 'register'])->name('events.register');
 
-// Competitions
-Route::prefix('competitions')->name('competitions.')->group(function () {
-    Route::get('/', [CompetitionController::class, 'index'])->name('index');
-    Route::get('/{id}', [CompetitionController::class, 'show'])->name('detail');
-});
-
-// Competitions API
-Route::get('/api/competitions', [CompetitionController::class, 'apiIndex'])->name('api.competitions.index');
-Route::get('/api/competitions/{id}', [CompetitionController::class, 'apiShow'])->name('api.competitions.show');
-
 // Community & Resources
 Route::get('/leaderboard',     [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
 Route::get('/scoring-help',    [\App\Http\Controllers\ScoringHelpController::class, 'index'])->name('scoring.help');
 Route::get('/roadmap',         [\App\Http\Controllers\RoadmapController::class, 'index'])->name('roadmap');
 Route::get('/foundation',      [\App\Http\Controllers\FoundationController::class, 'index'])->name('foundation');
 
-// About
-Route::get('/about',        fn() => view('about'))->name('about');
-Route::get('/story',        fn() => view('story'))->name('story');
+// About & Company
+Route::get('/about',        fn() => view('about', ['content' => \App\Models\PageContent::get('page_about', [])]))->name('about');
+Route::get('/story',        fn() => view('story', ['content' => \App\Models\PageContent::get('page_story', [])]))->name('story');
 Route::get('/how-we-work',  [\App\Http\Controllers\HowWeWorkController::class, 'index'])->name('how-we-work');
 Route::get('/contact',      fn() => view('contact'))->name('contact');
 Route::get('/faq',          fn() => view('faq'))->name('faq');
-Route::get('/terms',        fn() => view('terms'))->name('terms');
-Route::get('/privacy',      fn() => view('privacy'))->name('privacy');
+Route::get('/terms',        fn() => view('terms', ['content' => \App\Models\PageContent::get('page_terms', [])]))->name('terms');
+Route::get('/privacy',      fn() => view('privacy', ['content' => \App\Models\PageContent::get('page_privacy', [])]))->name('privacy');
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
@@ -234,7 +223,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ─── ADMIN AREA ─── prefix: /admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+        Route::get('/dashboard', fn() => redirect('/admin-panel'))->name('dashboard');
 
         // Events Management (Custom Admin - Not Filament)
         Route::get('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'index'])->name('events.index');

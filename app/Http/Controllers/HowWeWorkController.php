@@ -18,7 +18,9 @@ class HowWeWorkController extends Controller
         // Get impact stats (all)
         $impactStats = $stats;
 
-        return view('how-we-work', compact('heroStats', 'impactStats'));
+        $content = \App\Models\PageContent::get('page_how_we_work', []);
+
+        return view('how-we-work', compact('heroStats', 'impactStats', 'content'));
     }
 
     private function getCalculatedStats()

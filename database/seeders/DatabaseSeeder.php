@@ -19,8 +19,9 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             AchievementSeeder::class,
             EventSeeder::class,
-            CompetitionSeeder::class,
             StudentDataSeeder::class,
+            SiteSettingSeeder::class,
+            CompanyPagesSeeder::class,
         ]);
     }
 }

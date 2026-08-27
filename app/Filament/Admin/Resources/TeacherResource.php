@@ -33,7 +33,7 @@ class TeacherResource extends Resource
 
     protected static ?string $navigationLabel = 'Teachers';
 
-    protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'User Management';
 
     protected static ?string $modelLabel = 'Teacher';
 

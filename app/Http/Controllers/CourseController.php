@@ -15,8 +15,36 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Course::with(['category', 'teacher'])
-            ->where('status', 'published');
+        $baseQuery = Course::with(['category', 'teacher'])
+            ->where('status', '!=', 'draft');
+
+        // Apply filter types (VIP, Upcoming, Finished, Popular)
+        $filter = $request->get('filter', 'all');
+
+        $query = clone $baseQuery;
+
+        if ($filter === 'vip') {
+            $query->where('is_featured', true);
+        } elseif ($filter === 'upcoming') {
+            $query->where(function ($q) {
+                $q->where('start_date', '>=', now()->startOfDay())
+                  ->orWhere(function ($sub) {
+                      $sub->whereNull('started_at')
+                          ->where('status', 'published')
+                          ->where(function ($d) {
+                              $d->whereNull('end_date')->orWhere('end_date', '>=', now()->startOfDay());
+                          });
+                  });
+            });
+        } elseif ($filter === 'finished') {
+            $query->where(function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay());
+                })->orWhereIn('status', ['archived', 'completed']);
+            });
+        } elseif ($filter === 'popular') {
+            $query->orderByDesc('enrolled_count');
+        }
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -33,21 +61,65 @@ class CourseController extends Controller
             $query->where('level', $level);
         }
 
-        $sort = $request->get('sort', 'popular');
-        match ($sort) {
-            'newest' => $query->latest(),
-            'rating' => $query->orderByDesc('rating'),
-            default => $query->orderByDesc('enrolled_count'),
-        };
+        $sort = $request->get('sort', $filter === 'popular' ? 'popular' : 'newest');
+        if ($filter !== 'popular') {
+            match ($sort) {
+                'popular' => $query->orderByDesc('enrolled_count'),
+                'rating' => $query->orderByDesc('rating'),
+                default => $query->latest(),
+            };
+        }
 
-        $courses = $query->paginate(6)->withQueryString();
+        $courses = $query->paginate(8)->withQueryString();
         $categories = Category::all();
 
+        // Calculate filter counts for the filter chips
+        $counts = [
+            'all' => (clone $baseQuery)->count(),
+            'vip' => (clone $baseQuery)->where('is_featured', true)->count(),
+            'upcoming' => (clone $baseQuery)->where(function ($q) {
+                $q->where('start_date', '>=', now()->startOfDay())
+                  ->orWhere(function ($sub) {
+                      $sub->whereNull('started_at')
+                          ->where('status', 'published')
+                          ->where(function ($d) {
+                              $d->whereNull('end_date')->orWhere('end_date', '>=', now()->startOfDay());
+                          });
+                  });
+            })->count(),
+            'finished' => (clone $baseQuery)->where(function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay());
+                })->orWhereIn('status', ['archived', 'completed']);
+            })->count(),
+            'popular' => (clone $baseQuery)->where('enrolled_count', '>', 0)->count(),
+        ];
+
         $totalStudents = User::where('role', 'student')->count();
-        $totalCourses = Course::where('status', 'published')->count();
+        $totalCourses = (clone $baseQuery)->count();
         $totalCertificates = Certificate::count();
 
-        return view('courses.index', compact('courses', 'categories', 'totalStudents', 'totalCourses', 'totalCertificates'));
+        if ($request->ajax()) {
+            return view('courses.partials.course-list', compact(
+                'courses',
+                'categories',
+                'counts',
+                'filter',
+                'totalStudents',
+                'totalCourses',
+                'totalCertificates'
+            ))->render();
+        }
+
+        return view('courses.index', compact(
+            'courses',
+            'categories',
+            'counts',
+            'filter',
+            'totalStudents',
+            'totalCourses',
+            'totalCertificates'
+        ));
     }
 
     public function show($slug)

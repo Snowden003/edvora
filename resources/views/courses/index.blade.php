@@ -4,6 +4,7 @@
 
 @push('styles')
     <link href="{{ asset('assets/css/glass-panel.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/courses-pages.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -104,12 +105,54 @@
         </section>
 
         <!-- Search and Filter Section -->
-        <section class="py-4 gray">
+        <section class="py-4 gray courses-filter-section">
           <div class="container">
+
+            <!-- Filter Tabs Pills -->
+            <div class="courses-filter-tabs-wrapper mb-3">
+              <a href="{{ route('courses.index', array_merge(request()->except(['filter', 'page']), ['filter' => 'all'])) }}"
+                 class="filter-tab-pill {{ (!request('filter') || request('filter') === 'all') ? 'active' : '' }}">
+                <span class="tab-icon"><i class="bi bi-grid-fill"></i></span>
+                <span>All Courses</span>
+                <span class="tab-count">{{ $counts['all'] ?? 0 }}</span>
+              </a>
+
+              <a href="{{ route('courses.index', array_merge(request()->except(['filter', 'page']), ['filter' => 'vip'])) }}"
+                 class="filter-tab-pill vip-tab {{ request('filter') === 'vip' ? 'active' : '' }}">
+                <span class="tab-icon text-warning"><i class="bi bi-star-fill"></i></span>
+                <span>VIP Courses</span>
+                <span class="tab-count">{{ $counts['vip'] ?? 0 }}</span>
+              </a>
+
+              <a href="{{ route('courses.index', array_merge(request()->except(['filter', 'page']), ['filter' => 'upcoming'])) }}"
+                 class="filter-tab-pill {{ request('filter') === 'upcoming' ? 'active' : '' }}">
+                <span class="tab-icon text-success"><i class="bi bi-rocket-takeoff-fill"></i></span>
+                <span>Starting Soon</span>
+                <span class="tab-count">{{ $counts['upcoming'] ?? 0 }}</span>
+              </a>
+
+              <a href="{{ route('courses.index', array_merge(request()->except(['filter', 'page']), ['filter' => 'finished'])) }}"
+                 class="filter-tab-pill {{ request('filter') === 'finished' ? 'active' : '' }}">
+                <span class="tab-icon"><i class="bi bi-check2-circle"></i></span>
+                <span>Completed</span>
+                <span class="tab-count">{{ $counts['finished'] ?? 0 }}</span>
+              </a>
+
+              <a href="{{ route('courses.index', array_merge(request()->except(['filter', 'page']), ['filter' => 'popular'])) }}"
+                 class="filter-tab-pill {{ request('filter') === 'popular' ? 'active' : '' }}">
+                <span class="tab-icon text-danger"><i class="bi bi-fire"></i></span>
+                <span>Most Enrolled</span>
+                <span class="tab-count">{{ $counts['popular'] ?? 0 }}</span>
+              </a>
+            </div>
+
+            <!-- Filter Controls Bar -->
             <form method="GET" action="{{ route('courses.index') }}" id="filterForm">
-              <div class="glass-panel-">
-                <div class="row g-3">
-                  <div class="col-lg-6">
+              <input type="hidden" name="filter" id="activeFilterInput" value="{{ request('filter', 'all') }}" />
+
+              <div class="courses-filter-bar">
+                <div class="row g-3 align-items-center">
+                  <div class="col-lg-5 col-md-12">
                     <div class="input-group">
                       <span class="input-group-text">
                         <i class="bi bi-search"></i>
@@ -119,13 +162,14 @@
                         class="form-control"
                         name="search"
                         id="searchCourses"
-                        placeholder="Search courses..."
+                        placeholder="Search by title, topic or keywords..."
                         value="{{ request('search') }}"
+                        autocomplete="off"
                       />
                     </div>
                   </div>
-                  <div class="col-lg-2">
-                    <select class="form-select" name="category" id="categoryFilter" onchange="document.getElementById('filterForm').submit()">
+                  <div class="col-lg-3 col-md-4 col-sm-6">
+                    <select class="form-select" name="category" id="categoryFilter">
                       <option value="">All Categories</option>
                       @foreach($categories as $cat)
                         <option value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'selected' : '' }}>
@@ -134,102 +178,28 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="col-lg-2">
-                    <select class="form-select" name="level" id="levelFilter" onchange="document.getElementById('filterForm').submit()">
+                  <div class="col-lg-2 col-md-4 col-sm-6">
+                    <select class="form-select" name="level" id="levelFilter">
                       <option value="">All Levels</option>
                       <option value="beginner"     {{ request('level') == 'beginner' ? 'selected' : '' }}>Beginner</option>
                       <option value="intermediate" {{ request('level') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
                       <option value="advanced"     {{ request('level') == 'advanced' ? 'selected' : '' }}>Advanced</option>
                     </select>
                   </div>
-                  <div class="col-lg-2">
-                    <select class="form-select" name="sort" id="sortBy" onchange="document.getElementById('filterForm').submit()">
-                      <option value="popular" {{ request('sort', 'popular') == 'popular' ? 'selected' : '' }}>Most Popular</option>
-                      <option value="newest"  {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
+                  <div class="col-lg-2 col-md-4 col-sm-12">
+                    <select class="form-select" name="sort" id="sortBy">
+                      <option value="newest"  {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Newest</option>
+                      <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
                       <option value="rating"  {{ request('sort') == 'rating' ? 'selected' : '' }}>Highest Rated</option>
                     </select>
                   </div>
                 </div>
               </div>
             </form>
-          </div>
-        </section>
 
-        <!-- Courses Grid -->
-        <section class="py-5 light">
-          <div class="container">
-
-            @if($courses->isEmpty())
-                  <div class="text-center py-5">
-                    <i class="bi bi-search display-1 text-muted"></i>
-                    <h4 class="mt-3 text-muted">No courses found</h4>
-                    <a href="{{ route('courses.index') }}" class="btn btn-primary mt-3">Clear Filters</a>
-                  </div>
-            @else
-                  <div class="row g-4">
-                    @foreach($courses as $course)
-                          <div class="col-lg-4 col-md-6">
-                            <div class="card course-card h-100">
-                              <div class="position-relative">
-                                <img src="{{ $course->thumbnail ? asset('storage/' . $course->thumbnail) : 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop' }}"
-                                     class="card-img-top" alt="{{ $course->title }}" style="height:200px;object-fit:cover;">
-                                <div class="position-absolute top-0 start-0 m-2">
-                                  @if($course->enrolled_count > 800)
-                                    <span class="badge bg-danger">Popular</span>
-                                  @endif
-                                  @if($course->created_at && $course->created_at->diffInDays() < 30)
-                                    <span class="badge bg-success">New</span>
-                                  @endif
-                                </div>
-                              </div>
-                              <div class="card-body d-flex flex-column">
-                                <div class="mb-2">
-                                  <span class="badge bg-primary">{{ $course->category->name ?? '' }}</span>
-                                  <span class="badge bg-secondary ms-1">{{ ucfirst($course->level) }}</span>
-                                </div>
-                                <h5 class="card-title">{{ $course->title }}</h5>
-                                <p class="text-muted mb-2">by {{ $course->teacher->name ?? 'Edvora Instructor' }}</p>
-                                <p class="card-text small text-muted">{{ Str::limit($course->description, 100) }}</p>
-
-                                <div class="mt-auto">
-                                  <div class="d-flex align-items-center mb-3">
-                                    <div class="me-2">
-                                      @for($i = 1; $i <= 5; $i++)
-                                        <i class="bi {{ $i <= round($course->rating) ? 'bi-star-fill text-warning' : 'bi-star text-muted' }}"></i>
-                                      @endfor
-                                    </div>
-                                    <span class="text-muted small">({{ $course->rating }}) &bull; {{ number_format($course->enrolled_count) }} students</span>
-                                  </div>
-
-                                  <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <small class="text-muted">
-                                      <i class="bi bi-clock me-1"></i>{{ $course->duration_hours }}h
-                                    </small>
-                                    <small class="text-success fw-semibold">
-                                      <i class="bi bi-unlock me-1"></i>Free
-                                    </small>
-                                  </div>
-
-                                  <div class="d-flex gap-2">
-                                    <a href="{{ route('courses.detail', $course->slug) }}" class="btn btn-primary flex-fill">
-                                      Enroll Now
-                                    </a>
-                                    <a href="{{ route('courses.detail', $course->slug) }}" class="btn btn-outline-primary">
-                                      Details
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                    @endforeach
-                  </div>
-
-                  <!-- Pagination -->
-                  <div class="d-flex justify-content-center mt-5">
-                    {{ $courses->links('pagination::bootstrap-5') }}
-                  </div>
-            @endif
+            <div id="courses-grid-container">
+                @include('courses.partials.course-list')
+            </div>
 
           </div>
         </section>

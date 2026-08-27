@@ -46,12 +46,19 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Admin\Widgets\ClassSessionsChart::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->navigationGroups([
+                'Content Management',
+                'User Management',
+                'Academic & Scoring',
+                'Communication & Events',
+                'Settings & System',
+            ])
             ->navigationItems([
                 NavigationItem::make('Events Management')
                     ->url('/admin/events')
                     ->icon('heroicon-o-calendar')
-                    ->group('Events')
-                    ->sort(3),
+                    ->group('Communication & Events')
+                    ->sort(10),
             ])
             ->middleware([
                 EncryptCookies::class,

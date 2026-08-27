@@ -19,7 +19,7 @@ class ContactMessageResource extends Resource
 
     protected static ?string $navigationIcon    = 'heroicon-o-envelope';
     protected static ?string $navigationLabel   = 'Contact Messages';
-    protected static ?string $navigationGroup   = 'Communication';
+    protected static ?string $navigationGroup   = 'Communication & Events';
     protected static ?int    $navigationSort     = 1;
 
     public static function getNavigationBadge(): ?string

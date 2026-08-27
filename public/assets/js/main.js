@@ -1,19 +1,36 @@
 // Main JavaScript for Edvora Tech
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize all components
+  initHeaderScroll();
   initMobileNavbar();
   initThemeToggle();
   initPasswordToggle();
   loadPopularCourses();
   initCoursesSlider();
   loadUpcomingEvents();
-  loadUpcomingCompetitions();
   loadTopStudents();
   loadStartedCourses();
   loadTestimonials();
   initContactForm();
   initAnimations();
 });
+
+// Floating Header Scroll Effects
+function initHeaderScroll() {
+  const header = document.querySelector(".glass-header");
+  if (!header) return;
+
+  function onScroll() {
+    if (window.scrollY > 20) {
+      header.classList.add("scrolled");
+    } else {
+      header.classList.remove("scrolled");
+    }
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
 
 // Mobile Navbar Drawer
 function initMobileNavbar() {
@@ -582,56 +599,7 @@ function initEventsSlider() {
   startAutoplay();
 }
 
-// Load Upcoming Competitions
-function loadUpcomingCompetitions() {
-  const competitionsContainer = document.getElementById("upcomingCompetitions");
-  if (!competitionsContainer) return;
 
-  const competitions = [
-    {
-      id: 1,
-      title: "Coding Challenge 2024",
-      prize: "$5,000",
-      participants: 500,
-      deadline: "Jan 15, 2024",
-    },
-    {
-      id: 2,
-      title: "Data Science Hackathon",
-      prize: "$3,000",
-      participants: 250,
-      deadline: "Jan 20, 2024",
-    },
-    {
-      id: 3,
-      title: "Design Innovation Contest",
-      prize: "$2,000",
-      participants: 150,
-      deadline: "Jan 25, 2024",
-    },
-  ];
-
-  competitionsContainer.innerHTML = competitions
-    .map(
-      (comp) => `
-        <div class="col-md-4">
-            <div class="card competition-card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-trophy-fill fs-1 mb-3"></i>
-                    <h5 class="card-title">${comp.title}</h5>
-                    <p class="card-text">Prize Pool: <strong>${comp.prize}</strong></p>
-                    <p class="card-text small">${comp.participants} participants</p>
-                    <p class="card-text small">Deadline: ${comp.deadline}</p>
-                    <button class="btn btn-warning btn-sm" onclick="joinCompetition(${comp.id})">
-                        Join Now
-                    </button>
-                </div>
-            </div>
-        </div>
-    `,
-    )
-    .join("");
-}
 
 // Load Top Students with Enhanced Design
 function loadTopStudents() {
@@ -1164,11 +1132,6 @@ function enrollCourse(courseId) {
 function registerEvent(eventId) {
   alert(`Registering for event ${eventId}. Please login to continue.`);
   // Redirect to login or event registration
-}
-
-function joinCompetition(competitionId) {
-  alert(`Joining competition ${competitionId}. Please login to continue.`);
-  // Redirect to login or competition page
 }
 
 function continueCourse(courseId) {

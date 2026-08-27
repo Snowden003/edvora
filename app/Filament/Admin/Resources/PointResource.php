@@ -20,7 +20,7 @@ class PointResource extends Resource
     protected static ?string $model = Point::class;
     protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Points & Scoring';
-    protected static ?string $navigationGroup = 'Gamification';
+    protected static ?string $navigationGroup = 'Academic & Scoring';
     protected static ?string $modelLabel = 'Point Entry';
     protected static ?string $pluralModelLabel = 'Point Entries';
     protected static ?int $navigationSort = 1;

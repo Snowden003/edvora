@@ -74,7 +74,7 @@
 .why-edvora-card p { color: #62738d; font-size: .92rem; line-height: 1.7; margin: 0; }
 
 /* --- About Us Preview --- */
-.about-preview-section { padding: 80px 0; background: #f7faff; }
+.about-preview-section { padding: 80px 0; background: #f7faff; position: relative; overflow: hidden; }
 .about-preview-section .section-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -126,37 +126,156 @@
     color: #fff;
     font-weight: 600;
     text-decoration: none;
-    transition: transform .2s ease, background .2s ease;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow: 0 8px 20px rgba(31, 143, 255, 0.25);
 }
-.about-preview-cta:hover { transform: translateY(-2px); background: #0f7ae0; color: #fff; }
-.about-preview-visual {
+.about-preview-cta:hover { transform: translateY(-2px); background: #0f7ae0; color: #fff; box-shadow: 0 12px 25px rgba(31, 143, 255, 0.35); }
+
+/* Rich About Visual Card */
+.about-visual-card {
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #091e3e 0%, #102e5a 60%, #163d76 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(7, 21, 46, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    padding: 36px 28px;
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.about-visual-card__bg-glow {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31, 143, 255, 0.35) 0%, transparent 70%);
+    top: 20%;
+    left: 30%;
+    filter: blur(40px);
+    pointer-events: none;
+}
+.about-visual-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 8px 16px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #ffd166;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+}
+.about-visual-canvas {
+    position: relative;
+    min-height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 320px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #e8f4ff, #f0f7ff);
-    border: 1px solid #e2ebf7;
+    margin-top: 15px;
+}
+.about-visual-centerpiece {
     position: relative;
-    overflow: hidden;
+    width: 110px;
+    height: 110px;
+    display: grid;
+    place-items: center;
 }
-.about-preview-visual i {
-    font-size: 7rem;
-    color: #1F8FFF;
-    opacity: .15;
+.about-avatar-circle--main {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1F8FFF, #7456ce);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 2.2rem;
+    box-shadow: 0 12px 30px rgba(31, 143, 255, 0.45);
+    z-index: 2;
+    animation: floatAnim 4s ease-in-out infinite;
 }
-.about-preview-visual__badge {
+.about-orbit-ring {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    padding: 10px 16px;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 8px 20px rgba(31, 143, 255, .12);
-    color: #1F8FFF;
-    font-weight: 700;
-    font-size: .9rem;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    pointer-events: none;
 }
+.about-orbit-ring--1 { inset: -20px; animation: rotateClockwise 25s linear infinite; }
+.about-orbit-ring--2 { inset: -45px; border-color: rgba(31, 143, 255, 0.18); }
+
+@keyframes floatAnim {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+@keyframes rotateClockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.about-floating-pill {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    background: rgba(13, 37, 73, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+    z-index: 3;
+}
+.about-floating-pill:hover { transform: translateY(-4px); }
+.about-floating-pill--top-left { top: 10px; left: -10px; }
+.about-floating-pill--top-right { top: 25px; right: -10px; }
+.about-floating-pill--bottom-left { bottom: 15px; left: -10px; }
+
+.pill-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+}
+.pill-icon--pink { background: rgba(244, 184, 208, 0.2); color: #f4b8d0; }
+.pill-icon--purple { background: rgba(116, 86, 206, 0.25); color: #c4b5fd; }
+.pill-icon--blue { background: rgba(31, 143, 255, 0.25); color: #93c5fd; }
+
+.pill-text { display: flex; flex-direction: column; text-align: left; }
+.pill-text strong { color: #fff; font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+.pill-text small { color: rgba(255, 255, 255, 0.65); font-size: 0.72rem; }
+
+.about-code-snippet-box {
+    position: absolute;
+    bottom: -15px;
+    right: 0px;
+    background: rgba(6, 18, 38, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.75rem;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+    z-index: 4;
+}
+.code-snippet-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.code-snippet-header .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.code-snippet-header .dot--red { background: #ef4444; }
+.code-snippet-header .dot--yellow { background: #f59e0b; }
+.code-snippet-header .dot--green { background: #10b981; }
+.code-snippet-header .code-title { color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; margin-left: 6px; }
+.code-snippet-body code { display: block; color: #cbd5e1; line-height: 1.5; font-size: 0.73rem; }
+.code-snippet-body .kw { color: #f472b6; font-weight: bold; }
+.code-snippet-body .cls { color: #38bdf8; font-weight: bold; }
+.code-snippet-body .prop { color: #fbbf24; }
+.code-snippet-body .str { color: #4ade80; }
 
 /* --- Impact on Women --- */
 .impact-women-section { padding: 88px 0; background: #f7faff; position: relative; overflow: hidden; }
@@ -279,9 +398,164 @@
     color: #fff;
     font-weight: 700;
 }
-.top-student-name { color: #102c56; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-.top-student-xp { color: #1F8FFF; font-size: 1.3rem; font-weight: 800; }
-.top-student-xp-label { color: #92a1b8; font-size: .82rem; }
+/* --- Why Edvora Visual Showcase --- */
+.why-visual-showcase {
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #091e3e 0%, #102e5a 60%, #163d76 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(7, 21, 46, 0.25);
+    padding: 36px 28px;
+    min-height: 420px;
+    overflow: hidden;
+}
+.why-visual-bg {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31, 143, 255, 0.3) 0%, transparent 70%);
+    filter: blur(35px);
+    pointer-events: none;
+}
+.why-visual-card-main {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+.why-portal-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(31, 143, 255, 0.2), rgba(116, 86, 206, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: grid;
+    place-items: center;
+    color: #ffd166;
+    font-size: 2.2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    animation: floatAnim 4s ease-in-out infinite;
+}
+.why-visual-card-main h3 {
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.why-visual-card-main p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+.why-feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(13, 37, 73, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+}
+.why-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.why-floating-badge {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 99px;
+    background: rgba(6, 18, 38, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    z-index: 3;
+}
+.why-floating-badge--1 { top: 20px; left: 15px; }
+.why-floating-badge--2 { bottom: 15px; right: 15px; }
+
+/* --- Donation Section Visual Card --- */
+.donation-visual-card {
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #091e3e 0%, #102e5a 60%, #163d76 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(7, 21, 46, 0.25);
+    padding: 32px 28px;
+    min-height: 380px;
+    overflow: hidden;
+}
+.donation-visual-card__glow {
+    position: absolute;
+    top: 30%;
+    left: 25%;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
+    filter: blur(35px);
+    pointer-events: none;
+}
+.donation-card-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+.donation-heart-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(244, 184, 208, 0.3));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    display: grid;
+    place-items: center;
+    color: #f87171;
+    font-size: 2rem;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25);
+    animation: floatAnim 3.5s ease-in-out infinite;
+}
+.donation-card-content h3 {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.donation-card-content > p {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    margin-bottom: 22px;
+}
+.donation-impact-bars {
+    background: rgba(13, 37, 73, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+}
+.donation-quote {
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    font-style: italic;
+}
 
 /* --- Donation Section --- */
 .donation-home-section {
@@ -353,10 +627,13 @@
 @media (max-width: 991.98px) {
     .why-edvora-section, .donation-home-section, .impact-women-section { padding: 64px 0; }
     .about-preview-section, .top-students-preview { padding: 60px 0; }
-    .about-preview-visual { min-height: 240px; margin-top: 30px; }
+    .about-preview-visual, .about-visual-card, .why-visual-showcase, .donation-visual-card { min-height: auto; margin-top: 30px; }
 }
 @media (max-width: 575.98px) {
     .why-edvora-card, .impact-women-card, .top-student-card { flex: 1 1 100%; }
     .donation-stat-box { flex: 1 1 100%; }
     .about-preview-stats { gap: 20px; }
+    .about-floating-pill { position: static; margin-bottom: 8px; width: 100%; }
+    .about-code-snippet-box { position: static; margin-top: 12px; width: 100%; }
+    .about-visual-canvas { flex-direction: column; min-height: auto; }
 }

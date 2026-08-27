@@ -61,12 +61,9 @@ class StudentDataSeeder extends Seeder
                 }
             }
 
-            $activitySamples = [
                 ['type' => 'course',      'icon' => 'bi-play-circle',    'color' => 'success',   'message' => 'Completed a lesson in ' . ($enrolled->first()->title ?? 'a course')],
                 ['type' => 'achievement', 'icon' => 'bi-trophy',         'color' => 'warning',   'message' => 'Earned "' . ($earnedAchievements->first()->title ?? 'Achievement') . '" badge'],
-                ['type' => 'competition', 'icon' => 'bi-award',          'color' => 'primary',   'message' => 'Joined Coding Challenge 2026'],
                 ['type' => 'event',       'icon' => 'bi-calendar-check', 'color' => 'info',      'message' => 'Registered for AI & Machine Learning Summit'],
-            ];
 
             foreach ($activitySamples as $act) {
                 Activity::create([

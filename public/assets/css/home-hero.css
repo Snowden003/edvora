@@ -468,23 +468,23 @@
 /* ===== Hero 2 (code-built, no images) ===== */
 /* ===== Hero 2 (Edvora Tech Brand Blue & Cyan) ===== */
 :root {
-    --header-height: 72px;
-    --hero-slide-top-padding: 36px;
-    --hero-slide-bottom-padding: 80px;
+    --header-height: 0px;
+    --hero-slide-top-padding: 105px;
+    --hero-slide-bottom-padding: 65px;
 }
 
 @media (max-width: 991.98px) {
     :root {
-        --header-height: 64px;
-        --hero-slide-top-padding: 30px;
-        --hero-slide-bottom-padding: 80px;
+        --header-height: 0px;
+        --hero-slide-top-padding: 95px;
+        --hero-slide-bottom-padding: 60px;
     }
 }
 
 @media (max-width: 575.98px) {
     :root {
-        --hero-slide-top-padding: 24px;
-        --hero-slide-bottom-padding: 70px;
+        --hero-slide-top-padding: 85px;
+        --hero-slide-bottom-padding: 50px;
     }
 }
 
@@ -492,8 +492,8 @@
     position: relative;
     overflow: hidden;
     background: #020811;
-    min-height: calc(100vh - var(--header-height));
-    min-height: calc(100dvh - var(--header-height));
+    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -507,8 +507,8 @@
 .hero2 .carousel-inner {
     flex: 1;
     display: flex;
-    min-height: calc(100vh - var(--header-height));
-    min-height: calc(100dvh - var(--header-height));
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .hero2 .carousel-item {
@@ -516,8 +516,8 @@
     overflow: hidden;
     background: radial-gradient(circle at 50% 0%, #0a1628 0%, #050b14 60%, #020408 100%);
     padding: var(--hero-slide-top-padding) 0 var(--hero-slide-bottom-padding);
-    min-height: calc(100vh - var(--header-height));
-    min-height: calc(100dvh - var(--header-height));
+    min-height: 100vh;
+    min-height: 100dvh;
     flex: 0 0 100%;
 }
 

@@ -3,7 +3,7 @@
 <div class="mobile-drawer" id="mobileDrawer">
     <div class="mobile-drawer-header">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-            <i class="bi bi-mortarboard-fill me-2"></i>Edvora Tech
+            <i class="bi bi-mortarboard-fill me-2"></i>{{ $siteSettings->get('company_name', 'Edvora Tech') }}
         </a>
         <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Close">
             <i class="bi bi-x-lg"></i>
@@ -33,14 +33,13 @@
             </li>
 
             {{-- Community dropdown --}}
-            <li class="nav-item dropdown {{ request()->routeIs(['events.*','competitions.*','leaderboard']) ? 'open' : '' }}">
+            <li class="nav-item dropdown {{ request()->routeIs(['events.*','leaderboard']) ? 'open' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#" role="button">
                     <i class="bi bi-people"></i>Community
                 </a>
-                <ul class="mobile-sub-menu {{ request()->routeIs(['events.*','competitions.*','leaderboard']) ? 'open' : '' }}">
+                <ul class="mobile-sub-menu {{ request()->routeIs(['events.*','leaderboard']) ? 'open' : '' }}">
                     <span class="dropdown-header-label">Engage</span>
                     <li><a class="dropdown-item {{ request()->routeIs('events.*') ? 'active' : '' }}" href="{{ route('events.index') }}"><i class="bi bi-calendar-event"></i>Events</a></li>
-                    <li><a class="dropdown-item {{ request()->routeIs('competitions.*') ? 'active' : '' }}" href="{{ route('competitions.index') }}"><i class="bi bi-trophy"></i>Competitions</a></li>
                     <li><a class="dropdown-item {{ request()->routeIs('leaderboard') ? 'active' : '' }}" href="{{ route('leaderboard') }}"><i class="bi bi-bar-chart-steps"></i>Leaderboard</a></li>
                 </ul>
             </li>
@@ -96,7 +95,9 @@
                         @elseif(Auth::user()->role === 'teacher')
                             <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
                         @elseif(Auth::user()->role === 'admin')
-                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/admin-panel') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/admin-panel/company-pages') }}"><i class="bi bi-file-earmark-text"></i>Company Pages</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/admin-panel/site-settings') }}"><i class="bi bi-gear"></i>Site Settings</a></li>
                         @endif
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -116,7 +117,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top glass-header">
     <div class="container">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-            <i class="bi bi-mortarboard-fill me-2"></i>Edvora Tech
+            <i class="bi bi-mortarboard-fill me-2"></i>{{ $siteSettings->get('company_name', 'Edvora Tech') }}
         </a>
 
         <button class="navbar-toggler" id="mobileNavToggler" type="button" aria-label="Open menu">
@@ -138,13 +139,12 @@
                     <a class="nav-link {{ request()->routeIs('teachers.*') ? 'active' : '' }}" href="{{ route('teachers.index') }}">Teachers</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['events.*', 'competitions.*', 'leaderboard']) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['events.*', 'leaderboard']) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                         Community
                     </a>
                     <ul class="dropdown-menu glass-dropdown">
                         <li><span class="dropdown-header-label">Engage</span></li>
                         <li><a class="dropdown-item {{ request()->routeIs('events.*') ? 'active' : '' }}" href="{{ route('events.index') }}"><i class="bi bi-calendar-event"></i>Events</a></li>
-                        <li><a class="dropdown-item {{ request()->routeIs('competitions.*') ? 'active' : '' }}" href="{{ route('competitions.index') }}"><i class="bi bi-trophy"></i>Competitions</a></li>
                         <li><a class="dropdown-item {{ request()->routeIs('leaderboard') ? 'active' : '' }}" href="{{ route('leaderboard') }}"><i class="bi bi-bar-chart-steps"></i>Leaderboard</a></li>
                     </ul>
                 </li>
@@ -193,7 +193,9 @@
                             @elseif(Auth::user()->role === 'teacher')
                                 <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
                             @elseif(Auth::user()->role === 'admin')
-                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/admin-panel') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/admin-panel/company-pages') }}"><i class="bi bi-file-earmark-text"></i>Company Pages</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/admin-panel/site-settings') }}"><i class="bi bi-gear"></i>Site Settings</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>

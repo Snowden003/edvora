@@ -1,69 +1,350 @@
 /*   --------------  Courses Page Style  --------------  */
-.course-card {
-    background: rgba(255, 255, 255, 0.872);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.306) !important;
-    transition: all 0.4s ease;
-    overflow: hidden;
-}
 
-.course-card:hover {
-    transform: translateY(-10px);
-    box-shadow:10px 10px 30px rgba(0, 238, 255, 0.114) !important;
-}
-.course-card .position-relative::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.2),
-        transparent 50%
-    );
-}
-.card-img-top {
-    height: 250px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-}
-.course-card .btn-primary {
-    background: linear-gradient(135deg, #1f8fff, #00f0ff);
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: 0.3s ease;
-}
-
-.course-card .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 240, 255, 0.4);
-}
-
-.course-card .btn-outline-primary {
+/* ===== Quick Filter Tabs ===== */
+.courses-filter-section {
     position: relative;
-    border: 1.5px solid rgba(31, 143, 255, 0.5);
-    background: rgba(255, 255, 255, 0.4);
+    z-index: 10;
+}
+
+.courses-filter-tabs-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 6px 0 16px;
+}
+
+.filter-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-
-    color: var(--primary-blue);
+    border: 1px solid rgba(31, 143, 255, 0.15);
+    color: #475569;
+    font-size: 0.85rem;
     font-weight: 600;
-    border-radius: 14px;
-    padding: 10px 16px;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+}
 
-    transition: all 0.35s cubic-bezier(.2,.8,.2,1);
+.filter-tab-pill:hover {
+    color: #0284c7;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(31, 143, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(31, 143, 255, 0.15);
+}
+
+.filter-tab-pill.active {
+    background: linear-gradient(135deg, #1f8fff 0%, #00b4d8 100%);
+    color: #ffffff !important;
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(31, 143, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.filter-tab-pill .tab-icon {
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.filter-tab-pill.active .tab-icon {
+    color: #ffffff;
+}
+
+.filter-tab-pill .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(31, 143, 255, 0.1);
+    color: #1f8fff;
+    transition: all 0.25s ease;
+}
+
+.filter-tab-pill.active .tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* VIP Tab Special Accent */
+.filter-tab-pill.vip-tab:not(.active):hover {
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #d97706;
+}
+
+/* Compact Filter Controls Bar */
+.courses-filter-bar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(31, 143, 255, 0.15);
+    border-radius: 18px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    margin-bottom: 24px;
+}
+
+/* ===== Safi Academy Course Card ===== */
+.safi-course-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
+    border-radius: 2.5rem;
+    background: rgba(15, 23, 42, 0.7); /* Deep dark glass */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+    transition: all 0.5s ease;
+    position: relative;
+    text-decoration: none !important;
 }
 
-.course-card .btn-outline-primary:hover {
-    color: white ;
-    background-color: var(--primary-blue);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(31, 143, 255, 0.35);
+.safi-course-card:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 25px 80px rgba(16, 185, 129, 0.15);
 }
 
-.course-card .btn-outline-primary:hover::before {
+.safi-course-card .safi-thumb-wrap {
+    position: relative;
+    display: flex;
+    height: 16rem;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+}
+
+.safi-thumb-wrap .safi-pulse-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.2;
+}
+
+.safi-thumb-wrap .safi-pulse-inner {
+    width: 100%;
+    height: 100%;
+    animation: safi-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.safi-thumb-wrap .safi-grad-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.2), transparent);
+}
+
+.safi-thumb-wrap .safi-hover-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    transition: opacity 0.3s;
+    opacity: 0;
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+.safi-course-card:hover .safi-hover-glow {
     opacity: 1;
+}
+
+.safi-thumb-wrap img {
+    position: relative;
+    z-index: 20;
+    max-height: 100%;
+    width: 100%;
+    object-fit: contain;
+    transition: all 0.7s ease;
+    border-radius: 0.75rem;
+    filter: drop-shadow(0 25px 25px rgba(0,0,0,0.15));
+}
+
+.safi-course-card:hover .safi-thumb-wrap img {
+    transform: scale(1.1);
+    filter: brightness(1.1) drop-shadow(0 25px 25px rgba(0,0,0,0.15));
+}
+
+.safi-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem 2rem;
+    position: relative;
+    z-index: 20;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+}
+
+.safi-meta-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.safi-category {
+    border-radius: 0.375rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.625rem;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #9ca3af;
+}
+
+.safi-price {
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+.safi-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.025em;
+    transition: color 0.3s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.safi-course-card:hover .safi-title {
+    color: #facc15;
+}
+
+.safi-description {
+    margin-top: 0.75rem;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    color: #9ca3af;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 500;
+}
+
+.safi-footer {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+}
+
+.safi-lang {
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #737373;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+}
+
+.safi-explore {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #000000;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.safi-explore:hover {
+    background-color: #facc15;
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+    color: #000000;
+}
+
+.safi-explore:active {
+    transform: scale(0.95);
+}
+
+.safi-explore svg {
+    margin-left: 0.25rem;
+    width: 14px;
+    height: 14px;
+}
+
+@keyframes safi-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+
+/* Active Filter Banner / Status Bar */
+.filter-active-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    background: rgba(31, 143, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(31, 143, 255, 0.12);
+}
+
+.filter-active-summary .summary-text {
+    font-size: 0.85rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.filter-active-summary .clear-filters-btn {
+    font-size: 0.78rem;
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.filter-active-summary .clear-filters-btn:hover {
+    color: #dc2626;
+    text-decoration: underline;
 }
 
 #loadMoreBtn {

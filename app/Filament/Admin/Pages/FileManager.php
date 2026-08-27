@@ -20,7 +20,7 @@ class FileManager extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-folder-open';
     protected static ?string $navigationLabel = 'File Manager';
-    protected static ?string $navigationGroup = 'System';
+    protected static ?string $navigationGroup = 'Settings & System';
     protected static ?string $title = 'File Manager';
     protected static ?int $navigationSort = 99;
 

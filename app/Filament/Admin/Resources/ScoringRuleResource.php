@@ -15,7 +15,7 @@ class ScoringRuleResource extends Resource
     protected static ?string $model = ScoringRule::class;
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Scoring Rules';
-    protected static ?string $navigationGroup = 'Gamification';
+    protected static ?string $navigationGroup = 'Academic & Scoring';
     protected static ?string $modelLabel = 'Scoring Rule';
     protected static ?string $pluralModelLabel = 'Scoring Rules';
     protected static ?int $navigationSort = 2;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Competition;
 use App\Models\Course;
 use App\Models\Donation;
 use App\Models\Event;
@@ -47,12 +46,6 @@ class HomePageController extends Controller
                     ->pluck('id')
                     ->all(),
                 'upcomingEventIds' => Event::where('start_date', '>=', now())
-                    ->where('status', 'active')
-                    ->orderBy('start_date')
-                    ->limit(3)
-                    ->pluck('id')
-                    ->all(),
-                'upcomingCompetitionIds' => Competition::where('start_date', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_date')
                     ->limit(3)
@@ -108,11 +101,6 @@ class HomePageController extends Controller
             $homeData['upcomingEventIds']
         );
 
-        $upcomingCompetitions = $this->loadOrderedModels(
-            Competition::class,
-            $homeData['upcomingCompetitionIds']
-        );
-
         $approvedReviews = $this->loadOrderedModels(
             Review::class,
             $homeData['approvedReviewIds'],
@@ -147,7 +135,6 @@ class HomePageController extends Controller
             'recentCourses',
             'continueLearning',
             'upcomingEvents',
-            'upcomingCompetitions',
             'approvedReviews',
             'hasTopStudents',
             'topStudents',
