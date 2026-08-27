@@ -313,8 +313,8 @@
                                         <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">
                                             <i class="bi bi-clock" style="color: #3b82f6;"></i> Duration
                                         </div>
-                                        <div style="font-weight: 600; color: #16a34a; font-size: 18px;" id="sessionDuration">
-                                            {{ $activeSession->current_duration }}
+                                        <div style="font-weight: 700; color: #16a34a; font-size: 20px; font-family: 'Courier New', monospace; letter-spacing: 2px;" id="sessionDuration">
+                                            00:00:00
                                         </div>
                                         <div style="color: #94a3b8; font-size: 11px;">Running</div>
                                     </div>
@@ -323,12 +323,12 @@
                                 {{-- Participants --}}
                                 <div style="background: #f0f9ff; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 15px; border: 1px solid #bae6fd;">
                                     <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">
-                                        <i class="bi bi-people" style="color: #0ea5e9;"></i> Participants
+                                        <i class="bi bi-people" style="color: #0ea5e9;"></i> Students Joined
                                     </div>
-                                    <div style="font-weight: 700; color: #0369a1; font-size: 24px;">
-                                        {{ $activeSession->participants_count ?? 0 }}
+                                    <div style="font-weight: 700; color: #0369a1; font-size: 28px;" id="liveParticipantCount">
+                                        {{ $activeSessionParticipants }}
                                     </div>
-                                    <div style="color: #64748b; font-size: 11px;">Auto-tracked by system</div>
+                                    <div style="color: #64748b; font-size: 11px;">Joined via platform link</div>
                                 </div>
 
                                 {{-- Room Name --}}
@@ -1115,6 +1115,9 @@
                             $hasDocs = $documents->where('created_at', '>=', $s->started_at)
                                                  ->where('created_at', '<=', $s->ended_at ?? $s->started_at->addHours(4))
                                                  ->count();
+                            $sessionAttendees = $s->attendances->sortByDesc(function($a) {
+                                return $a->status === 'present' ? 2 : ($a->status === 'late' ? 1 : 0);
+                            });
                         @endphp
                         <div class="shistory-card">
                             <div class="shistory-index">#{{ $loop->iteration }}</div>
@@ -1154,10 +1157,10 @@
                                     </div>
                                     {{-- Attendees --}}
                                     <div class="shistory-meta-item">
-                                        <span class="shistory-meta-label">Attendees</span>
+                                        <span class="shistory-meta-label">Joined via Platform</span>
                                         <span class="shistory-val">
                                             <i class="bi bi-people-fill me-1 text-success"></i>
-                                            {{ $s->attendees_count }}
+                                            {{ $sessionAttendees->count() }} student{{ $sessionAttendees->count() !== 1 ? 's' : '' }}
                                         </span>
                                     </div>
                                     {{-- Documents --}}
@@ -1178,6 +1181,59 @@
                                     <i class="bi bi-chat-left-text me-1" style="color:#8b5cf6;"></i>{{ $s->note }}
                                 </div>
                                 @endif
+
+                                {{-- ── Attendees Expandable Section ── --}}
+                                @if($sessionAttendees->count() > 0)
+                                <div class="mt-3">
+                                    <button class="btn btn-sm rounded-3 fw-semibold px-3 py-1"
+                                            style="background:#ede9fe;color:#6d28d9;border:1px solid #ddd6fe;font-size:.78rem;"
+                                            onclick="toggleAttendees({{ $s->id }})"
+                                            id="att-toggle-btn-{{ $s->id }}">
+                                        <i class="bi bi-people-fill me-1"></i>
+                                        Show Attendees ({{ $sessionAttendees->count() }})
+                                    </button>
+
+                                    <div id="att-list-{{ $s->id }}" style="display:none;margin-top:12px;">
+                                        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                                            @foreach($sessionAttendees as $att)
+                                            @php
+                                                $attAvatar = $att->user && $att->user->avatar
+                                                    ? (str_starts_with($att->user->avatar,'http') ? $att->user->avatar : asset('storage/'.$att->user->avatar))
+                                                    : 'https://ui-avatars.com/api/?name='.urlencode($att->user->name ?? 'User').'&background=8b5cf6&color=fff&size=40';
+                                                $attStatusColor = $att->status === 'present' ? '#10b981' : ($att->status === 'late' ? '#f59e0b' : '#ef4444');
+                                                $attStatusBg    = $att->status === 'present' ? '#ecfdf5' : ($att->status === 'late' ? '#fffbeb' : '#fef2f2');
+                                                $attStatusIcon  = $att->status === 'present' ? 'bi-check-circle-fill' : ($att->status === 'late' ? 'bi-clock-history' : 'bi-x-circle-fill');
+                                            @endphp
+                                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;min-width:200px;">
+                                                <img src="{{ $attAvatar }}" alt=""
+                                                     style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                                                <div style="min-width:0;flex:1;">
+                                                    <div style="font-weight:600;font-size:.85rem;color:#1e293b;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                                                        {{ $att->user->name ?? 'Unknown' }}
+                                                    </div>
+                                                    @if($att->joined_at)
+                                                    <div style="font-size:.72rem;color:#64748b;">
+                                                        <i class="bi bi-box-arrow-in-right me-1" style="color:#10b981;"></i>{{ $att->joined_at->format('H:i') }}
+                                                        @if($att->left_at)
+                                                            <i class="bi bi-box-arrow-right ms-2 me-1" style="color:#ef4444;"></i>{{ $att->left_at->format('H:i') }}
+                                                        @endif
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                <span style="background:{{ $attStatusBg }};color:{{ $attStatusColor }};border-radius:6px;padding:2px 8px;font-size:.7rem;font-weight:600;white-space:nowrap;flex-shrink:0;">
+                                                    <i class="bi {{ $attStatusIcon }} me-1"></i>{{ ucfirst($att->status) }}
+                                                </span>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
+                                <div class="mt-2" style="font-size:.8rem;color:#94a3b8;">
+                                    <i class="bi bi-info-circle me-1"></i>No students joined via platform for this session.
+                                </div>
+                                @endif
+
                             </div>
                         </div>
                         @empty
@@ -1989,6 +2045,26 @@ function toggleCurrEdit(lessonId) {
     if (!isEditing) edit.querySelector('input[name=title]').focus();
 }
 
+// Toggle session attendees list in history
+function toggleAttendees(sessionId) {
+    const list = document.getElementById('att-list-' + sessionId);
+    const btn  = document.getElementById('att-toggle-btn-' + sessionId);
+    if (!list || !btn) return;
+    const isVisible = list.style.display !== 'none';
+    list.style.display = isVisible ? 'none' : 'flex';
+    list.style.flexWrap = 'wrap';
+    list.style.gap = '10px';
+    // Update button icon/label
+    const count = list.querySelectorAll('[id^="att-list"]').length;
+    if (isVisible) {
+        btn.innerHTML = '<i class="bi bi-people-fill me-1"></i>' + btn.innerHTML.replace('Hide', 'Show');
+        btn.style.background = '#ede9fe';
+    } else {
+        btn.innerHTML = btn.innerHTML.replace('Show', 'Hide');
+        btn.style.background = '#c4b5fd';
+    }
+}
+
 // Toggle class note edit form
 function toggleNoteEdit(noteId) {
     const view = document.getElementById('cn-view-' + noteId);
@@ -2031,40 +2107,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const durationEl = document.getElementById('sessionDuration');
     const autoCloseWarning = document.getElementById('autoCloseWarning');
     const autoCloseMessage = document.getElementById('autoCloseMessage');
+    const participantCountEl = document.getElementById('liveParticipantCount');
     const courseId = {{ $course->id }};
+    const sessionId = {{ $activeSession->id }};
+    let liveParticipantCount = {{ $activeSessionParticipants }};
 
-    // Update duration every minute
+    // ── Real-time HH:MM:SS timer ──────────────────────────────
     function updateDuration() {
         const now = new Date();
-        const diffMs = now - sessionStartedAt;
+        const diffMs = Math.max(0, now - sessionStartedAt);
+        const totalSecs = Math.floor(diffMs / 1000);
+        const hours = Math.floor(totalSecs / 3600);
+        const mins  = Math.floor((totalSecs % 3600) / 60);
+        const secs  = totalSecs % 60;
+
+        durationEl.textContent =
+            String(hours).padStart(2, '0') + ':' +
+            String(mins).padStart(2, '0')  + ':' +
+            String(secs).padStart(2, '0');
+
+        // Warn when 5+ min with 0 participants
         const diffMins = Math.floor(diffMs / 60000);
-
-        if (diffMins < 60) {
-            durationEl.textContent = diffMins + ' min';
-        } else {
-            const hours = Math.floor(diffMins / 60);
-            const mins = diffMins % 60;
-            durationEl.textContent = hours + 'h ' + mins + 'm';
-        }
-
-        // Show warning when approaching auto-close (5+ minutes with no participants)
-        if (diffMins >= 5 && {{ $activeSession->participants_count ?? 0 }} === 0) {
-            const remaining = 5; // Minutes until auto-close
+        if (diffMins >= 5 && liveParticipantCount === 0) {
             autoCloseWarning.style.display = 'block';
-            autoCloseMessage.textContent = 'No participants detected. Session will auto-close in ' + remaining + ' minutes.';
+            autoCloseMessage.textContent = 'No participants detected. Session may auto-close.';
+        } else if (liveParticipantCount > 0) {
+            autoCloseWarning.style.display = 'none';
         }
     }
 
-    // Initial update
+    // Initial update + tick every second
     updateDuration();
+    setInterval(updateDuration, 1000);
 
-    // Update every minute
-    setInterval(updateDuration, 60000);
+    // ── AJAX: poll participant count every 30 s ────────────────
+    function pollParticipants() {
+        fetch('{{ route("teacher.courses.sessions.participants", [$course->id, $activeSession->id]) }}', {
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            liveParticipantCount = data.count;
+            if (participantCountEl) participantCountEl.textContent = data.count;
+        })
+        .catch(err => console.log('Participant poll error:', err));
+    }
 
-    // Check for auto-close every minute (when there are no participants)
+    // Poll immediately then every 30 s
+    pollParticipants();
+    setInterval(pollParticipants, 30000);
+
+    // ── Auto-close check every 60 s ───────────────────────────
     setInterval(function() {
-        if ({{ $activeSession->participants_count ?? 0 }} === 0) {
-            // Ping the server to check if session should auto-close
+        if (liveParticipantCount === 0) {
             fetch('{{ route("teacher.courses.auto-close") }}', {
                 method: 'POST',
                 headers: {
@@ -2076,7 +2171,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.closed_count > 0) {
-                    // Session was auto-closed, reload the page
                     window.location.reload();
                 }
             })

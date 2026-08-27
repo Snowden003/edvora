@@ -119,7 +119,13 @@ class TeacherDashboardController extends Controller
             ->latest()
             ->first();
 
-        $pastSessions = \App\Models\ClassSession::where('course_id', $id)
+        // Count students who joined via platform for the active session
+        $activeSessionParticipants = $activeSession
+            ? \App\Models\SessionAttendance::where('session_id', $activeSession->id)->count()
+            : 0;
+
+        $pastSessions = \App\Models\ClassSession::with('attendances.user')
+            ->where('course_id', $id)
             ->where('status', 'ended')
             ->orderByDesc('started_at')
             ->get();
@@ -184,7 +190,7 @@ class TeacherDashboardController extends Controller
 
         return view('teacher.courses-detail', compact(
             'course', 'user', 'enrollments', 'reviews', 'documents',
-            'activeSession', 'pastSessions', 'attendanceSummary', 'classNotes', 'lessons',
+            'activeSession', 'activeSessionParticipants', 'pastSessions', 'attendanceSummary', 'classNotes', 'lessons',
             'completedLessonIds', 'completedLessonsCount', 'totalLessons', 'progressPercent',
             'scoringRules', 'coursePoints'
         ));
@@ -594,6 +600,24 @@ class TeacherDashboardController extends Controller
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * AJAX: Return the number of students who joined the session via the platform.
+     */
+    public function getSessionParticipants(Request $request, $id, $sessionId)
+    {
+        $user   = Auth::user();
+        $course = Course::where('teacher_id', $user->id)->findOrFail($id);
+
+        $session = \App\Models\ClassSession::where('course_id', $course->id)->findOrFail($sessionId);
+
+        $count = \App\Models\SessionAttendance::where('session_id', $session->id)->count();
+
+        return response()->json([
+            'count'      => $count,
+            'session_id' => $session->id,
+        ]);
     }
 
     public function saveRecording(Request $request, $id, $lessonId)

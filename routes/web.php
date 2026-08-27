@@ -198,6 +198,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/courses/{id}/sessions/start',       [TeacherDashboardController::class, 'startClass'])->name('courses.sessions.start');
         Route::post('/courses/{id}/sessions/end',         [TeacherDashboardController::class, 'endClass'])->name('courses.sessions.end');
         Route::post('/courses/{id}/sessions/activity',    [TeacherDashboardController::class, 'updateParticipantActivity'])->name('courses.sessions.activity');
+        Route::get('/courses/{id}/sessions/{sessionId}/participants', [TeacherDashboardController::class, 'getSessionParticipants'])->name('courses.sessions.participants');
         Route::get('/courses/{id}/sessions/join',        [TeacherDashboardController::class, 'joinClass'])->name('courses.sessions.join');
         Route::post('/courses/auto-close-inactive',       [TeacherDashboardController::class, 'autoCloseInactiveSessions'])->name('courses.auto-close');
         Route::get('/courses/{id}/sessions/leave',        [TeacherDashboardController::class, 'leaveClass'])->name('courses.sessions.leave');

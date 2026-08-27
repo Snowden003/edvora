@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SessionAttendance;
 
 class ClassSession extends Model
 {
@@ -49,5 +50,10 @@ class ClassSession extends Model
     public function lesson()
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(SessionAttendance::class, 'session_id');
     }
 }
