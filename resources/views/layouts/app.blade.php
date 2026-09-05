@@ -42,7 +42,7 @@
     @stack('styles')
 
     <link href="{{ asset('assets/css/modern-footer.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/ai-chatbot.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/ai-chatbot.css') }}?v={{ file_exists(public_path('assets/css/ai-chatbot.css')) ? filemtime(public_path('assets/css/ai-chatbot.css')) : time() }}" rel="stylesheet" />
     @auth
     @vite('resources/js/app.js')
     @endauth
