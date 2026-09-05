@@ -1198,6 +1198,62 @@ body.dark-mode .card.border-0 .text-muted {
 }
 
 /* Teacher profile page */
+.teachers-hero-section .breadcrumb,
+.teacher-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  list-style: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.teachers-hero-section .breadcrumb-item,
+.teacher-breadcrumb .breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.teachers-hero-section .breadcrumb-item a,
+.teacher-breadcrumb .breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.teachers-hero-section .breadcrumb-item a:hover,
+.teacher-breadcrumb .breadcrumb-item a:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.teachers-hero-section .breadcrumb-item + .breadcrumb-item::before,
+.teacher-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  content: "/";
+  color: rgba(255, 255, 255, 0.4) !important;
+  padding: 0 10px;
+  font-weight: 400;
+}
+
+.teachers-hero-section .breadcrumb-item.active,
+.teacher-breadcrumb .breadcrumb-item.active {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
 .teacher-profile-card {
   padding: 28px;
   border-radius: 28px;

@@ -242,17 +242,12 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-        $hasPublishedCourses = $this->relationLoaded('courses')
-            ? $this->courses->contains(fn ($course) => $course->status === 'published')
-            : $this->courses()->where('status', 'published')->exists();
-
         return filled($this->name)
             && filled($this->department)
             && filled($this->bio)
             && mb_strlen(trim(strip_tags($this->bio))) >= 30
             && filled($teacherProfile->specialization)
-            && filled($teacherProfile->expertise)
-            && $hasPublishedCourses;
+            && filled($teacherProfile->expertise);
     }
 
     /**

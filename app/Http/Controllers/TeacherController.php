@@ -15,6 +15,7 @@ class TeacherController extends Controller
 
         $teachingSections = $teachers
             ->flatMap(fn (User $teacher) => $teacher->teaching_sections)
+            ->map(fn ($name) => trim((string) $name))
             ->filter()
             ->unique()
             ->sort()
@@ -39,24 +40,15 @@ class TeacherController extends Controller
         return User::query()
             ->where('role', 'teacher')
             ->where('status', 'active')
-            ->whereNotNull('experience_years')
-            ->where('experience_years', '!=', '')
             ->whereNotNull('department')
             ->where('department', '!=', '')
             ->whereNotNull('bio')
             ->where('bio', '!=', '')
-            ->whereRaw('CHAR_LENGTH(TRIM(bio)) >= 30')
-            ->whereRaw("(CHAR_LENGTH(TRIM(bio)) - CHAR_LENGTH(REPLACE(TRIM(bio), ' ', '')) + 1) >= 8")
             ->whereHas('teacher', function (Builder $query) {
                 $query->whereNotNull('specialization')
                     ->where('specialization', '!=', '')
                     ->whereNotNull('expertise')
-                    ->where('expertise', '!=', '')
-                    ->whereNotNull('years_of_experience')
-                    ->where('years_of_experience', '>', 0);
-            })
-            ->whereHas('courses', function (Builder $query) {
-                $query->where('status', 'published');
+                    ->where('expertise', '!=', '');
             })
             ->with([
                 'teacher',
@@ -85,17 +77,18 @@ class TeacherController extends Controller
     private function decorateTeacher(User $teacher): User
     {
         $publishedCourses = $teacher->courses
-            ->where('status', 'published')
+            ->whereIn('status', ['published', 'started'])
             ->values();
 
         $teachingSections = $publishedCourses
             ->pluck('category.name')
+            ->map(fn ($name) => trim((string) $name))
             ->filter()
             ->unique()
             ->values();
 
         if ($teachingSections->isEmpty() && filled($teacher->department)) {
-            $teachingSections = collect([$teacher->department]);
+            $teachingSections = collect([trim((string) $teacher->department)]);
         }
 
         $teacher->setAttribute('avatar_url', $teacher->publicAvatarUrl());

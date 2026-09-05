@@ -35,8 +35,8 @@
   <div class="container">
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-4">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+      <ol class="breadcrumb teacher-breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="bi bi-house-door me-1"></i>Home</a></li>
         <li class="breadcrumb-item"><a href="{{ route('teachers.index') }}">Teachers</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ $teacher->name }}</li>
       </ol>

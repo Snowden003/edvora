@@ -94,7 +94,7 @@
             <div class="teachers-empty-state">
                 <i class="bi bi-people"></i>
                 <h3>No complete teacher profiles yet</h3>
-                <p>Only teachers with complete public profiles and published classes are shown here.</p>
+                <p>Only teachers with complete public profiles are shown here.</p>
             </div>
         @else
             <div class="row g-4" id="teachersGrid">
