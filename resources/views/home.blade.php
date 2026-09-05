@@ -334,6 +334,69 @@
         </div>
     </section>
 
+    {{-- Edvora AI Chatbot Banner Section --}}
+    <section class="home-ai-section">
+        <div class="container">
+            <div class="home-ai-hero-card">
+                <div class="home-ai-hero-card__glow"></div>
+                <div class="row g-5 align-items-center position-relative">
+                    <div class="col-lg-7">
+                        <span class="home-ai-badge">
+                            <i class="bi bi-stars"></i> Edvora AI — New Feature
+                        </span>
+                        <h2 class="home-ai-title">
+                            Get Answers Faster<br>
+                            <span class="home-ai-title-gradient">with Edvora AI Assistant!</span>
+                        </h2>
+                        <p class="home-ai-desc">
+                            Edvora Tech's Smart Assistant has direct access to our <strong class="home-ai-highlight">live database</strong>, finding accurate and up-to-date information about courses, instructors, live classes, events, and free books in seconds.
+                        </p>
+                        <div class="home-ai-chips">
+                            <button type="button" class="home-ai-chip-item" onclick="window.edvoraAiOpenWithTopic && window.edvoraAiOpenWithTopic('courses')">📚 Courses</button>
+                            <button type="button" class="home-ai-chip-item" onclick="window.edvoraAiOpenWithTopic && window.edvoraAiOpenWithTopic('teachers')">👨‍🏫 Instructors</button>
+                            <button type="button" class="home-ai-chip-item" onclick="window.edvoraAiOpenWithTopic && window.edvoraAiOpenWithTopic('classes')">🔴 Live Classes</button>
+                            <button type="button" class="home-ai-chip-item" onclick="window.edvoraAiOpenWithTopic && window.edvoraAiOpenWithTopic('events')">🎉 Events</button>
+                            <button type="button" class="home-ai-chip-item" onclick="window.edvoraAiOpenWithTopic && window.edvoraAiOpenWithTopic('books')">📖 Free Books</button>
+                        </div>
+                        <button type="button" id="homeAiOpenBtn" class="home-ai-cta-btn" onclick="document.getElementById('edvoraAiTrigger').click()">
+                            <i class="bi bi-robot"></i>
+                            Chat with Edvora AI Now
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="col-lg-5 d-none d-lg-block">
+                        <div class="home-ai-preview-card">
+                            <!-- Simulated chat preview -->
+                            <div class="home-ai-preview-header">
+                                <div class="home-ai-preview-avatar"><i class="bi bi-cpu-fill"></i></div>
+                                <div>
+                                    <div class="home-ai-preview-name">Edvora Smart Assistant</div>
+                                    <div class="home-ai-preview-status">
+                                        <span class="home-ai-status-dot"></span> Online — Live Database Access
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="home-ai-preview-messages">
+                                <div class="home-ai-preview-row home-ai-preview-row--user">
+                                    <div class="home-ai-bubble-user">
+                                        How many courses are available on the site?
+                                    </div>
+                                    <div class="home-ai-user-avatar"><i class="bi bi-person-fill"></i></div>
+                                </div>
+                                <div class="home-ai-preview-row">
+                                    <div class="home-ai-bot-avatar"><i class="bi bi-robot"></i></div>
+                                    <div class="home-ai-bubble-bot">
+                                        There are currently <strong class="home-ai-highlight-text">{{ $totalCourses }} active courses</strong> available on Edvora Tech! All courses are completely <strong class="home-ai-highlight-success">free</strong>. 🎓
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="about-preview-section">
         <div class="container">
             <div class="row g-5 align-items-center">

@@ -1,0 +1,1409 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   Edvora AI Chatbot Component Styles (Spacious, Minimalist, 2-Step Flow)
+   ========================================================================== */
+
+/* Floating Trigger Button */
+.edvora-ai-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #1f8fff 0%, #0066cc 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 25px -5px rgba(31, 143, 255, 0.5), 0 0 15px rgba(0, 102, 204, 0.25);
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.edvora-ai-trigger:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 15px 30px -5px rgba(31, 143, 255, 0.7), 0 0 25px rgba(0, 102, 204, 0.4);
+    background: linear-gradient(135deg, #0077ee 0%, #0055aa 100%);
+    color: #ffffff;
+}
+
+.edvora-ai-trigger__icon {
+    position: relative;
+    font-size: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edvora-ai-trigger__pulse {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 9px;
+    height: 9px;
+    background-color: #10b981;
+    border-radius: 50%;
+    border: 2px solid #1f8fff;
+    animation: edvoraPulse 2s infinite;
+}
+
+@keyframes edvoraPulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ── Chat Drawer Window (Expanded, Spacious & Airy) ─────────────── */
+.edvora-ai-drawer {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 480px;
+    max-width: calc(100vw - 32px);
+    height: 670px;
+    max-height: calc(100vh - 105px);
+    z-index: 99999;
+    background: #ffffff;
+    border: 1px solid rgba(31, 143, 255, 0.16);
+    border-radius: 26px;
+    box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.2), 0 0 35px rgba(31, 143, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.96);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    direction: ltr;
+    font-family: 'Poppins', sans-serif;
+    color: #1e293b;
+}
+
+.edvora-ai-drawer.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* ── View Container (Step 1 vs Step 2) ───────────────────────── */
+.edvora-ai-view {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeInView 0.25s ease forwards;
+}
+
+.edvora-ai-view.is-active {
+    display: flex;
+}
+
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header Common ────────────────────────────────────────────── */
+.edvora-ai-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #1f8fff 0%, #0066cc 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.edvora-ai-header__profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.edvora-ai-header__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.edvora-ai-header__info h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.edvora-ai-header__verified-icon {
+    font-size: 0.85rem;
+    color: #bae6fd;
+}
+
+.edvora-ai-header__status {
+    font-size: 0.74rem;
+    color: #d1fae5;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.edvora-ai-header__status-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #10b981;
+    border-radius: 50%;
+}
+
+.edvora-ai-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Language Pill Switcher */
+.edvora-ai-lang-switch {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.edvora-ai-lang-btn {
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    padding: 3px 9px;
+    border-radius: 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-lang-btn.is-active {
+    background: #ffffff;
+    color: #0066cc;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.edvora-ai-header__btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-header__btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+/* Chat Screen Header Controls (Back & Topic Pill) */
+.edvora-ai-back-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.edvora-ai-header-topic-pill {
+    background: #ffffff;
+    color: #0066cc;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ── STEP 1: Topic Selection Screen (Spacious Onboarding) ──────── */
+.edvora-ai-topic-screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #ffffff;
+}
+
+.edvora-ai-hero-welcome {
+    background: linear-gradient(135deg, rgba(31, 143, 255, 0.07) 0%, rgba(0, 102, 204, 0.02) 100%);
+    border: 1px solid rgba(31, 143, 255, 0.14);
+    border-radius: 20px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+.edvora-ai-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    color: #0284c7;
+    border: 1px solid rgba(31, 143, 255, 0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.edvora-ai-hero-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+}
+
+.edvora-ai-hero-subtitle {
+    font-size: 0.86rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.edvora-ai-grid-heading {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 4px 0 0 0;
+}
+
+.edvora-ai-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.edvora-ai-topic-card {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 16px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    outline: none;
+    font-family: inherit;
+}
+
+.edvora-ai-topic-card:hover {
+    border-color: #1f8fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(31, 143, 255, 0.12);
+    background: #ffffff;
+}
+
+.edvora-ai-topic-card__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(31, 143, 255, 0.1);
+    color: #1f8fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.25s ease;
+}
+
+.edvora-ai-topic-card:hover .edvora-ai-topic-card__icon {
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(31, 143, 255, 0.3);
+}
+
+.edvora-ai-topic-card__title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.edvora-ai-topic-card__desc {
+    font-size: 0.74rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.edvora-ai-topic-card__arrow {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    transition: all 0.2s;
+}
+
+.edvora-ai-topic-card:hover .edvora-ai-topic-card__arrow {
+    color: #1f8fff;
+    transform: translateX(3px);
+}
+
+/* Quick Start bar at the bottom of View 1 */
+.edvora-ai-topic-screen-footer {
+    padding: 14px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edvora-ai-quick-input {
+    flex: 1;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 9px 14px;
+    font-size: 0.86rem;
+    outline: none;
+    color: #1e293b;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.edvora-ai-quick-input:focus {
+    border-color: #1f8fff;
+    box-shadow: 0 0 0 3px rgba(31, 143, 255, 0.15);
+}
+
+.edvora-ai-quick-btn {
+    padding: 9px 16px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.edvora-ai-quick-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.3);
+}
+
+/* ── STEP 2: Dedicated Chat Screen (Uncluttered, Full Space) ─── */
+.edvora-ai-chat-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+/* Chat Body / Messages Area */
+.edvora-ai-body {
+    flex: 1;
+    padding: 20px 22px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 143, 255, 0.2) transparent;
+}
+
+.edvora-ai-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.edvora-ai-body::-webkit-scrollbar-thumb {
+    background: rgba(31, 143, 255, 0.2);
+    border-radius: 4px;
+}
+
+/* Message Bubble */
+.edvora-ai-msg {
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+    animation: fadeInMsg 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInMsg {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.edvora-ai-msg--user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.edvora-ai-msg--bot {
+    margin-right: auto;
+}
+
+.edvora-ai-msg__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.edvora-ai-msg--bot .edvora-ai-msg__avatar {
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(31, 143, 255, 0.25);
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__avatar {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.edvora-ai-msg__content {
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.68;
+    word-break: break-word;
+}
+
+.edvora-ai-msg--bot .edvora-ai-msg__content {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    border-top-left-radius: 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__content {
+    background: linear-gradient(135deg, #1f8fff, #0066cc) !important;
+    color: #ffffff !important;
+    border-top-right-radius: 4px;
+    box-shadow: 0 4px 14px rgba(31, 143, 255, 0.22);
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__content p {
+    color: #ffffff !important;
+    font-size: 0.94rem;
+    font-weight: 600 !important;
+    line-height: 1.75;
+    margin: 0 0 8px 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__content p:last-child {
+    margin-bottom: 0;
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__content span:not(.edvora-ai-msg__topic-tag),
+.edvora-ai-msg--user .edvora-ai-msg__content strong,
+.edvora-ai-msg--user .edvora-ai-msg__content em {
+    color: #ffffff !important;
+}
+
+.edvora-ai-msg__topic-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__topic-tag {
+    background: #ffffff !important;
+    color: #0056b3 !important;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__topic-tag span {
+    color: #0056b3 !important;
+}
+
+.edvora-ai-msg--user .edvora-ai-msg__topic-tag i {
+    color: #1f8fff !important;
+    font-size: 0.78rem;
+}
+
+.edvora-ai-msg--bot .edvora-ai-msg__topic-tag {
+    background: #eff6ff;
+    color: #0066cc;
+    border: 1px solid #bfdbfe;
+}
+
+.edvora-ai-msg--bot .edvora-ai-msg__content p {
+    color: #1e293b !important;
+    margin: 0 0 8px 0;
+}
+
+.edvora-ai-msg__content p {
+    margin: 0 0 8px 0;
+}
+
+.edvora-ai-msg__content p:last-child {
+    margin-bottom: 0;
+}
+
+.edvora-ai-msg__content ul, .edvora-ai-msg__content ol {
+    margin: 6px 0;
+    padding-left: 20px;
+}
+
+.edvora-ai-msg__content code {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85em;
+}
+
+.edvora-ai-msg__sources {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #cbd5e1;
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.edvora-ai-source-tag {
+    background: rgba(31, 143, 255, 0.1);
+    border: 1px solid rgba(31, 143, 255, 0.2);
+    color: #0284c7;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* Quick Suggestions inside Chat (Clean & Minimal) */
+.edvora-ai-suggestions {
+    padding: 8px 18px;
+    background: #ffffff;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-top: 1px solid #e2e8f0;
+}
+
+.edvora-ai-suggestions::-webkit-scrollbar {
+    display: none;
+}
+
+.edvora-ai-chip {
+    white-space: nowrap;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-chip:hover {
+    background: rgba(31, 143, 255, 0.08);
+    border-color: rgba(31, 143, 255, 0.3);
+    color: #0284c7;
+}
+
+/* Chat Input Footer */
+.edvora-ai-footer {
+    padding: 14px 20px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.edvora-ai-input-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 4px 6px 4px 14px;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-input-form:focus-within {
+    background: #ffffff;
+    border-color: #1f8fff;
+    box-shadow: 0 0 0 3px rgba(31, 143, 255, 0.15);
+}
+
+.edvora-ai-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #1e293b;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    padding: 9px 4px;
+}
+
+.edvora-ai-input::placeholder {
+    color: #94a3b8;
+}
+
+.edvora-ai-send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.edvora-ai-send-icon {
+    display: inline-block;
+}
+
+.edvora-ai-send-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #0077ee, #0055aa);
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.35);
+}
+
+.edvora-ai-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Typing Indicator Animation */
+.edvora-ai-typing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0;
+}
+
+.edvora-ai-typing__dot {
+    width: 6px;
+    height: 6px;
+    background-color: #1f8fff;
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.edvora-ai-typing__dot:nth-child(1) { animation-delay: -0.32s; }
+.edvora-ai-typing__dot:nth-child(2) { animation-delay: -0.16s; }
+
+
+/* ── Guest Question Limit & Meter ─────────────────────────────── */
+.edvora-ai-header-limit-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #0066cc;
+    border: 1px solid #bfdbfe;
+}
+
+.edvora-ai-header-limit-pill.is-limit {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+/* Topic Screen Guest Banner */
+.edvora-ai-guest-banner {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #1e3a8a;
+}
+
+.edvora-ai-guest-banner__text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.edvora-ai-guest-banner__badge {
+    background: #ffffff;
+    color: #0066cc;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    border: 1px solid #bfdbfe;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Guest Usage Meter in Footer */
+.edvora-ai-meter-bar {
+    margin-bottom: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 6px 10px;
+}
+
+.edvora-ai-meter-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.edvora-ai-meter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.edvora-ai-meter-nums {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.edvora-ai-meter-track {
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.edvora-ai-meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1f8fff, #0066cc);
+    border-radius: 999px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.edvora-ai-meter-fill.is-warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.edvora-ai-meter-fill.is-danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* Limit Reached Card in Chat Body */
+.edvora-ai-limit-card {
+    background: #ffffff;
+    border: 1.5px solid #fecaca;
+    border-radius: 18px;
+    padding: 20px 18px;
+    text-align: center;
+    margin: 12px 0;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.08);
+    animation: fadeInMsg 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edvora-ai-limit-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin: 0 auto 12px auto;
+}
+
+.edvora-ai-limit-card__title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #991b1b;
+    margin: 0 0 8px 0;
+}
+
+.edvora-ai-limit-card__desc {
+    font-size: 0.82rem;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0 0 16px 0;
+}
+
+.edvora-ai-limit-card__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.edvora-ai-auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.edvora-ai-auth-btn--primary {
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.3);
+}
+
+.edvora-ai-auth-btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(31, 143, 255, 0.4);
+    color: #ffffff !important;
+}
+
+.edvora-ai-auth-btn--secondary {
+    background: #f1f5f9;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1;
+}
+
+.edvora-ai-auth-btn--secondary:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+    color: #0f172a !important;
+}
+
+/* Locked state on input form */
+.edvora-ai-input-form.is-locked {
+    opacity: 0.7;
+    background: #f1f5f9;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+}
+
+.edvora-ai-input:disabled {
+    background: transparent;
+    cursor: not-allowed;
+    color: #94a3b8;
+}
+
+/* ── RTL Support for Drawer (Bold & Modern Persian Font) ──────── */
+.edvora-ai-drawer[dir="rtl"],
+.edvora-ai-drawer[dir="rtl"] input,
+.edvora-ai-drawer[dir="rtl"] button,
+.edvora-ai-drawer[dir="rtl"] textarea,
+.edvora-ai-drawer[dir="rtl"] span,
+.edvora-ai-drawer[dir="rtl"] p,
+.edvora-ai-drawer[dir="rtl"] h3,
+.edvora-ai-drawer[dir="rtl"] h4,
+.edvora-ai-drawer[dir="rtl"] div {
+    font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Ensure icons always use bootstrap-icons font */
+.edvora-ai-drawer i,
+.edvora-ai-drawer i.bi,
+.edvora-ai-drawer .bi,
+.edvora-ai-drawer [class*="bi-"],
+.edvora-ai-trigger i,
+.edvora-ai-trigger .bi,
+.edvora-ai-trigger [class*="bi-"],
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+    font-family: 'bootstrap-icons' !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    display: inline-block;
+}
+
+.edvora-ai-drawer[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg__content {
+    font-size: 0.95rem;
+    font-weight: 550;
+    line-height: 1.88;
+    letter-spacing: -0.15px;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg__content p {
+    font-size: 0.95rem;
+    font-weight: 550;
+    line-height: 1.88;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--user .edvora-ai-msg__content {
+    color: #ffffff !important;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--user .edvora-ai-msg__content p {
+    color: #ffffff !important;
+    font-weight: 650 !important;
+    font-size: 0.98rem;
+    line-height: 1.8;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--bot .edvora-ai-msg__content {
+    font-weight: 500;
+    color: #1e293b !important;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--bot .edvora-ai-msg__content p {
+    font-weight: 500;
+    color: #1e293b !important;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--bot .edvora-ai-msg__content strong,
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--bot .edvora-ai-msg__content b {
+    font-weight: 750 !important;
+    color: #0f172a;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-topic-card {
+    text-align: right;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-topic-card__title {
+    font-weight: 750;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-topic-card__desc {
+    font-weight: 500;
+    line-height: 1.55;
+    color: #64748b;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-hero-title {
+    font-weight: 800;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-hero-subtitle {
+    font-weight: 500;
+    line-height: 1.75;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-input {
+    font-weight: 550;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-topic-card__arrow {
+    right: auto;
+    left: 14px;
+    transform: scaleX(-1);
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-topic-card:hover .edvora-ai-topic-card__arrow {
+    transform: scaleX(-1) translateX(3px);
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-back-btn i {
+    transform: rotate(180deg);
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--user {
+    margin-right: auto;
+    margin-left: 0;
+    flex-direction: row-reverse;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg--bot {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-send-icon {
+    transform: rotate(180deg);
+}
+
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg__content ul,
+.edvora-ai-drawer[dir="rtl"] .edvora-ai-msg__content ol {
+    padding-left: 0;
+    padding-right: 20px;
+}
+
+/* ==========================================================================
+   Homepage AI Assistant Banner Section (Light Theme)
+   ========================================================================== */
+
+.home-ai-section {
+    padding: 80px 0;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0) 0%, rgba(31, 143, 255, 0.04) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.home-ai-hero-card {
+    background: #ffffff;
+    border: 1px solid rgba(31, 143, 255, 0.16);
+    border-radius: 28px;
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(31, 143, 255, 0.08), 0 2px 10px rgba(0, 0, 0, 0.02);
+    color: #1e293b;
+    direction: ltr;
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-ai-hero-card:hover {
+    box-shadow: 0 25px 55px rgba(31, 143, 255, 0.12), 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.home-ai-hero-card__glow {
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(31, 143, 255, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    top: -100px;
+    right: -100px;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+.home-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(31, 143, 255, 0.08);
+    border: 1px solid rgba(31, 143, 255, 0.2);
+    color: #0284c7;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.home-ai-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 16px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+.home-ai-title-gradient {
+    background: linear-gradient(135deg, #1f8fff 0%, #0066cc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.home-ai-desc {
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 26px;
+}
+
+.home-ai-highlight {
+    color: #0284c7;
+    font-weight: 600;
+}
+
+.home-ai-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.home-ai-chip-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.home-ai-chip-item:hover {
+    background: rgba(31, 143, 255, 0.08);
+    border-color: rgba(31, 143, 255, 0.25);
+    color: #0284c7;
+    transform: translateY(-1px);
+}
+
+.home-ai-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 32px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    border: none;
+    border-radius: 16px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(31, 143, 255, 0.35);
+}
+
+.home-ai-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(31, 143, 255, 0.45);
+    background: linear-gradient(135deg, #0077ee, #0055aa);
+    color: #ffffff;
+}
+
+/* Simulated Chat Preview Box (Light Theme) */
+.home-ai-preview-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04);
+    font-family: inherit;
+    position: relative;
+}
+
+.home-ai-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.home-ai-preview-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.25);
+    flex-shrink: 0;
+}
+
+.home-ai-preview-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.home-ai-preview-status {
+    font-size: 0.75rem;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.home-ai-status-dot {
+    width: 7px;
+    height: 7px;
+    background: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.home-ai-preview-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-ai-preview-row {
+    display: flex;
+    gap: 10px;
+}
+
+.home-ai-preview-row--user {
+    justify-content: flex-end;
+}
+
+.home-ai-bubble-user,
+.home-ai-bubble-user p {
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #ffffff !important;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    max-width: 80%;
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.2);
+}
+
+.home-ai-bubble-bot {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    padding: 12px 16px;
+    border-radius: 18px 18px 18px 4px;
+    font-size: 0.86rem;
+    max-width: 85%;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.home-ai-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #e2e8f0;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.home-ai-bot-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #1f8fff, #0066cc);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.home-ai-highlight-text {
+    color: #0284c7;
+    font-weight: 600;
+}
+
+.home-ai-highlight-success {
+    color: #10b981;
+    font-weight: 600;
+}
+
+/* ── Mobile Responsiveness ───────────────────────────────────── */
+@media (max-width: 991px) {
+    .home-ai-hero-card {
+        padding: 32px 24px;
+    }
+    .home-ai-title {
+        font-size: 1.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .edvora-ai-trigger {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+    .edvora-ai-drawer {
+        bottom: 75px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        height: 560px;
+    }
+    .edvora-ai-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .home-ai-section {
+        padding: 50px 0;
+    }
+    .home-ai-title {
+        font-size: 1.6rem;
+    }
+    .home-ai-cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

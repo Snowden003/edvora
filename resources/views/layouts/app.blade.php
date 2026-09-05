@@ -29,8 +29,10 @@
     @php($isHomePage = request()->routeIs('home'))
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <link href="{{ asset('assets/css/variables.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/global.css') }}" rel="stylesheet" />
@@ -40,6 +42,7 @@
     @stack('styles')
 
     <link href="{{ asset('assets/css/modern-footer.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/ai-chatbot.css') }}" rel="stylesheet" />
     @auth
     @vite('resources/js/app.js')
     @endauth
@@ -74,6 +77,7 @@
     <script src="{{ asset('assets/js/notifications.js') }}" defer></script>
     @endauth
 
+    @include('components.ai-chatbot')
     @stack('scripts')
 </body>
 </html>

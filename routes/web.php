@@ -46,6 +46,9 @@ Route::get('/logout', function () {
 // Contact Message
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 
+// AI Chatbot
+Route::post('/ai-chat', \App\Http\Controllers\AiChatController::class)->name('ai.chat');
+
 // Books (public, no login required)
 Route::prefix('books')->name('books.')->group(function () {
     Route::get('/', [BookController::class, 'index'])->name('index');
