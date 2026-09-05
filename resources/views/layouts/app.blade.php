@@ -6,6 +6,8 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key') }}">
+    <meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster') ?? 'mt1' }}">
     @php
         $metaTitle = trim($__env->yieldContent('meta_title', $__env->yieldContent('title', 'Edvora Tech - Free Online Education for Afghan Women')));
         $metaDescription = trim($__env->yieldContent('meta_description', 'Edvora provides free online courses and practical digital skills education for Afghan women and girls.'));

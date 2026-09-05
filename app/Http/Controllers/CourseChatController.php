@@ -61,8 +61,9 @@ class CourseChatController extends Controller
             ->where('course_id', $course->id)
             ->where('status', '!=', 'banned')
             ->exists();
+        $isAdmin = ($user->role ?? null) === 'admin';
 
-        abort_unless($isTeacher || $isEnrolled, 403);
+        abort_unless($isTeacher || $isEnrolled || $isAdmin, 403);
 
         return $user;
     }

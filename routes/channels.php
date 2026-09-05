@@ -19,8 +19,9 @@ Broadcast::channel('course-chat.{courseId}', function ($user, $courseId) {
         ->where('course_id', $course->id)
         ->where('status', '!=', 'banned')
         ->exists();
+    $isAdmin = ($user->role ?? null) === 'admin';
 
-    if (!$isTeacher && !$isEnrolled) {
+    if (!$isTeacher && !$isEnrolled && !$isAdmin) {
         return false;
     }
 

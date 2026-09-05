@@ -301,7 +301,19 @@ const initCourseChat = (root) => {
                 playNotificationSound();
             }
         })
-        .error(() => setStatus('Live chat connection failed. Reconnecting may restore it.'));
+        .error((error) => {
+            console.error('Pusher / Echo live chat error:', error);
+            const status = error?.status || error?.error?.status;
+            if (status === 403) {
+                setStatus('Access denied: You are not enrolled or authorized for this course chat.');
+            } else if (status === 419) {
+                setStatus('Session expired. Please refresh the page to reconnect.');
+            } else if (status === 401) {
+                setStatus('Authentication required. Please log in again.');
+            } else {
+                setStatus('Live chat connection failed. Reconnecting may restore it.');
+            }
+        });
 };
 
 // ── Background listener: for pages that are NOT the chat page ─────────
