@@ -17,6 +17,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\CourseChatController;
 use App\Models\Course;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -91,17 +92,7 @@ Route::get('/debug-broadcast', function (\Illuminate\Http\Request $request) {
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 
-Route::get('/sitemap.xml', function () {
-    $courses = Course::query()
-        ->where('status', 'published')
-        ->select(['slug', 'updated_at'])
-        ->orderBy('updated_at', 'desc')
-        ->get();
-
-    return response()
-        ->view('sitemap', compact('courses'))
-        ->header('Content-Type', 'application/xml');
-})->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Logout GET (redirect to home for convenience)
 Route::get('/logout', function () {

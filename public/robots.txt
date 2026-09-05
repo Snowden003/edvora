@@ -1,2 +1,12 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /admin-panel/
+Disallow: /student/
+Disallow: /teacher/
+Disallow: /broadcasting/
+Disallow: /api/
+Disallow: /profile
+Disallow: /logout
+Disallow: /verify-otp
+
+Sitemap: /sitemap.xml
