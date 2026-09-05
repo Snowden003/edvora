@@ -22,6 +22,7 @@ window.Echo = new Echo({
     auth: {
         headers: {
             'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
         },
     },
 });

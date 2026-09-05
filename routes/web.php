@@ -24,9 +24,21 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 
 
 
-Route::get('/chatbot', function() {
-    return "OK";
-});
+Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
+    try {
+        $result = \Illuminate\Support\Facades\Broadcast::driver('pusher')->auth($request);
+        return response()->json($result);
+    } catch (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e) {
+        return response()->json(['message' => 'Unauthorized channel access.'], 403);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('Broadcast auth error: ' . $e->getMessage(), [
+            'exception' => $e,
+            'channel' => $request->input('channel_name'),
+            'user' => $request->user()?->id,
+        ]);
+        return response()->json(['message' => 'Broadcasting authorization failed.'], 500);
+    }
+})->middleware(['web', 'auth']);
 
 // Google OAuth
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
