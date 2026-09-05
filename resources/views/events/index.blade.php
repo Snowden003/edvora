@@ -59,34 +59,45 @@
                     Join workshops, webinars, and conferences led by global experts.
                 </p>
 
+@php
+    $formatStat = function (int $num): string {
+        if ($num >= 1000000) {
+            return round($num / 1000000, 1) . 'M+';
+        }
+        if ($num >= 1000) {
+            return round($num / 1000, 1) . 'K+';
+        }
+        if ($num >= 10) {
+            return $num . '+';
+        }
+        return (string) $num;
+    };
+@endphp
+
                 <div class="row g-4 justify-content-center events-stats">
                     <div class="col-6 col-md-4">
                         <div class="stat-card">
                             <i class="bi bi-calendar-check-fill"></i>
-                            <span class="stat-number">100+</span>
-                            <span class="stat-label">Events Annually</span>
+                            <span class="stat-number">{{ $formatStat($displayEventsCount ?? 0) }}</span>
+                            <span class="stat-label">{{ ($activeEvents ?? 0) > 0 ? 'Active Events' : 'Total Events' }}</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
                         <div class="stat-card">
                             <i class="bi bi-person-video3"></i>
-                            <span class="stat-number">250+</span>
+                            <span class="stat-number">{{ $formatStat($totalSpeakers ?? 0) }}</span>
                             <span class="stat-label">Expert Speakers</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
                         <div class="stat-card">
                             <i class="bi bi-globe-americas"></i>
-                            <span class="stat-number">50K+</span>
-                            <span class="stat-label">Global Attendees</span>
+                            <span class="stat-number">{{ $formatStat($totalAttendees ?? 0) }}</span>
+                            <span class="stat-label">Event Attendees</span>
                         </div>
                     </div>
                 </div>
 
-                <a href="#eventsGrid" class="btn btn-events-hero mt-4">
-                    <span>Explore Events</span>
-                    <i class="bi bi-arrow-down-circle-fill"></i>
-                </a>
             </div>
         </div>
     </div>

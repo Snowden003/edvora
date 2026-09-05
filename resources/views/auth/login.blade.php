@@ -22,8 +22,14 @@
 <div class="login-wrapper">
     <div class="glass-card" id="glassCard">
         
-        <!-- Branding Section (Left Column) -->
-        <div class="brand-section d-none d-md-flex flex-column justify-content-center align-items-center w-50">
+        <!-- Back to Home Link -->
+        <a href="{{ route('home') }}" class="back-home-link" title="Back to Home">
+            <i class="bi bi-arrow-left"></i>
+            <span>Home</span>
+        </a>
+
+        <!-- Branding Section (Left Column - Desktop) -->
+        <div class="brand-section d-none d-md-flex flex-column justify-content-center align-items-center">
             <div class="text-center w-100" style="transform-style: preserve-3d;">
                 <div class="mb-4 z-group" style="transform: translateZ(60px);">
                     <i class="bi bi-mortarboard-fill" style="font-size: 5rem; color: #00F0FF; filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.5));"></i>
@@ -38,7 +44,19 @@
         </div>
 
         <!-- Form Section (Right Column) -->
-        <div class="form-section w-50">
+        <div class="form-section">
+            
+            <!-- Mobile Brand Header -->
+            <div class="mobile-brand-header">
+                <a href="{{ route('home') }}">
+                    <div class="mb-1">
+                        <i class="bi bi-mortarboard-fill brand-icon-mobile"></i>
+                    </div>
+                    <div class="brand-title-mobile">Edvora Tech</div>
+                </a>
+                <p class="brand-tagline-mobile">Empowering Afghan women through tech education</p>
+            </div>
+
             <div class="text-center" style="transform-style: preserve-3d;">
                 <h2 class="auth-title">Welcome Back</h2>
                 <p class="auth-subtitle">Sign in to continue</p>
@@ -84,7 +102,7 @@
                     @error('password')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4 z-group" style="transform: translateZ(15px);">
+                <div class="d-flex justify-content-between align-items-center mb-4 z-group flex-wrap gap-2" style="transform: translateZ(15px);">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                         <label class="form-check-label small" for="rememberMe">Remember me</label>

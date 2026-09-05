@@ -179,9 +179,17 @@ class GeminiService
             ],
         ];
 
-        $langRule = ($language === 'fa')
-            ? "قانون زبان: کاربر زبان فارسی را انتخاب کرده است. پاسخ خود را حتماً به زبان فارسی روان، شیوا و محترمانه بنویسید."
-            : "LANGUAGE RULE: The user selected English. You MUST respond completely in clear, natural, and professional English.";
+        $langRule = "قانون زبان (MANDATORY LANGUAGE RULE):
+دقیقاً و ۱۰۰٪ به همان زبانی که کاربر پیام داده است پاسخ دهید:
+- اگر پیام کاربر به زبان فارسی است (یا شامل کلمات فارسی/دری/عربی است)، حتماً و کاملاً به زبان فارسی روان، شیوا و محترمانه پاسخ دهید. تحت هیچ شرایطی در پاسخ به پیام فارسی، انگلیسی صحبت نکنید.
+- اگر پیام کاربر به زبان انگلیسی است، کاملاً به زبان انگلیسی روان پاسخ دهید.";
+
+        $linksRule = "قانون لینک‌ها و معرفی دوره‌ها (COURSES & LINKS MANDATORY RULE):
+هر زمان کاربر در مورد دوره‌ها، تعداد دوره‌ها، اساتید، کتاب‌ها یا رویدادها سوال پرسید:
+۱. حتماً مشخصات کامل (نام دوره، مدرس، سطح) را بگویید.
+۲. حتماً لینک مستقیم کلیک‌پذیر با فرمت مارک‌داون قرار دهید: [عنوان دوره](/courses/slug)
+مثال: برای دوره جاوااسکریپت بنویسید: [دوره JS Courses](/courses/js-courses)
+کاربر با کلیک روی این لینک باید بتواند مستقیماً به صفحه دوره برود.";
 
         $topicRule = "";
         if (!empty($topic) && $topic !== 'all') {
@@ -189,23 +197,25 @@ class GeminiService
         }
 
         $systemInstruction = "شما دستیار هوشمند و رسمی پشتیبانی آموزشی پلتفرم «ادورا» (Edvora / edvoratech.com) هستید. 
-وظیفه شما فقط و فقط راهنمایی و حل مشکلات کاربران در خصوص وب‌سایت، امکانات، دوره‌ها، اساتید، کتاب‌ها، کلاس‌های زنده و رویدادهای ادورا است.
+وظیفه شما راهنمایی و حل مشکلات کاربران در خصوص وب‌سایت، امکانات، دوره‌ها، اساتید، کتاب‌ها، کلاس‌های زنده و رویدادهای ادورا است.
 
 {$langRule}
+{$linksRule}
 {$topicRule}
 
 قوانین الزامی و حیاتی (MANDATORY OPERATIONAL RULES):
-۱. **محدوده عملکرد:** این چت‌بات فقط و فقط برای حل کردن مشکلات و سوالات مربوط به وب‌سایت ادورا است، نه حل کردن کد یا مسائل سیاسی و حقوقی.
+۱. **محدوده عملکرد:** این چت‌بات فقط برای حل کردن مشکلات و سوالات مربوط به وب‌سایت ادورا است، نه حل کردن کد یا مسائل سیاسی و حقوقی.
 ۲. **عدم پذیرش فایل و ویس:** فایل یا ویس نمی‌گیرید. همواره مثل یک مربی و راهنمای آموزشی شایسته، محترمانه و دقیق با کاربر صحبت کنید.
-۳. **جملات کوتاه و کاربردی:** از گفتن جملات طولانی خودداری کنید. تمام جملات و پاسخ‌ها باید کاملاً کوتاه، مختصر، مفید و کاربردی باشند (حداکثر ۱ تا ۳ جمله خلاصه).
-۴. **عبارت پیش‌فرض برای رد درخواست‌های نامربوط:** در مواجهه با ارسال کدهای برنامه‌نویسی کاربران، درخواست حل یا دیباگ کد، یا سوالات متفرقه و خارج از وب‌سایت (سیاسی، حقوقی، تکالیف و...)، دقیقاً و عینا از این پاسخ استفاده کنید:
+۳. **پاسخ‌های مفید با لینک:** در معرفی دوره‌ها و امکانات، حتماً لینک‌های مستقیم را در قالب مارک‌داون بنویسید تا کاربر بتواند کلیک کند.
+۴. **عبارت پیش‌فرض برای رد درخواست‌های نامربوط:** در مواجهه با ارسال کدهای برنامه‌نویسی کاربران، درخواست حل یا دیباگ کد، یا سوالات متفرقه و خارج از وب‌سایت، دقیقاً از این پاسخ استفاده کنید:
 «من فقط میتوانم به شما در زمینه استفاده از امکانات، دورهها و سوالات مربوط به وبسایت ادورا کمک کنم و مجاز به حل کد یا بررسی تکهکدهای برنامهنویسی نیستم. برای این مورد میتوانید از انجمنها یا سایر ابزارها استفاده کنید.»
 (در زبان انگلیسی: \"I can only assist you with website features, courses, and inquiries regarding the Edvora platform, and I am not authorized to solve code or review programming snippets. For this, you can use developer forums or other tools.\")
-۵. **ارجاع مشکلات حل‌نشده به ایمیل مدیریت:** اگر مشکلی را دیدید که نمی‌دانید چگونه حل می‌شود یا در دیتابیس وب‌سایت پاسخی برای آن وجود ندارد، بلافاصله ابزار «send_unresolved_issue_to_admin» را صدا بزنید تا خلاصه مشکل به ایمیل مدیریت ارسال شود. پس از ارسال، در یک جمله کوتاه و آرامش‌بخش به کاربر اطلاع دهید که:
-«این موضوع ثبت و برای بررسی و پیگیری به ایمیل مدیریت و پشتیبانی ادورا ارسال شد. همکاران ما به زودی آن را بررسی می‌کنند.»
+۵. **ارجاع مشکلات حل‌نشده به ایمیل مدیریت:** اگر مشکلی را دیدید که نمی‌دانید چگونه حل می‌شود، ابزار «send_unresolved_issue_to_admin» را صدا بزنید تا خلاصه مشکل به ایمیل مدیریت ارسال شود.
 
 اطلاعات زنده کنونی سایت:
 - تعداد دوره‌ها: {$platformSnapshot['total_courses']}
+لیست و مشخصات کامل دوره‌های فعال سایت:
+{$platformSnapshot['courses_list_text']}
 - تعداد اساتید: {$platformSnapshot['total_teachers']}
 - تعداد دانشجویان ثبت‌نام شده: {$platformSnapshot['total_students']}
 - تعداد دوره‌های تکمیل شده: {$platformSnapshot['completed_enrollments']}
@@ -289,24 +299,45 @@ class GeminiService
             foreach ($functionCalls as $call) {
                 $fnName = $call['name'];
                 $fnArgs = $call['args'] ?? [];
+                $callId = $call['id'] ?? null;
                 $toolResult = $this->executeTool($fnName, $fnArgs);
                 $usedSources[] = $toolResult['source_name'] ?? $fnName;
 
-                $toolResponsesParts[] = [
+                $contentData = $toolResult['data'];
+                if (is_array($contentData) && empty($contentData)) {
+                    $contentData = (object)[];
+                }
+
+                $respPart = [
                     'functionResponse' => [
                         'name' => $fnName,
                         'response' => [
                             'name' => $fnName,
-                            'content' => $toolResult['data'],
+                            'content' => $contentData,
                         ],
                     ],
                 ];
+                if ($callId) {
+                    $respPart['functionResponse']['id'] = $callId;
+                }
+                $toolResponsesParts[] = $respPart;
+            }
+
+            // Sanitize model parts: ensure any functionCall args is (object)[] instead of empty array []
+            $sanitizedModelParts = [];
+            foreach ($parts as $p) {
+                if (isset($p['functionCall'])) {
+                    $fn = $p['functionCall'];
+                    $fnArgs = $fn['args'] ?? [];
+                    $p['functionCall']['args'] = empty($fnArgs) ? (object)[] : (object)$fnArgs;
+                }
+                $sanitizedModelParts[] = $p;
             }
 
             // Append assistant tool call content & tool response content to conversation
             $contents[] = [
                 'role' => 'model',
-                'parts' => $parts,
+                'parts' => $sanitizedModelParts,
             ];
             $contents[] = [
                 'role' => 'user',
@@ -334,12 +365,47 @@ class GeminiService
                         $responseText .= $sp['text'];
                     }
                 }
+            } else {
+                Log::warning("Gemini second payload failed, attempting direct text fallback.");
+            }
+        }
+
+        // CRITICAL: NEVER return an empty message box to the user!
+        $trimmedResponse = trim($responseText);
+        if ($trimmedResponse === '') {
+            $directPayload = [
+                'system_instruction' => [
+                    'parts' => [['text' => $systemInstruction]],
+                ],
+                'contents' => [
+                    ['role' => 'user', 'parts' => [['text' => $userMessage]]],
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.4,
+                    'maxOutputTokens' => 1500,
+                ],
+            ];
+            $directRes = $this->callGeminiApi($directPayload);
+            if ($directRes['success']) {
+                $dParts = $directRes['data']['candidates'][0]['content']['parts'] ?? [];
+                foreach ($dParts as $dp) {
+                    if (isset($dp['text'])) {
+                        $trimmedResponse .= $dp['text'];
+                    }
+                }
+                $trimmedResponse = trim($trimmedResponse);
+            }
+
+            if ($trimmedResponse === '') {
+                $trimmedResponse = ($language === 'fa')
+                    ? "در حال حاضر اطلاعات درخواستی در سامانه ادورا ثبت شده است. برای مشاهده جزئیات کامل‌تر می‌توانید بخش‌های دوره‌ها یا اساتید را نیز بررسی نمایید."
+                    : "Information regarding your query is available in the Edvora platform. You can also explore our courses and mentors sections for further details.";
             }
         }
 
         return [
             'success' => true,
-            'message' => trim($responseText),
+            'message' => $trimmedResponse,
             'sources' => array_values(array_unique($usedSources)),
         ];
     }
@@ -627,8 +693,23 @@ class GeminiService
     protected function getPlatformSummaryData(): array
     {
         try {
+            $courses = Course::with(['teacher:id,name'])->where('status', '!=', 'draft')->get(['id', 'title', 'slug', 'level', 'duration_hours', 'teacher_id', 'description']);
+            $coursesList = $courses->map(function ($c) {
+                $teacher = $c->teacher->name ?? 'مدرس ادورا';
+                $desc = \Illuminate\Support\Str::limit(strip_tags($c->description), 80);
+                return "- دوره [{$c->title}](/courses/{$c->slug}) | مدرس: {$teacher} | سطح: {$c->level} | مدت: {$c->duration_hours} ساعت | توضیح: {$desc}";
+            })->implode("\n");
+
             return [
-                'total_courses' => Course::where('status', '!=', 'draft')->count(),
+                'total_courses' => $courses->count(),
+                'courses_list_text' => $coursesList ?: 'هیچ دوره‌ای ثبت نشده است.',
+                'courses' => $courses->map(fn($c) => [
+                    'title' => $c->title,
+                    'slug' => $c->slug,
+                    'url' => "/courses/{$c->slug}",
+                    'teacher' => $c->teacher->name ?? 'ادورا',
+                    'level' => $c->level,
+                ])->toArray(),
                 'total_teachers' => User::where('role', 'teacher')->count(),
                 'total_students' => User::where('role', 'student')->count(),
                 'completed_enrollments' => Enrollment::where('status', 'completed')->count(),
@@ -639,6 +720,8 @@ class GeminiService
         } catch (\Throwable $e) {
             return [
                 'total_courses' => 0,
+                'courses_list_text' => '',
+                'courses' => [],
                 'total_teachers' => 0,
                 'total_students' => 0,
                 'completed_enrollments' => 0,

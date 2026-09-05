@@ -15,17 +15,48 @@ class EventController extends Controller
 {
     public function index()
     {
-        $featuredEvent = Event::where('start_date', '>=', now())
-            ->where('status', 'active')
-            ->orderBy('start_date')
-            ->first();
+        $eventsQuery = Event::where('status', 'active')
+            ->where(function ($q) {
+                $q->where('start_date', '>=', now())
+                  ->orWhere(function ($sub) {
+                      $sub->whereNotNull('end_date')
+                          ->where('end_date', '>=', now());
+                  });
+            })
+            ->orderBy('start_date');
 
-        $events = Event::where('start_date', '>=', now())
-            ->where('status', 'active')
-            ->orderBy('start_date')
-            ->get();
+        $featuredEvent = (clone $eventsQuery)->first();
+        $events = (clone $eventsQuery)->get();
 
-        return view('events.index', compact('featuredEvent', 'events'));
+        // Database-driven Hero Statistics
+        $totalEvents = Event::count();
+        $activeEvents = Event::where('status', 'active')->count();
+        $displayEventsCount = $activeEvents > 0 ? $activeEvents : $totalEvents;
+
+        $speakersCount = Event::whereNotNull('presenter')
+            ->where('presenter', '!=', '')
+            ->distinct('presenter')
+            ->count('presenter');
+
+        $activeTeachersCount = \App\Models\User::where('role', 'teacher')
+            ->where('status', 'active')
+            ->count();
+
+        $totalSpeakers = max($speakersCount, $activeTeachersCount);
+
+        $registeredUsersCount = EventRegistration::where('status', 'registered')->count();
+        $sumRegisteredCount = (int) Event::sum('registered_count');
+        $totalAttendees = max($registeredUsersCount, $sumRegisteredCount);
+
+        return view('events.index', compact(
+            'featuredEvent',
+            'events',
+            'displayEventsCount',
+            'totalEvents',
+            'activeEvents',
+            'totalSpeakers',
+            'totalAttendees'
+        ));
     }
 
     public function show($slug)

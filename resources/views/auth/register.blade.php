@@ -22,8 +22,14 @@
 <div class="login-wrapper">
     <div class="glass-card" id="glassCard">
         
-        <!-- Branding Section (Left Column) -->
-        <div class="brand-section d-none d-md-flex flex-column justify-content-center align-items-center w-50">
+        <!-- Back to Home Link -->
+        <a href="{{ route('home') }}" class="back-home-link" title="Back to Home">
+            <i class="bi bi-arrow-left"></i>
+            <span>Home</span>
+        </a>
+
+        <!-- Branding Section (Left Column - Desktop) -->
+        <div class="brand-section d-none d-md-flex flex-column justify-content-center align-items-center">
             <div class="text-center w-100" style="transform-style: preserve-3d;">
                 <div class="mb-4 z-group" style="transform: translateZ(60px);">
                     <i class="bi bi-mortarboard-fill" style="font-size: 5rem; color: #00F0FF; filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.5));"></i>
@@ -38,7 +44,19 @@
         </div>
 
         <!-- Form Section (Right Column) -->
-        <div class="form-section w-50">
+        <div class="form-section">
+            
+            <!-- Mobile Brand Header -->
+            <div class="mobile-brand-header">
+                <a href="{{ route('home') }}">
+                    <div class="mb-1">
+                        <i class="bi bi-mortarboard-fill brand-icon-mobile"></i>
+                    </div>
+                    <div class="brand-title-mobile">Edvora Tech</div>
+                </a>
+                <p class="brand-tagline-mobile">Empowering Afghan women through tech education</p>
+            </div>
+
             <div class="text-center" style="transform-style: preserve-3d;">
                 <h2 class="auth-title">Join Edvora!</h2>
                 <p class="auth-subtitle">Create your account and start your journey</p>
@@ -82,7 +100,7 @@
                 </div>
 
                 {{-- Full Name --}}
-                <div class="mb-3 z-group">
+                <div class="mb-3 auth-input-group z-group">
                     <label for="name" class="form-label">Full Name</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
@@ -92,7 +110,7 @@
                 </div>
 
                 {{-- Email --}}
-                <div class="mb-3 z-group">
+                <div class="mb-3 auth-input-group z-group">
                     <label for="email" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-envelope"></i></span>
@@ -102,7 +120,7 @@
                 </div>
 
                 {{-- Password --}}
-                <div class="mb-3 z-group">
+                <div class="mb-3 auth-input-group z-group">
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock"></i></span>
@@ -115,7 +133,7 @@
                 </div>
 
                 {{-- Confirm Password --}}
-                <div class="mb-3 z-group">
+                <div class="mb-3 auth-input-group z-group">
                     <label for="password_confirmation" class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>

@@ -23,7 +23,7 @@ class AiChatController extends Controller
         $validated = $request->validate([
             'message' => 'required|string|max:1000',
             'topic' => 'nullable|string|max:50',
-            'language' => 'nullable|string|in:en,fa',
+            'language' => 'nullable|string|in:en,fa,auto',
             'history' => 'nullable|array',
             'history.*.role' => 'nullable|string|in:user,model,assistant',
             'history.*.text' => 'nullable|string|max:1000',
@@ -33,7 +33,10 @@ class AiChatController extends Controller
         $message = trim($validated['message']);
         $history = $validated['history'] ?? [];
         $topic = $validated['topic'] ?? 'all';
-        $language = $validated['language'] ?? 'en';
+
+        // Automatically detect language from user's message
+        $hasPersian = (bool) preg_match('/[\x{0600}-\x{06FF}]/u', $message);
+        $language = $hasPersian ? 'fa' : ($validated['language'] ?? 'en');
 
         // Enforce 5-question limit for unauthenticated (guest) users
         $isGuest = !auth()->check();
@@ -85,10 +88,17 @@ class AiChatController extends Controller
                 ], 422);
             }
 
+            $responseMessage = trim($result['message'] ?? '');
+            if ($responseMessage === '') {
+                $responseMessage = $language === 'fa'
+                    ? 'پاسخی از دستیار هوشمند دریافت نشد. لطفاً سوال خود را دوباره مطرح بفرمایید.'
+                    : 'No response received. Please try rephrasing your question.';
+            }
+
             $responsePayload = [
                 'success' => true,
-                'message' => $result['message'],
-                'sources' => $result['sources'],
+                'message' => $responseMessage,
+                'sources' => $result['sources'] ?? [],
                 'is_guest' => $isGuest,
             ];
 

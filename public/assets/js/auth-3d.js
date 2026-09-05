@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateGoogleLink();
     }
 
-    // 3. 3D Parallax Tilt Effect
+    // 3. 3D Parallax Tilt Effect (Desktop Only)
     const card = document.getElementById('glassCard');
     const wrapper = document.querySelector('.login-wrapper');
 
@@ -77,12 +77,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         wrapper.addEventListener('mouseleave', function () {
-            card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-            card.style.transition = `transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)`;
+            if (window.innerWidth >= 768) {
+                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+                card.style.transition = `transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)`;
+            } else {
+                card.style.transform = '';
+            }
         });
 
         wrapper.addEventListener('mouseenter', function () {
-            card.style.transition = `none`;
+            if (window.innerWidth >= 768) {
+                card.style.transition = `none`;
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth < 768) {
+                card.style.transform = '';
+                card.style.transition = '';
+            }
         });
     }
 });
