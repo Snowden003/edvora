@@ -24,21 +24,68 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 
 
 
-Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
+Route::match(['get', 'post'], '/broadcasting/auth', function (\Illuminate\Http\Request $request) {
+    if (! $request->user()) {
+        return response()->json(['message' => 'Unauthenticated.'], 401);
+    }
+
     try {
+        require_once base_path('routes/channels.php');
         $result = \Illuminate\Support\Facades\Broadcast::driver('pusher')->auth($request);
-        return response()->json($result);
+
+        return response()->json($result)
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0')
+            ->header('X-LiteSpeed-Cache-Control', 'no-cache');
     } catch (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e) {
         return response()->json(['message' => 'Unauthorized channel access.'], 403);
     } catch (\Throwable $e) {
         \Illuminate\Support\Facades\Log::error('Broadcast auth error: ' . $e->getMessage(), [
-            'exception' => $e,
+            'exception' => $e->getMessage(),
             'channel' => $request->input('channel_name'),
             'user' => $request->user()?->id,
         ]);
-        return response()->json(['message' => 'Broadcasting authorization failed.'], 500);
+        return response()->json(['message' => 'Broadcasting authorization failed: ' . $e->getMessage()], 500);
     }
 })->middleware(['web', 'auth']);
+
+Route::get('/debug-broadcast', function (\Illuminate\Http\Request $request) {
+    $user = $request->user();
+    $course = \App\Models\Course::first();
+
+    $driver = get_class(\Illuminate\Support\Facades\Broadcast::driver());
+    $configDefault = config('broadcasting.default');
+    $pusherKey = config('broadcasting.connections.pusher.key');
+    $cluster = config('broadcasting.connections.pusher.options.cluster');
+
+    $authTest = null;
+    $authError = null;
+    if ($user && $course) {
+        try {
+            require_once base_path('routes/channels.php');
+            $subReq = \Illuminate\Http\Request::create('/broadcasting/auth', 'POST', [
+                'channel_name' => 'presence-course-chat.' . $course->id,
+                'socket_id' => '1234.5678',
+            ]);
+            $subReq->setUserResolver(fn() => $user);
+            $authTest = \Illuminate\Support\Facades\Broadcast::driver('pusher')->auth($subReq);
+        } catch (\Throwable $e) {
+            $authError = $e->getMessage();
+        }
+    }
+
+    return response()->json([
+        'user' => $user ? ['id' => $user->id, 'name' => $user->name, 'role' => $user->role] : 'Not logged in',
+        'config_default' => $configDefault,
+        'broadcaster_class' => $driver,
+        'pusher_key' => $pusherKey,
+        'pusher_cluster' => $cluster,
+        'test_course_id' => $course?->id,
+        'auth_test_result' => $authTest,
+        'auth_test_error' => $authError,
+    ]);
+});
 
 // Google OAuth
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
