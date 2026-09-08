@@ -13,40 +13,19 @@
     
 
     <!-- Hero Section -->
-    <section class="hero-animated py-5">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center">
-                    <div class="hero-content">
-                        <!-- Badge -->
-                        <div class="premium-badge mx-auto mb-4"
-                            style="width: fit-content; animation: badgeFloat 3s ease-in-out infinite;">
-                            <i class="bi bi-headset text-brand-yellow me-2"></i>
-                            <span class="text-white fw-semibold">Edvora Support</span>
-                        </div>
-
-                        <!-- Title -->
-                        <h1 class="story-title text-white fw-bold mb-4" style="font-size: 4.5rem; line-height: 1.1;">
-                            Get In <span class="hero-highlight-text">Touch</span>
-                        </h1>
-
-                        <!-- Subtitle -->
-                        <p class="para-lg text-white mx-auto mb-5" style="max-width: 700px; opacity: 0.9;">
-                            Send us your question through the form below. Our team reviews every message submitted through Edvora.
-                        </p>
-
-                        <!-- Stats -->
-                        <div class="hero-stats justify-content-center gap-4 mt-4">
-                            <div class="hero-stat">
-                                <div class="value">Free</div>
-                                <div class="label">Support through Edvora</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-headset"
+        badgeText="Edvora Support"
+        titlePrefix="Get In"
+        highlight="Touch"
+        subtitle="Send us your question or feedback through the form below. Our dedicated support team reviews every message and responds promptly."
+        :stats="[
+            ['icon' => 'bi bi-chat-heart-fill', 'value' => '24/7', 'label' => 'Support Available'],
+            ['icon' => 'bi bi-lightning-charge-fill text-warning', 'value' => 'Fast Response', 'label' => 'Direct Assistance'],
+        ]"
+        :floatingIcons="['bi bi-envelope', 'bi bi-chat-dots', 'bi bi-headset', 'bi bi-send', 'bi bi-shield-check']"
+    />
 
     <!-- Premium 3D Contact Section -->
     <section class="py-5"

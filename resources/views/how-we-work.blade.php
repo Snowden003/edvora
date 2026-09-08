@@ -135,54 +135,41 @@
     @endphp
 
     <!-- Modern Hero Section -->
-    <section class="hww-hero text-white text-center">
-        <div class="container position-relative z-index-2">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <!-- Badge -->
-                    <div class="hww-badge">
-                        <i class="bi bi-heart-fill text-danger me-1"></i>
-                        <span class="text-white fw-semibold small">{{ $hero['badge'] ?? 'Non-Profit Organization' }}</span>
-                    </div>
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-heart-fill text-danger"
+        badgeText="{{ $hero['badge'] ?? 'Non-Profit Educational Mission' }}"
+        titlePrefix="{{ $hero['title_prefix'] ?? 'How We' }}"
+        highlight="{{ $hero['highlight'] ?? 'Work' }}"
+        subtitle="{{ $hero['subtitle'] ?? 'Empowering youth and learners through accessible education, vibrant community, and modern technology.' }}"
+        :floatingIcons="['bi bi-heart', 'bi bi-award', 'bi bi-lightning-charge', 'bi bi-people', 'bi bi-mortarboard']"
+    >
+        <x-slot:actionsSlot>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{{ $hero['cta_url'] ?? route('courses.index') }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
+                    <i class="bi bi-collection-play me-2"></i>{{ $hero['cta_text'] ?? 'Explore Programs' }}
+                </a>
+                <a href="{{ route('about') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                    <i class="bi bi-info-circle me-2"></i>About Us
+                </a>
+            </div>
+        </x-slot:actionsSlot>
 
-                    <!-- Title -->
-                    <h1 class="display-3 fw-bold mb-3">
-                        <span>{{ $hero['title_prefix'] ?? 'How We' }}</span>
-                        <span class="text-primary">{{ $hero['highlight'] ?? 'Work' }}</span>
-                    </h1>
-
-                    <!-- Subtitle -->
-                    <p class="lead text-white-50 mb-4 mx-auto" style="max-width: 680px;">
-                        {{ $hero['subtitle'] ?? 'Empowering youth through education, community, and technology' }}
-                    </p>
-
-                    <!-- CTA Buttons -->
-                    <div class="d-flex justify-content-center gap-3 mb-5">
-                        <a href="{{ $hero['cta_url'] ?? route('courses.index') }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
-                            <i class="bi bi-collection-play me-2"></i>{{ $hero['cta_text'] ?? 'Explore Programs' }}
-                        </a>
-                        <a href="{{ route('about') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
-                            <i class="bi bi-info-circle me-2"></i>About Us
-                        </a>
-                    </div>
-
-                    <!-- Hero Stats Grid -->
-                    @if(isset($heroStats) && count($heroStats) > 0)
-                    <div class="row g-3 justify-content-center pt-3">
-                        @foreach($heroStats as $stat)
-                        <div class="col-md-4 col-sm-6">
-                            <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
-                                <div class="h2 fw-bold text-white mb-0">{{ $stat->value }}{{ $stat->suffix }}</div>
-                                <div class="small text-white-50">{{ $stat->label }}</div>
+        @if(isset($heroStats) && count($heroStats) > 0)
+            <div class="row g-3 justify-content-center pt-3">
+                @foreach($heroStats as $stat)
+                    <div class="col-md-4 col-sm-6">
+                        <div class="hero-stat-pill w-100 justify-content-center">
+                            <div class="stat-pill-content text-center">
+                                <span class="stat-pill-val">{{ $stat->value }}{{ $stat->suffix }}</span>
+                                <span class="stat-pill-lbl">{{ $stat->label }}</span>
                             </div>
                         </div>
-                        @endforeach
                     </div>
-                    @endif
-                </div>
+                @endforeach
             </div>
-        </div>
-    </section>
+        @endif
+    </x-page-hero>
 
     <!-- Mission Statement Section -->
     <section class="py-5" style="background-color: #f8fbff;">

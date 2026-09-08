@@ -40,6 +40,7 @@
     <link href="{{ asset('assets/css/global.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/animations.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/page-hero.css') }}" rel="stylesheet" />
 
     @stack('styles')
 

@@ -279,8 +279,36 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ─── ADMIN AREA ─── prefix: /admin
-    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', fn() => redirect('/admin-panel'))->name('dashboard');
+    Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index']);
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+
+        // Courses Management (React SPA)
+        Route::prefix('courses')->name('courses.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminCourseController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminCourseController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminCourseController::class, 'store'])->name('store');
+            Route::get('/{course}/edit', [\App\Http\Controllers\Admin\AdminCourseController::class, 'edit'])->name('edit');
+            Route::post('/{course}', [\App\Http\Controllers\Admin\AdminCourseController::class, 'update'])->name('update');
+            Route::delete('/{course}', [\App\Http\Controllers\Admin\AdminCourseController::class, 'destroy'])->name('destroy');
+            Route::post('/{course}/toggle-featured', [\App\Http\Controllers\Admin\AdminCourseController::class, 'toggleFeatured'])->name('toggle-featured');
+            Route::post('/bulk-action', [\App\Http\Controllers\Admin\AdminCourseController::class, 'bulkAction'])->name('bulk-action');
+            Route::post('/import-curriculum', [\App\Http\Controllers\Admin\AdminCourseController::class, 'importCurriculum'])->name('import-curriculum');
+            Route::post('/categories', [\App\Http\Controllers\Admin\AdminCourseController::class, 'storeCategory'])->name('categories.store');
+        });
+
+        // Books & Articles Management (React SPA)
+        Route::prefix('books')->name('books.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminBookController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminBookController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminBookController::class, 'store'])->name('store');
+            Route::get('/{book}/edit', [\App\Http\Controllers\Admin\AdminBookController::class, 'edit'])->name('edit');
+            Route::post('/{book}', [\App\Http\Controllers\Admin\AdminBookController::class, 'update'])->name('update');
+            Route::delete('/{book}', [\App\Http\Controllers\Admin\AdminBookController::class, 'destroy'])->name('destroy');
+            Route::post('/{book}/toggle-publish', [\App\Http\Controllers\Admin\AdminBookController::class, 'togglePublish'])->name('toggle-publish');
+            Route::post('/bulk-action', [\App\Http\Controllers\Admin\AdminBookController::class, 'bulkAction'])->name('bulk-action');
+            Route::post('/categories', [\App\Http\Controllers\Admin\AdminBookController::class, 'storeCategory'])->name('categories.store');
+        });
 
         // Events Management (Custom Admin - Not Filament)
         Route::get('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'index'])->name('events.index');

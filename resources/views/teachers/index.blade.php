@@ -15,51 +15,35 @@
     $totalActiveCourses = $teachers->sum('active_courses_count');
 @endphp
 
-<section class="teachers-hero-section teachers-directory-hero">
-    <div class="container position-relative">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
-                <div class="teachers-directory-copy">
-                    <span class="teachers-directory-kicker">Meet Our Teachers</span>
-                    <h1>Qualified teachers with complete public profiles</h1>
-                    <p>
-                        Explore instructors who actively teach on Edvora. Every profile shown here includes
-                        verified teaching information, active course history, and the sections they teach.
-                    </p>
-                    <div class="teachers-directory-stats">
-                        <div class="teachers-directory-stat">
-                            <strong>{{ $totalTeachers }}</strong>
-                            <span>Complete profiles</span>
-                        </div>
-                        <div class="teachers-directory-stat">
-                            <strong>{{ number_format($totalStudents) }}</strong>
-                            <span>Students reached</span>
-                        </div>
-                        <div class="teachers-directory-stat">
-                            <strong>{{ $totalActiveCourses }}</strong>
-                            <span>Active classes</span>
-                        </div>
-                        <div class="teachers-directory-stat">
-                            <strong>{{ number_format($avgRating, 1) }}</strong>
-                            <span>Average rating</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="teachers-directory-hero-card">
-                    <h2>What you can see here</h2>
-                    <ul>
-                        <li><i class="bi bi-check-circle-fill"></i> Number of students</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Active and total classes</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Join date</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Teaching sections</li>
-                    </ul>
-                </div>
+<x-page-hero
+    layout="split"
+    badgeIcon="bi bi-person-workspace"
+    badgeText="Meet Our Teachers"
+    titlePrefix="Qualified Mentors &"
+    highlight="Instructors"
+    subtitle="Explore instructors who actively teach on Edvora. Every profile includes verified teaching credentials, active course history, and student ratings."
+    :stats="[
+        ['icon' => 'bi bi-person-check-fill', 'value' => (string) $totalTeachers, 'label' => 'Instructors'],
+        ['icon' => 'bi bi-people-fill', 'value' => number_format($totalStudents), 'label' => 'Students Reached'],
+        ['icon' => 'bi bi-book-half', 'value' => (string) $totalActiveCourses, 'label' => 'Active Classes'],
+        ['icon' => 'bi bi-star-fill text-warning', 'value' => number_format($avgRating, 1), 'label' => 'Avg Rating'],
+    ]"
+    :floatingIcons="['bi bi-mortarboard', 'bi bi-award', 'bi bi-lightbulb', 'bi bi-people', 'bi bi-book']"
+>
+    <x-slot:mediaSlot>
+        <div class="hero-side-card text-start">
+            <h3 class="fw-bold mb-3 text-white d-flex align-items-center gap-2" style="font-size: 1.25rem;">
+                <i class="bi bi-shield-check text-info"></i> Instructor Verified
+            </h3>
+            <p class="text-white-50 small mb-3">All teacher profiles on Edvora undergo verification for expertise and curriculum quality.</p>
+            <div class="d-flex flex-column gap-2 text-white-50" style="font-size: 0.88rem;">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill text-success"></i> Direct Q&A & live feedback</div>
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill text-success"></i> Comprehensive course curriculum</div>
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill text-success"></i> Continuous student assessments</div>
             </div>
         </div>
-    </div>
-</section>
+    </x-slot:mediaSlot>
+</x-page-hero>
 
 <section class="teachers-directory-toolbar">
     <div class="container">

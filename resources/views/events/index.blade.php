@@ -12,53 +12,6 @@
 @endpush
 
 @section('content')
-<section class="events-hero-section">
-    <div class="floating-icon icon-calendar">
-        <i class="bi bi-calendar-event-fill"></i>
-    </div>
-    <div class="floating-icon icon-people">
-        <i class="bi bi-people-fill"></i>
-    </div>
-    <div class="floating-icon icon-globe">
-        <i class="bi bi-globe-americas"></i>
-    </div>
-    <div class="floating-icon icon-award">
-        <i class="bi bi-award-fill"></i>
-    </div>
-
-    <div class="event-particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
-    <div class="container text-center text-white position-relative" style="z-index: 10;">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="premium-badge-events">
-                    <i class="bi bi-gem"></i>
-                    <span>Premium Events</span>
-                </div>
-
-                <h1 class="events-hero-title">
-                    <span>Discover</span>
-                    <span>Our Exclusive</span>
-                    <span>Events</span>
-                </h1>
-
-                <p class="events-hero-subtitle">
-                    Join workshops, webinars, and conferences led by global experts.
-                </p>
-
 @php
     $formatStat = function (int $num): string {
         if ($num >= 1000000) {
@@ -74,34 +27,33 @@
     };
 @endphp
 
-                <div class="row g-4 justify-content-center events-stats">
-                    <div class="col-6 col-md-4">
-                        <div class="stat-card">
-                            <i class="bi bi-calendar-check-fill"></i>
-                            <span class="stat-number">{{ $formatStat($displayEventsCount ?? 0) }}</span>
-                            <span class="stat-label">{{ ($activeEvents ?? 0) > 0 ? 'Active Events' : 'Total Events' }}</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <div class="stat-card">
-                            <i class="bi bi-person-video3"></i>
-                            <span class="stat-number">{{ $formatStat($totalSpeakers ?? 0) }}</span>
-                            <span class="stat-label">Expert Speakers</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <div class="stat-card">
-                            <i class="bi bi-globe-americas"></i>
-                            <span class="stat-number">{{ $formatStat($totalAttendees ?? 0) }}</span>
-                            <span class="stat-label">Event Attendees</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</section>
+<x-page-hero
+    layout="centered"
+    badgeIcon="bi bi-gem"
+    badgeText="Premium Events"
+    badgeClass="badge-gold"
+    titlePrefix="Discover Our Exclusive"
+    highlight="Events"
+    subtitle="Join interactive workshops, webinars, and conferences led by global technology leaders and mentors."
+    :stats="[
+        [
+            'icon' => 'bi bi-calendar-check-fill',
+            'value' => $formatStat($displayEventsCount ?? 0),
+            'label' => ($activeEvents ?? 0) > 0 ? 'Active Events' : 'Total Events',
+        ],
+        [
+            'icon' => 'bi bi-person-video3',
+            'value' => $formatStat($totalSpeakers ?? 0),
+            'label' => 'Expert Speakers',
+        ],
+        [
+            'icon' => 'bi bi-globe-americas',
+            'value' => $formatStat($totalAttendees ?? 0),
+            'label' => 'Event Attendees',
+        ],
+    ]"
+    :floatingIcons="['bi bi-calendar-event-fill', 'bi bi-people-fill', 'bi bi-globe-americas', 'bi bi-award-fill', 'bi bi-mic-fill']"
+/>
 
 <section class="py-4 gray">
     <div class="container">

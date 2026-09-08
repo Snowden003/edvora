@@ -14,113 +14,106 @@
 @section('content')
 <!-- Header -->
 
-    <!-- Leaderboard Hero -->
-    <header class="leaderboard-hero">
-        <div class="leaderboard-bg-animation">
-            <div class="particle p1"
-                style="position:absolute; top:20%; left:10%; width:5px; height:5px; background:white; border-radius:50%; opacity:0.3;">
+    <!-- Leaderboard Master Hero Section -->
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-trophy-fill"
+        badgeText="Wall of Fame"
+        badgeClass="badge-gold"
+        titlePrefix="{{ $monthName }}"
+        highlight="Wall of Records"
+        highlightClass="highlight-gold"
+        subtitle="Celebrating the brilliance, continuous dedication, and high achievements of our top-performing students."
+        :floatingIcons="['bi bi-trophy', 'bi bi-star-fill', 'bi bi-award', 'bi bi-mortarboard', 'bi bi-fire']"
+    >
+        <!-- Filters -->
+        <form method="GET" action="{{ route('leaderboard') }}" class="row g-2 justify-content-center mb-4">
+            <div class="col-md-4 col-sm-6">
+                <select name="course_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Courses</option>
+                    @foreach($courses as $id => $title)
+                    <option value="{{ $id }}" {{ $courseId == $id ? 'selected' : '' }}>{{ $title }}</option>
+                    @endforeach
+                </select>
             </div>
-            <div class="particle p2"
-                style="position:absolute; top:60%; left:85%; width:7px; height:7px; background:white; border-radius:50%; opacity:0.2;">
+            <div class="col-md-3 col-sm-6">
+                <select name="range" class="form-select" onchange="this.form.submit()">
+                    <option value="weekly" {{ $range === 'weekly' ? 'selected' : '' }}>This Week</option>
+                    <option value="monthly" {{ $range === 'monthly' ? 'selected' : '' }}>This Month</option>
+                    <option value="all_time" {{ $range === 'all_time' ? 'selected' : '' }}>All Time</option>
+                </select>
             </div>
-            <div class="particle p3"
-                style="position:absolute; top:30%; left:70%; width:4px; height:4px; background:white; border-radius:50%; opacity:0.4;">
+        </form>
+
+        @if($top3->count() >= 3)
+        <!-- Top 3 Podium -->
+        <div class="podium-container">
+            @php
+                $podiumOrder = [1, 0, 2]; // Rank 2, Rank 1, Rank 3
+                $rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+            @endphp
+
+            <!-- Rank 2 -->
+            @php $second = $top3->get(1); @endphp
+            <div class="podium-item rank-2">
+                <div class="podium-rank">2</div>
+                <div class="student-img-container">
+                    @php
+                        $avatar2 = $second->user->avatar
+                            ? (str_starts_with($second->user->avatar, 'http') ? $second->user->avatar : asset('storage/' . $second->user->avatar))
+                            : 'https://ui-avatars.com/api/?name=' . urlencode($second->user->name) . '&size=200&background=c0c0c0&color=fff';
+                    @endphp
+                    <img src="{{ $avatar2 }}" class="student-img" alt="{{ $second->user->name }}"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($second->user->name) }}&size=200&background=c0c0c0&color=fff'">
+                </div>
+                <h3 class="student-name">{{ $second->user->name }}</h3>
+                <p class="student-dept">{{ $second->user->department ?? 'Student' }}</p>
+                <div class="student-score">{{ number_format($second->xp) }} <span class="xp-label">XP</span></div>
+            </div>
+
+            <!-- Rank 1 -->
+            @php $first = $top3->get(0); @endphp
+            <div class="podium-item rank-1">
+                <div class="podium-rank"><i class="bi bi-trophy-fill"></i></div>
+                <div class="student-img-container">
+                    @php
+                        $avatar1 = $first->user->avatar
+                            ? (str_starts_with($first->user->avatar, 'http') ? $first->user->avatar : asset('storage/' . $first->user->avatar))
+                            : 'https://ui-avatars.com/api/?name=' . urlencode($first->user->name) . '&size=200&background=ffd700&color=fff';
+                    @endphp
+                    <img src="{{ $avatar1 }}" class="student-img" alt="{{ $first->user->name }}"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($first->user->name) }}&size=200&background=ffd700&color=fff'">
+                </div>
+                <h3 class="student-name">{{ $first->user->name }}</h3>
+                <p class="student-dept">{{ $first->user->department ?? 'Student' }}</p>
+                <div class="student-score">{{ number_format($first->xp) }} <span class="xp-label">XP</span></div>
+            </div>
+
+            <!-- Rank 3 -->
+            @php $third = $top3->get(2); @endphp
+            <div class="podium-item rank-3">
+                <div class="podium-rank">3</div>
+                <div class="student-img-container">
+                    @php
+                        $avatar3 = $third->user->avatar
+                            ? (str_starts_with($third->user->avatar, 'http') ? $third->user->avatar : asset('storage/' . $third->user->avatar))
+                            : 'https://ui-avatars.com/api/?name=' . urlencode($third->user->name) . '&size=200&background=cd7f32&color=fff';
+                    @endphp
+                    <img src="{{ $avatar3 }}" class="student-img" alt="{{ $third->user->name }}"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($third->user->name) }}&size=200&background=cd7f32&color=fff'">
+                </div>
+                <h3 class="student-name">{{ $third->user->name }}</h3>
+                <p class="student-dept">{{ $third->user->department ?? 'Student' }}</p>
+                <div class="student-score">{{ number_format($third->xp) }} <span class="xp-label">XP</span></div>
             </div>
         </div>
-
-        <div class="container position-relative z-top" style="z-index: 10;">
-            <h1 class="hero-title">{{ $monthName }} Wall of Records</h1>
-            <p class="hero-subtitle">Celebrating the brilliance and hard work of our top performing students in {{ $monthName }} {{ $currentYear }}</p>
-
-            <!-- Filters -->
-            <form method="GET" action="{{ route('leaderboard') }}" class="row g-2 justify-content-center mb-4">
-                <div class="col-md-4 col-sm-6">
-                    <select name="course_id" class="form-select" onchange="this.form.submit()">
-                        <option value="">All Courses</option>
-                        @foreach($courses as $id => $title)
-                        <option value="{{ $id }}" {{ $courseId == $id ? 'selected' : '' }}>{{ $title }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <select name="range" class="form-select" onchange="this.form.submit()">
-                        <option value="weekly" {{ $range === 'weekly' ? 'selected' : '' }}>This Week</option>
-                        <option value="monthly" {{ $range === 'monthly' ? 'selected' : '' }}>This Month</option>
-                        <option value="all_time" {{ $range === 'all_time' ? 'selected' : '' }}>All Time</option>
-                    </select>
-                </div>
-            </form>
-
-            @if($top3->count() >= 3)
-            <!-- Top 3 Podium -->
-            <div class="podium-container">
-                @php
-                    $podiumOrder = [1, 0, 2]; // Rank 2, Rank 1, Rank 3
-                    $rankClasses = ['rank-1', 'rank-2', 'rank-3'];
-                @endphp
-
-                <!-- Rank 2 -->
-                @php $second = $top3->get(1); @endphp
-                <div class="podium-item rank-2">
-                    <div class="podium-rank">2</div>
-                    <div class="student-img-container">
-                        @php
-                            $avatar2 = $second->user->avatar
-                                ? (str_starts_with($second->user->avatar, 'http') ? $second->user->avatar : asset('storage/' . $second->user->avatar))
-                                : 'https://ui-avatars.com/api/?name=' . urlencode($second->user->name) . '&size=200&background=c0c0c0&color=fff';
-                        @endphp
-                        <img src="{{ $avatar2 }}" class="student-img" alt="{{ $second->user->name }}"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($second->user->name) }}&size=200&background=c0c0c0&color=fff'">
-                    </div>
-                    <h3 class="student-name">{{ $second->user->name }}</h3>
-                    <p class="student-dept">{{ $second->user->department ?? 'Student' }}</p>
-                    <div class="student-score">{{ number_format($second->xp) }} <span class="xp-label">XP</span></div>
-                </div>
-
-                <!-- Rank 1 -->
-                @php $first = $top3->get(0); @endphp
-                <div class="podium-item rank-1">
-                    <div class="podium-rank"><i class="bi bi-trophy-fill"></i></div>
-                    <div class="student-img-container">
-                        @php
-                            $avatar1 = $first->user->avatar
-                                ? (str_starts_with($first->user->avatar, 'http') ? $first->user->avatar : asset('storage/' . $first->user->avatar))
-                                : 'https://ui-avatars.com/api/?name=' . urlencode($first->user->name) . '&size=200&background=ffd700&color=fff';
-                        @endphp
-                        <img src="{{ $avatar1 }}" class="student-img" alt="{{ $first->user->name }}"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($first->user->name) }}&size=200&background=ffd700&color=fff'">
-                    </div>
-                    <h3 class="student-name">{{ $first->user->name }}</h3>
-                    <p class="student-dept">{{ $first->user->department ?? 'Student' }}</p>
-                    <div class="student-score">{{ number_format($first->xp) }} <span class="xp-label">XP</span></div>
-                </div>
-
-                <!-- Rank 3 -->
-                @php $third = $top3->get(2); @endphp
-                <div class="podium-item rank-3">
-                    <div class="podium-rank">3</div>
-                    <div class="student-img-container">
-                        @php
-                            $avatar3 = $third->user->avatar
-                                ? (str_starts_with($third->user->avatar, 'http') ? $third->user->avatar : asset('storage/' . $third->user->avatar))
-                                : 'https://ui-avatars.com/api/?name=' . urlencode($third->user->name) . '&size=200&background=cd7f32&color=fff';
-                        @endphp
-                        <img src="{{ $avatar3 }}" class="student-img" alt="{{ $third->user->name }}"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($third->user->name) }}&size=200&background=cd7f32&color=fff'">
-                    </div>
-                    <h3 class="student-name">{{ $third->user->name }}</h3>
-                    <p class="student-dept">{{ $third->user->department ?? 'Student' }}</p>
-                    <div class="student-score">{{ number_format($third->xp) }} <span class="xp-label">XP</span></div>
-                </div>
-            </div>
-            @elseif($top3->isEmpty())
-            <div class="text-center mt-5">
-                <i class="bi bi-trophy text-white" style="font-size: 3rem; opacity: 0.5;"></i>
-                <p class="text-white mt-3" style="opacity: 0.8;">No leaderboard data available for {{ $monthName }} {{ $range !== 'all_time' ? $currentYear : '' }} yet.</p>
-            </div>
-            @endif
+        @elseif($top3->isEmpty())
+        <div class="text-center mt-5">
+            <i class="bi bi-trophy text-white" style="font-size: 3rem; opacity: 0.5;"></i>
+            <p class="text-white mt-3" style="opacity: 0.8;">No leaderboard data available for {{ $monthName }} {{ $range !== 'all_time' ? $currentYear : '' }} yet.</p>
         </div>
-    </header>
+        @endif
+    </x-page-hero>
 
     <!-- Rankings Section -->
     <main class="leaderboard-list-section">

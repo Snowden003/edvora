@@ -254,26 +254,179 @@
     font-weight: 500;
 }
 
+.safi-thumb-wrap .safi-floating-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.safi-floating-badge--upcoming {
+    background: rgba(14, 165, 233, 0.25);
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+}
+
+.safi-floating-badge--ongoing {
+    background: rgba(16, 185, 129, 0.25);
+    border: 1px solid rgba(52, 211, 153, 0.5);
+    color: #34d399;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.safi-floating-badge--finished {
+    background: rgba(148, 163, 184, 0.2);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #cbd5e1;
+}
+
+.safi-floating-badge--open {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+}
+
+.safi-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: inline-block;
+    animation: safi-badge-blink 1.5s infinite ease-in-out;
+}
+
+@keyframes safi-badge-blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+.safi-vip-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.3rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+}
+
+/* Schedule & Countdown Bar inside Card Body */
+.safi-schedule-bar {
+    margin-top: 1rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.875rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    transition: all 0.3s ease;
+}
+
+.safi-course-card:hover .safi-schedule-bar {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.safi-schedule-bar--upcoming {
+    border-left: 3px solid #38bdf8;
+}
+
+.safi-schedule-bar--ongoing {
+    border-left: 3px solid #34d399;
+}
+
+.safi-schedule-bar--finished {
+    border-left: 3px solid #94a3b8;
+}
+
+.safi-schedule-bar--open {
+    border-left: 3px solid #818cf8;
+}
+
+.safi-schedule-dates {
+    font-size: 0.78rem;
+    color: #e2e8f0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.safi-schedule-dates i {
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+.safi-schedule-countdown {
+    font-size: 0.73rem;
+    font-weight: 700;
+}
+
+.safi-schedule-bar--upcoming .safi-schedule-countdown {
+    color: #38bdf8;
+}
+
+.safi-schedule-bar--ongoing .safi-schedule-countdown {
+    color: #34d399;
+}
+
+.safi-schedule-bar--finished .safi-schedule-countdown {
+    color: #94a3b8;
+}
+
+.safi-schedule-bar--open .safi-schedule-countdown {
+    color: #a5b4fc;
+}
+
 .safi-footer {
-    margin-top: 2rem;
+    margin-top: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
+    padding-top: 1rem;
 }
 
-.safi-lang {
+.safi-footer-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.safi-duration {
     font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #737373;
+    font-weight: 800;
+    color: #94a3b8;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
+    display: inline-flex;
+    align-items: center;
 }
 
 .safi-explore {

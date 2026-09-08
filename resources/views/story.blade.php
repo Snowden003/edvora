@@ -16,28 +16,16 @@
     @endphp
 
     <!-- Hero Section -->
-    <section class="story-hero-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-12 text-center">
-                    <div class="story-badge">
-                        <i class="bi bi-gem"></i>
-                        <span>{{ $hero['badge'] ?? 'Our Journey' }}</span>
-                    </div>
-
-                    <h1 class="story-title">
-                        <span>{{ $hero['title_prefix'] ?? 'The Story Behind' }}</span>
-                        <br>
-                        <span class="highlight">{{ $hero['highlight'] ?? ($siteSettings->get('company_name', 'Edvora')) }}</span>
-                    </h1>
-
-                    <p class="story-subtitle">
-                        {{ $hero['subtitle'] ?? 'From a revolutionary idea to transforming education through technology' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-gem"
+        badgeText="{{ $hero['badge'] ?? 'Our Journey' }}"
+        badgeClass="badge-gold"
+        titlePrefix="{{ $hero['title_prefix'] ?? 'The Story Behind' }}"
+        highlight="{{ $hero['highlight'] ?? ($siteSettings->get('company_name', 'Edvora')) }}"
+        subtitle="{{ $hero['subtitle'] ?? 'From an ambitious dream to empowering thousands of learners through accessible, cutting-edge technology education.' }}"
+        :floatingIcons="['bi bi-rocket-takeoff', 'bi bi-lightbulb', 'bi bi-stars', 'bi bi-award', 'bi bi-globe']"
+    />
 
     <!-- Story Content -->
     <section class="py-5 story-content-section">

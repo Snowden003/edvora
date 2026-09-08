@@ -23,6 +23,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ['middleware' => ['web', 'auth']],
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'teacher.onboarded' => \App\Http\Middleware\EnsureTeacherOnboarded::class,

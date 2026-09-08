@@ -10,99 +10,22 @@
 @section('content')
     <!-- Header -->
 
-        <!-- Hero Section with Special Animation -->
-        <section class="py-5 courses-hero-section">
-          <!-- Animated Background -->
-          <div class="courses-bg-animation">
-            <!-- Floating Learning Icons -->
-            <div class="floating-learning-icon icon-1">
-              <i class="bi bi-book"></i>
-            </div>
-            <div class="floating-learning-icon icon-2">
-              <i class="bi bi-lightbulb"></i>
-            </div>
-            <div class="floating-learning-icon icon-3">
-              <i class="bi bi-mortarboard"></i>
-            </div>
-            <div class="floating-learning-icon icon-4">
-              <i class="bi bi-trophy"></i>
-            </div>
-            <div class="floating-learning-icon icon-5">
-              <i class="bi bi-star"></i>
-            </div>
-            <div class="floating-learning-icon icon-6">
-              <i class="bi bi-award"></i>
-            </div>
-
-            <!-- Animated Particles -->
-            <div class="learning-particle particle-1"></div>
-            <div class="learning-particle particle-2"></div>
-            <div class="learning-particle particle-3"></div>
-            <div class="learning-particle particle-4"></div>
-            <div class="learning-particle particle-5"></div>
-            <div class="learning-particle particle-6"></div>
-            <div class="learning-particle particle-7"></div>
-            <div class="learning-particle particle-8"></div>
-
-            <!-- Animated Lines -->
-            <div class="animated-line line-1"></div>
-            <div class="animated-line line-2"></div>
-            <div class="animated-line line-3"></div>
-
-            <!-- Floating Geometric Shapes -->
-            <div class="geometric-shape shape-1"></div>
-            <div class="geometric-shape shape-2"></div>
-            <div class="geometric-shape shape-3"></div>
-            <div class="geometric-shape shape-4"></div>
-          </div>
-
-          <div class="container position-relative">
-            <div class="row align-items-center text-white">
-              <div class="col-lg-8">
-                <div class="hero-content">
-                  <h1 class="display-4 fw-bold mb-3 hero-title">
-                    <span
-                      class="typewriter-text"
-                      data-text="Explore Our Courses"
-                    ></span>
-                  </h1>
-                  <p class="lead mb-4 hero-subtitle">
-                    <span
-                      class="typewriter-text"
-                      data-text="Discover world-class courses taught by industry experts. From programming to design, data science to marketing - find your perfect learning path."
-                    ></span>
-                  </p>
-                  <div class="d-flex gap-3 flex-wrap hero-stats">
-                    <div class="stat-card stat-1">
-                      <i class="bi bi-people me-2"></i>{{ number_format($totalStudents) }}+ Students
-                    </div>
-                    <div class="stat-card stat-2">
-                      <i class="bi bi-book me-2"></i>{{ $totalCourses }}+ Courses
-                    </div>
-                    <div class="stat-card stat-3">
-                      <i class="bi bi-award me-2"></i>{{ $totalCertificates }} Certificates
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4 text-center">
-                <div class="hero-image-container">
-                  <div class="image-glow"></div>
-                  <img
-                    src="{{ asset('assets/images/hero_logo_design.png') }}"
-                    alt="Edvora Tech"
-                    class="hero-image"
-                  />
-                  <div class="image-overlay">
-                    <div class="pulse-ring ring-1"></div>
-                    <div class="pulse-ring ring-2"></div>
-                    <div class="pulse-ring ring-3"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <!-- Reusable Master Hero Section -->
+        <x-page-hero
+            layout="split"
+            badgeIcon="bi bi-mortarboard-fill"
+            badgeText="Explore Our Courses"
+            titlePrefix="Discover World-Class"
+            highlight="Courses"
+            subtitle="Explore comprehensive technology and career skill programs taught by industry experts. Find your perfect learning path and build your future."
+            :stats="[
+                ['icon' => 'bi bi-people-fill', 'value' => number_format($totalStudents) . '+', 'label' => 'Students'],
+                ['icon' => 'bi bi-book-fill', 'value' => $totalCourses . '+', 'label' => 'Courses'],
+                ['icon' => 'bi bi-award-fill', 'value' => (string) $totalCertificates, 'label' => 'Certificates'],
+            ]"
+            :image="asset('assets/images/hero_logo_design.png')"
+            imageAlt="Edvora Courses"
+        />
 
         <!-- Search and Filter Section -->
         <section class="py-4 gray courses-filter-section">

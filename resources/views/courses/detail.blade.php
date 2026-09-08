@@ -74,6 +74,59 @@
             ],
         ];
     }
+
+    $today = \Carbon\Carbon::today();
+    $startDate = $course->start_date ? \Carbon\Carbon::parse($course->start_date)->startOfDay() : null;
+    $endDate = $course->end_date ? \Carbon\Carbon::parse($course->end_date)->startOfDay() : null;
+
+    $detailDateStatus = [
+        'type' => 'open',
+        'badge_text' => 'Open Enrollment',
+        'countdown_text' => 'Flexible Schedule',
+        'icon' => 'bi bi-lightning-charge-fill',
+        'badge_class' => 'bg-info bg-opacity-25 text-info border-0',
+    ];
+
+    if ($startDate && $startDate->greaterThan($today)) {
+        $daysUntilStart = (int) $today->diffInDays($startDate, false);
+        $detailDateStatus['type'] = 'upcoming';
+        $detailDateStatus['icon'] = 'bi bi-rocket-takeoff-fill';
+        $detailDateStatus['badge_class'] = 'bg-info bg-opacity-25 text-info border-0';
+        if ($daysUntilStart === 0) {
+            $detailDateStatus['badge_text'] = 'Starts Today';
+            $detailDateStatus['countdown_text'] = 'Starts today';
+        } elseif ($daysUntilStart === 1) {
+            $detailDateStatus['badge_text'] = 'Starts Tomorrow';
+            $detailDateStatus['countdown_text'] = '1 day left until start';
+        } else {
+            $detailDateStatus['badge_text'] = "Starts in {$daysUntilStart} days";
+            $detailDateStatus['countdown_text'] = "{$daysUntilStart} days left until start";
+        }
+    } elseif (
+        (($startDate && $startDate->lessThanOrEqualTo($today)) || $course->started_at !== null || $course->status === 'started')
+        && ($endDate && $endDate->greaterThanOrEqualTo($today))
+    ) {
+        $daysUntilEnd = (int) $today->diffInDays($endDate, false);
+        $detailDateStatus['type'] = 'ongoing';
+        $detailDateStatus['icon'] = 'bi bi-hourglass-split';
+        $detailDateStatus['badge_class'] = 'bg-warning bg-opacity-25 text-warning border-0';
+        if ($daysUntilEnd === 0) {
+            $detailDateStatus['badge_text'] = 'Ends Today';
+            $detailDateStatus['countdown_text'] = 'Ends today';
+        } elseif ($daysUntilEnd === 1) {
+            $detailDateStatus['badge_text'] = 'Ends Tomorrow';
+            $detailDateStatus['countdown_text'] = '1 day left until class ends';
+        } else {
+            $detailDateStatus['badge_text'] = "Ends in {$daysUntilEnd} days";
+            $detailDateStatus['countdown_text'] = "{$daysUntilEnd} days left until class ends";
+        }
+    } elseif (($endDate && $endDate->lessThan($today)) || in_array($course->status, ['archived', 'completed'])) {
+        $detailDateStatus['type'] = 'finished';
+        $detailDateStatus['icon'] = 'bi bi-check2-circle';
+        $detailDateStatus['badge_class'] = 'bg-secondary bg-opacity-25 text-white-50 border-0';
+        $detailDateStatus['badge_text'] = 'Completed';
+        $detailDateStatus['countdown_text'] = 'Course completed';
+    }
 @endphp
 
 @section('title', 'Free ' . $course->title . ' Online Course for Afghan Women | Edvora')
@@ -110,6 +163,9 @@
                         </span>
                         <span class="badge bg-success bg-opacity-25 text-success border-0">
                             <i class="bi bi-unlock-fill me-1"></i> Free Access
+                        </span>
+                        <span class="badge {{ $detailDateStatus['badge_class'] }}">
+                            <i class="{{ $detailDateStatus['icon'] }} me-1"></i> {{ $detailDateStatus['badge_text'] }}
                         </span>
                     </div>
 
@@ -259,6 +315,32 @@
                                         <span class="feature-text-val">English</span>
                                     </div>
                                 </div>
+                                @if($course->start_date || $course->end_date)
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-calendar3"></i></div>
+                                    <div class="feature-text">
+                                        <span class="feature-text-label">Course Schedule</span>
+                                        <span class="feature-text-val">
+                                            @if($course->start_date && $course->end_date)
+                                                {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
+                                            @elseif($course->start_date)
+                                                Starts {{ $course->start_date->format('M d, Y') }}
+                                            @elseif($course->end_date)
+                                                Ends {{ $course->end_date->format('M d, Y') }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="{{ $detailDateStatus['icon'] }}"></i></div>
+                                    <div class="feature-text">
+                                        <span class="feature-text-label">Status</span>
+                                        <span class="feature-text-val fw-bold {{ $detailDateStatus['type'] === 'upcoming' ? 'text-info' : ($detailDateStatus['type'] === 'ongoing' ? 'text-warning' : 'text-success') }}">
+                                            {{ $detailDateStatus['countdown_text'] }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </section>

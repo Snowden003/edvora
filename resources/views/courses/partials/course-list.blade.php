@@ -53,10 +53,71 @@
                         <div class="row g-3 g-xl-4">
                           @foreach($categoryCourses as $course)
                             @php
-                              $isUpcoming = ($course->start_date && $course->start_date->isFuture()) || (!$course->started_at && $course->status === 'published' && (!$course->end_date || $course->end_date->isFuture()));
-                              $isFinished = ($course->end_date && $course->end_date->isPast()) || in_array($course->status, ['archived', 'completed']);
-                              $isHot = $course->enrolled_count > 600;
-                              $isNew = $course->created_at && $course->created_at->diffInDays() < 30;
+                              $today = \Carbon\Carbon::today();
+                              $startDate = $course->start_date ? \Carbon\Carbon::parse($course->start_date)->startOfDay() : null;
+                              $endDate = $course->end_date ? \Carbon\Carbon::parse($course->end_date)->startOfDay() : null;
+
+                              // Date & Countdown Status Calculation
+                              $dateStatus = [
+                                  'type' => 'open', // upcoming, ongoing, finished, open
+                                  'badge_text' => 'Open Course',
+                                  'countdown_text' => 'Flexible Schedule',
+                                  'icon' => 'bi bi-lightning-charge-fill',
+                                  'pulse' => false,
+                              ];
+
+                              if ($startDate && $startDate->greaterThan($today)) {
+                                  // Course starts in future
+                                  $daysUntilStart = (int) $today->diffInDays($startDate, false);
+                                  $dateStatus['type'] = 'upcoming';
+                                  $dateStatus['icon'] = 'bi bi-rocket-takeoff-fill';
+                                  $dateStatus['pulse'] = true;
+
+                                  if ($daysUntilStart === 0) {
+                                      $dateStatus['badge_text'] = 'Starts Today';
+                                      $dateStatus['countdown_text'] = 'Starts today';
+                                  } elseif ($daysUntilStart === 1) {
+                                      $dateStatus['badge_text'] = 'Starts Tomorrow';
+                                      $dateStatus['countdown_text'] = '1 day left until start';
+                                  } else {
+                                      $dateStatus['badge_text'] = "Starts in {$daysUntilStart} days";
+                                      $dateStatus['countdown_text'] = "{$daysUntilStart} days left until start";
+                                  }
+                              } elseif (
+                                  (($startDate && $startDate->lessThanOrEqualTo($today)) || $course->started_at !== null || $course->status === 'started')
+                                  && ($endDate && $endDate->greaterThanOrEqualTo($today))
+                              ) {
+                                  // Course is running & has upcoming end date
+                                  $daysUntilEnd = (int) $today->diffInDays($endDate, false);
+                                  $dateStatus['type'] = 'ongoing';
+                                  $dateStatus['icon'] = 'bi bi-hourglass-split';
+                                  $dateStatus['pulse'] = true;
+
+                                  if ($daysUntilEnd === 0) {
+                                      $dateStatus['badge_text'] = 'Ends Today';
+                                      $dateStatus['countdown_text'] = 'Ends today';
+                                  } elseif ($daysUntilEnd === 1) {
+                                      $dateStatus['badge_text'] = 'Ends Tomorrow';
+                                      $dateStatus['countdown_text'] = '1 day left until class ends';
+                                  } else {
+                                      $dateStatus['badge_text'] = "Ends in {$daysUntilEnd} days";
+                                      $dateStatus['countdown_text'] = "{$daysUntilEnd} days left until class ends";
+                                  }
+                              } elseif (($endDate && $endDate->lessThan($today)) || in_array($course->status, ['archived', 'completed'])) {
+                                  // Course finished
+                                  $dateStatus['type'] = 'finished';
+                                  $dateStatus['icon'] = 'bi bi-check2-circle';
+                                  $dateStatus['badge_text'] = 'Completed';
+                                  $dateStatus['countdown_text'] = 'Course completed';
+                                  $dateStatus['pulse'] = false;
+                              } elseif ($startDate && $startDate->lessThanOrEqualTo($today)) {
+                                  // Course started without fixed end date
+                                  $dateStatus['type'] = 'ongoing';
+                                  $dateStatus['icon'] = 'bi bi-play-circle-fill';
+                                  $dateStatus['badge_text'] = 'In Progress';
+                                  $dateStatus['countdown_text'] = 'Class in progress';
+                                  $dateStatus['pulse'] = true;
+                              }
                             @endphp
                             <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-6 col-sm-6">
                               <article class="safi-course-card">
@@ -64,6 +125,22 @@
                                   <div class="safi-pulse-bg"><div class="safi-pulse-inner"></div></div>
                                   <div class="safi-grad-overlay"></div>
                                   <div class="safi-hover-glow"></div>
+
+                                  <!-- Dynamic Countdown Floating Badge -->
+                                  <div class="safi-floating-badge safi-floating-badge--{{ $dateStatus['type'] }}">
+                                      @if($dateStatus['pulse'])
+                                          <span class="safi-badge-dot"></span>
+                                      @endif
+                                      <i class="{{ $dateStatus['icon'] }}"></i>
+                                      <span>{{ $dateStatus['badge_text'] }}</span>
+                                  </div>
+
+                                  @if($course->is_featured)
+                                      <div class="safi-vip-badge">
+                                          <i class="bi bi-star-fill"></i> VIP
+                                      </div>
+                                  @endif
+
                                   <img src="{{ $course->thumbnail ? (Str::startsWith($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop' }}"
                                        alt="{{ $course->title }}"
                                        loading="lazy">
@@ -80,11 +157,37 @@
                                   </h2>
 
                                   <p class="safi-description">
-                                      {{ Str::limit(strip_tags($course->description ?? 'Learn the essential skills for success in this comprehensive course.'), 120) }}
+                                      {{ Str::limit(strip_tags($course->description ?? 'Learn the essential skills for success in this comprehensive course.'), 90) }}
                                   </p>
 
+                                  <!-- Schedule & Timeline Section -->
+                                  <div class="safi-schedule-bar safi-schedule-bar--{{ $dateStatus['type'] }}">
+                                      <div class="safi-schedule-dates">
+                                          <i class="bi bi-calendar3"></i>
+                                          <span>
+                                              @if($course->start_date && $course->end_date)
+                                                  {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
+                                              @elseif($course->start_date)
+                                                  Starts {{ $course->start_date->format('M d, Y') }}
+                                              @elseif($course->end_date)
+                                                  Ends {{ $course->end_date->format('M d, Y') }}
+                                              @else
+                                                  Flexible Schedule
+                                              @endif
+                                          </span>
+                                      </div>
+                                      <div class="safi-schedule-countdown">
+                                          <span>{{ $dateStatus['countdown_text'] }}</span>
+                                      </div>
+                                  </div>
+
                                   <div class="safi-footer">
-                                    <span class="safi-lang">en</span>
+                                    <div class="safi-footer-meta">
+                                      <span class="safi-lang">en</span>
+                                      @if($course->duration_hours)
+                                          <span class="safi-duration"><i class="bi bi-clock me-1"></i>{{ $course->duration_hours }}h</span>
+                                      @endif
+                                    </div>
                                     <a href="{{ route('courses.detail', $course->slug) }}" class="safi-explore">
                                       Explore
                                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>

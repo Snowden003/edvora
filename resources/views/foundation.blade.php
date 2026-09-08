@@ -12,126 +12,93 @@
 
 @section('content')
 <!-- Hero Section with Donation Form -->
-<section class="foundation-hero">
-    <div class="foundation-bg">
-        <div class="floating-shape shape-1"></div>
-        <div class="floating-shape shape-2"></div>
-        <div class="floating-shape shape-3"></div>
-    </div>
-    
-    <div class="container">
-        <div class="row align-items-center min-vh-100 py-5">
-            <!-- Left: Info -->
-            <div class="col-lg-5 mb-5 mb-lg-0">
-                <div class="foundation-info">
-                    <div class="foundation-badge">
-                        <i class="fas fa-gem"></i>
-                        <span>Edvora Foundation</span>
-                    </div>
-                    
-                    <h1 class="foundation-title">
-                        Support the Future of
-                        <span class="highlight">Technology</span>
-                    </h1>
-                    
-                    <p class="foundation-desc">
-                        Your contribution helps Iranian youth access quality technology education. 
-                        Every donation makes a difference.
-                    </p>
-                    
-                    <!-- Stats -->
-                    <div class="foundation-stats">
-                        <div class="stat-box">
-                            <span class="stat-num">{{ number_format($totalStudents) }}</span>
-                            <span class="stat-text">Students</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-num">{{ number_format($totalSupporters) }}</span>
-                            <span class="stat-text">Supporters</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-num">${{ number_format($totalDonations) }}</span>
-                            <span class="stat-text">Raised</span>
-                        </div>
-                    </div>
+<x-page-hero
+    layout="split"
+    badgeIcon="bi bi-heart-fill text-danger"
+    badgeText="Edvora Foundation"
+    badgeClass="badge-gold"
+    titlePrefix="Support the Future of"
+    highlight="Tech Education"
+    subtitle="Your contribution helps students and youth access world-class technology courses, hands-on mentorship, and career certifications. Every donation makes a direct difference."
+    :stats="[
+        ['icon' => 'bi bi-people-fill', 'value' => number_format($totalStudents), 'label' => 'Students'],
+        ['icon' => 'bi bi-heart-fill text-danger', 'value' => number_format($totalSupporters), 'label' => 'Supporters'],
+        ['icon' => 'bi bi-currency-dollar text-success', 'value' => '$' . number_format($totalDonations), 'label' => 'Raised'],
+    ]"
+    :floatingIcons="['bi bi-heart', 'bi bi-gem', 'bi bi-star', 'bi bi-award', 'bi bi-mortarboard']"
+>
+    <x-slot:mediaSlot>
+        <div class="donation-card text-start">
+            <div class="card-header">
+                <div class="heart-icon">
+                    <i class="fas fa-heart"></i>
                 </div>
+                <h2>Make a Donation</h2>
+                <p>Choose an amount to support our students</p>
             </div>
             
-            <!-- Right: Donation Form -->
-            <div class="col-lg-7">
-                <div class="donation-card">
-                    <div class="card-header">
-                        <div class="heart-icon">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                        <h2>Make a Donation</h2>
-                        <p>Choose an amount to support our students</p>
-                    </div>
-                    
-                    <form class="donation-form" id="donationForm">
-                        <!-- Quick Amount Buttons -->
-                        <div class="amount-grid">
-                            <button type="button" class="amount-chip" data-amount="25">$25</button>
-                            <button type="button" class="amount-chip" data-amount="50">$50</button>
-                            <button type="button" class="amount-chip" data-amount="100">$100</button>
-                            <button type="button" class="amount-chip" data-amount="250">$250</button>
-                            <button type="button" class="amount-chip" data-amount="500">$500</button>
-                            <button type="button" class="amount-chip other">Other</button>
-                        </div>
-                        
-                        <!-- Custom Amount Input -->
-                        <div class="custom-amount-wrapper">
-                            <span class="currency">$</span>
-                            <input type="number" class="custom-input" id="customAmount" placeholder="Enter amount">
-                        </div>
-                        
-                        <!-- Personal Info -->
-                        <div class="form-fields">
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="donorName" placeholder="Full Name" required>
-                            </div>
-                            <div class="input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="donorEmail" placeholder="Email Address" required>
-                            </div>
-                            <div class="input-group">
-                                <i class="fas fa-phone"></i>
-                                <input type="tel" id="donorPhone" placeholder="Phone Number" required>
-                            </div>
-                            <div class="input-group textarea">
-                                <i class="fas fa-comment"></i>
-                                <textarea id="donorMessage" rows="2" placeholder="Message (Optional)"></textarea>
-                            </div>
-                        </div>
-                        
-                        <!-- Privacy Checkbox -->
-                        <label class="privacy-check">
-                            <input type="checkbox" id="showName" checked>
-                            <span class="checkmark"></span>
-                            <span class="label-text">Show my name in supporters list</span>
-                        </label>
-                        
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn-donate-submit">
-                            <i class="fas fa-heart"></i>
-                            <span>Donate Now</span>
-                            <div class="btn-loader">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </div>
-                        </button>
-                        
-                        <!-- Security Note -->
-                        <div class="security-note">
-                            <i class="fas fa-lock"></i>
-                            <span>Secure payment. Your information is protected.</span>
-                        </div>
-                    </form>
+            <form class="donation-form" id="donationForm">
+                <!-- Quick Amount Buttons -->
+                <div class="amount-grid">
+                    <button type="button" class="amount-chip" data-amount="25">$25</button>
+                    <button type="button" class="amount-chip" data-amount="50">$50</button>
+                    <button type="button" class="amount-chip" data-amount="100">$100</button>
+                    <button type="button" class="amount-chip" data-amount="250">$250</button>
+                    <button type="button" class="amount-chip" data-amount="500">$500</button>
+                    <button type="button" class="amount-chip other">Other</button>
                 </div>
-            </div>
+                
+                <!-- Custom Amount Input -->
+                <div class="custom-amount-wrapper">
+                    <span class="currency">$</span>
+                    <input type="number" class="custom-input" id="customAmount" placeholder="Enter amount">
+                </div>
+                
+                <!-- Personal Info -->
+                <div class="form-fields">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="donorName" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="donorEmail" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="donorPhone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group textarea">
+                        <i class="fas fa-comment"></i>
+                        <textarea id="donorMessage" rows="2" placeholder="Message (Optional)"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Privacy Checkbox -->
+                <label class="privacy-check">
+                    <input type="checkbox" id="showName" checked>
+                    <span class="checkmark"></span>
+                    <span class="label-text">Show my name in supporters list</span>
+                </label>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-donate-submit">
+                    <i class="fas fa-heart"></i>
+                    <span>Donate Now</span>
+                    <div class="btn-loader">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+                
+                <!-- Security Note -->
+                <div class="security-note">
+                    <i class="fas fa-lock"></i>
+                    <span>Secure payment. Your information is protected.</span>
+                </div>
+            </form>
         </div>
-    </div>
-</section>
+    </x-slot:mediaSlot>
+</x-page-hero>
 
 <!-- Impact Section -->
 <section class="impact-section">

@@ -15,27 +15,22 @@
     
 
     <!-- Hero Section -->
-    <section class="py-5" style="background: linear-gradient(135deg, #1F8FFF, #1F8FFF);">
-        <div class="container">
-            <div class="row align-items-center text-white">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
-                    <p class="lead mb-4">Find answers to common questions about our courses, platform, and services.
-                        Can't find what you're looking for? Contact our support team.</p>
-                    <div class="input-group mb-3" style="max-width: 500px;">
-                        <input type="text" class="form-control" id="faqSearch" placeholder="Search FAQ...">
-                        <button class="btn btn-warning" type="button"
-                            style="background-color: #1F8FFF; border-color: #1F8FFF;">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <i class="bi bi-question-circle-fill" style="font-size: 8rem; opacity: 0.3;"></i>
-                </div>
-            </div>
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-patch-question-fill"
+        badgeText="Help Center & Knowledge Base"
+        titlePrefix="Frequently Asked"
+        highlight="Questions"
+        subtitle="Find clear answers to common questions about courses, exams, certificates, and learning on Edvora."
+        :floatingIcons="['bi bi-question-circle', 'bi bi-lightbulb', 'bi bi-book', 'bi bi-shield-check', 'bi bi-chat-dots']"
+    >
+        <div class="input-group mx-auto mb-2" style="max-width: 580px;">
+            <input type="text" class="form-control" id="faqSearch" placeholder="Search questions, topics, or keywords...">
+            <button class="btn btn-primary px-4" type="button">
+                <i class="bi bi-search"></i>
+            </button>
         </div>
-    </section>
+    </x-page-hero>
 
     <!-- FAQ Categories -->
     <section class="py-5" style="background-color: #EEEEEE;">

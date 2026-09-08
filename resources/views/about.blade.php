@@ -24,16 +24,15 @@
     @endphp
 
     <!-- Premium Hero Section -->
-    <section class="hero-animated">
-        <div class="container text-center text-white">
-            <h1 class="story-title display-3 fw-bold anim-slide-in-left">
-                {{ $hero['title'] ?? 'The Story of' }} <span class="highlight">{{ $hero['highlight'] ?? ($siteSettings->get('company_name', 'Edvora')) }}</span>
-            </h1>
-            <p class="story-subtitle lead anim-slide-in-right anim-delay-03">
-                {{ $hero['subtitle'] ?? 'Pioneering the future of education with passion, innovation, and a commitment to lifelong learning.' }}
-            </p>
-        </div>
-    </section>
+    <x-page-hero
+        layout="centered"
+        badgeIcon="bi bi-info-circle-fill"
+        badgeText="About Edvora"
+        titlePrefix="{{ $hero['title'] ?? 'The Story of' }}"
+        highlight="{{ $hero['highlight'] ?? ($siteSettings->get('company_name', 'Edvora')) }}"
+        subtitle="{{ $hero['subtitle'] ?? 'Pioneering the future of education with passion, innovation, and an unwavering commitment to accessible learning.' }}"
+        :floatingIcons="['bi bi-compass', 'bi bi-lightbulb', 'bi bi-globe', 'bi bi-mortarboard', 'bi bi-award']"
+    />
 
     <!-- Mission & Vision -->
     <section class="py-5 section-animated" style="background-color: #f8f9fa;">
