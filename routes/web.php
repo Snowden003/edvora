@@ -316,8 +316,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'store'])->name('events.store');
         Route::get('/events/{event}/edit', [\App\Http\Controllers\Admin\EventAdminController::class, 'edit'])->name('events.edit');
         Route::put('/events/{event}', [\App\Http\Controllers\Admin\EventAdminController::class, 'update'])->name('events.update');
-        Route::delete('/events/{event}', [\App\Http\Controllers\Admin\EventAdminController::class, 'destroy'])->name('events.destroy');
         Route::get('/events/{event}/registrations/pdf', [\App\Http\Controllers\Admin\EventAdminController::class, 'downloadRegistrationsPdf'])->name('events.registrations.pdf');
+
+        // Broadcast Emails to All Students / Users (React SPA)
+        Route::prefix('broadcast-emails')->name('broadcast-emails.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminBroadcastEmailController::class, 'index'])->name('index');
+            Route::post('/send', [\App\Http\Controllers\Admin\AdminBroadcastEmailController::class, 'send'])->name('send');
+            Route::post('/test', [\App\Http\Controllers\Admin\AdminBroadcastEmailController::class, 'sendTest'])->name('test');
+        });
     });
 });
 

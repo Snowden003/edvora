@@ -22,7 +22,8 @@ import {
     Menu,
     X,
     Shield,
-    LogOut
+    LogOut,
+    Mail
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
@@ -145,6 +146,13 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                     icon: CalendarDays,
                     href: '/admin/events',
                     active: url.includes('/admin/events'),
+                },
+                {
+                    name: 'ارسال ایمیل همگانی',
+                    icon: Mail,
+                    href: '/admin/broadcast-emails',
+                    active: url.startsWith('/admin/broadcast-emails'),
+                    isSpa: true,
                 },
             ],
         },
