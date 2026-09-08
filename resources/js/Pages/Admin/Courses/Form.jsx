@@ -828,17 +828,18 @@ export default function Form({ course = null, categories = [], teachers = [], is
                                     type="file"
                                     ref={fileInputRef}
                                     onChange={handleExcelUpload}
-                                    accept=".xlsx, .xls"
+                                    accept=".xlsx, .xls, .csv"
                                     className="hidden"
                                 />
                                 <button
                                     type="button"
                                     disabled={excelImportLoading}
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all disabled:opacity-50"
+                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all disabled:opacity-50 shadow-sm"
+                                    title="فرمت مجاز: اکسل (.xlsx) یا .csv"
                                 >
                                     <FileSpreadsheet size={16} />
-                                    <span>{excelImportLoading ? 'در حال پردازش...' : 'ایمپورت سرفصل‌ها از فایل اکسل (.xlsx)'}</span>
+                                    <span>{excelImportLoading ? 'در حال پردازش...' : 'ایمپورت سرفصل‌ها از فایل اکسل (.xlsx / .csv)'}</span>
                                 </button>
                             </div>
                         </div>

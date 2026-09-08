@@ -445,11 +445,15 @@ class AdminCourseController extends Controller
 
     public function importCurriculum(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls|max:5120',
-        ]);
-
         try {
+            $request->validate([
+                'file' => 'required|file|extensions:xlsx,xls,csv|max:10240',
+            ], [
+                'file.required'   => 'فایل اکسل انتخاب نشده است.',
+                'file.extensions' => 'فرمت فایل باید اکسل (.xlsx, .xls) یا .csv باشد.',
+                'file.max'        => 'حجم فایل نباید بیش از ۱۰ مگابایت باشد.',
+            ]);
+
             $file = $request->file('file');
             $lessons = app(CurriculumSpreadsheetImporter::class)->import($file->getRealPath());
 
@@ -458,6 +462,11 @@ class AdminCourseController extends Controller
                 'lessons' => $lessons,
                 'message' => count($lessons) . ' درس با موفقیت از فایل اکسل استخراج شد.',
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => collect($e->errors())->flatten()->first() ?? 'فایل معتبر نیست.',
+            ], 422);
         } catch (RuntimeException $e) {
             return response()->json([
                 'success' => false,
@@ -466,7 +475,7 @@ class AdminCourseController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در پردازش فایل اکسل.',
+                'message' => 'خطا در پردازش فایل اکسل: ' . $e->getMessage(),
             ], 500);
         }
     }
