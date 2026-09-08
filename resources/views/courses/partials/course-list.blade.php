@@ -125,7 +125,7 @@
                                 <div class="glass-card-specular"></div>
 
                                 <!-- Thumbnail Box -->
-                                <div class="edvora-card-thumb-box">
+                                <div class="edvora-card-thumb-box" style="position: relative; aspect-ratio: 16/9.5; max-height: 210px; overflow: hidden; border-radius: 16px;">
                                   <!-- Live Status Badge (Top-Start) -->
                                   <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}">
                                     @if($dateStatus['pulse'])
@@ -155,10 +155,11 @@
                                   @endif
 
                                   <!-- Image with Smooth Zoom Effect -->
-                                  <a href="{{ route('courses.detail', $course->slug) }}" class="edvora-thumb-link" tabindex="-1" aria-hidden="true">
+                                  <a href="{{ route('courses.detail', $course->slug) }}" class="edvora-thumb-link" tabindex="-1" aria-hidden="true" style="display: block; width: 100%; height: 100%;">
                                     <img src="{{ $course->thumbnail ? (Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop' }}"
                                          alt="{{ $course->title }}"
                                          class="edvora-card-img"
+                                         style="width: 100%; height: 100%; object-fit: cover; display: block;"
                                          loading="lazy"
                                          onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop';">
                                   </a>

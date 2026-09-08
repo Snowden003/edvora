@@ -4,7 +4,7 @@
 
 @push('styles')
     <link href="{{ asset('assets/css/glass-panel.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/courses-pages.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/courses-pages.css') }}?v={{ file_exists(public_path('assets/css/courses-pages.css')) ? filemtime(public_path('assets/css/courses-pages.css')) : time() }}" rel="stylesheet" />
 @endpush
 
 @section('content')

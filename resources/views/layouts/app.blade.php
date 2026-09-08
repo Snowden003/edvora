@@ -36,15 +36,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-    <link href="{{ asset('assets/css/variables.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/global.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/animations.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/page-hero.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/variables.css') }}?v={{ file_exists(public_path('assets/css/variables.css')) ? filemtime(public_path('assets/css/variables.css')) : time() }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/global.css') }}?v={{ file_exists(public_path('assets/css/global.css')) ? filemtime(public_path('assets/css/global.css')) : time() }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/animations.css') }}?v={{ file_exists(public_path('assets/css/animations.css')) ? filemtime(public_path('assets/css/animations.css')) : time() }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/style.css') }}?v={{ file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : time() }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/page-hero.css') }}?v={{ file_exists(public_path('assets/css/page-hero.css')) ? filemtime(public_path('assets/css/page-hero.css')) : time() }}" rel="stylesheet" />
 
     @stack('styles')
 
-    <link href="{{ asset('assets/css/modern-footer.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/modern-footer.css') }}?v={{ file_exists(public_path('assets/css/modern-footer.css')) ? filemtime(public_path('assets/css/modern-footer.css')) : time() }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/ai-chatbot.css') }}?v={{ file_exists(public_path('assets/css/ai-chatbot.css')) ? filemtime(public_path('assets/css/ai-chatbot.css')) : time() }}" rel="stylesheet" />
     @auth
     @vite('resources/js/app.js')
