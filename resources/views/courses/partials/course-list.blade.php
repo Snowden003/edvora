@@ -119,78 +119,103 @@
                                   $dateStatus['pulse'] = true;
                               }
                             @endphp
-                            <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-6 col-sm-6">
-                              <article class="safi-course-card">
-                                <div class="safi-thumb-wrap">
-                                  <div class="safi-pulse-bg"><div class="safi-pulse-inner"></div></div>
-                                  <div class="safi-grad-overlay"></div>
-                                  <div class="safi-hover-glow"></div>
+                            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                              <article class="edvora-glass-course-card">
+                                <!-- Card Top Glass Specular Glow -->
+                                <div class="glass-card-specular"></div>
 
-                                  <!-- Dynamic Countdown Floating Badge -->
-                                  <div class="safi-floating-badge safi-floating-badge--{{ $dateStatus['type'] }}">
-                                      @if($dateStatus['pulse'])
-                                          <span class="safi-badge-dot"></span>
-                                      @endif
-                                      <i class="{{ $dateStatus['icon'] }}"></i>
-                                      <span>{{ $dateStatus['badge_text'] }}</span>
+                                <!-- Thumbnail Box -->
+                                <div class="edvora-card-thumb-box">
+                                  <!-- Live Status Badge (Top-Start) -->
+                                  <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}">
+                                    @if($dateStatus['pulse'])
+                                      <span class="status-live-dot"></span>
+                                    @endif
+                                    <i class="{{ $dateStatus['icon'] }}"></i>
+                                    <span>{{ $dateStatus['badge_text'] }}</span>
                                   </div>
 
+                                  <!-- VIP Badge (Top-End) -->
                                   @if($course->is_featured)
-                                      <div class="safi-vip-badge">
-                                          <i class="bi bi-star-fill"></i> VIP
-                                      </div>
+                                    <div class="edvora-floating-vip-badge">
+                                      <i class="bi bi-star-fill"></i> VIP
+                                    </div>
                                   @endif
 
-                                  <img src="{{ $course->thumbnail ? (Str::startsWith($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop' }}"
-                                       alt="{{ $course->title }}"
-                                       loading="lazy">
+                                  <!-- Floating Category Tag (Bottom-Start) -->
+                                  <div class="edvora-floating-category">
+                                    <span>{{ $course->category ? $course->category->name : 'Technology' }}</span>
+                                  </div>
+
+                                  <!-- Floating Level Pill (Bottom-End) -->
+                                  @if($course->level)
+                                    <div class="edvora-floating-level">
+                                      <span>{{ ucfirst($course->level) }}</span>
+                                    </div>
+                                  @endif
+
+                                  <!-- Image with Smooth Zoom Effect -->
+                                  <a href="{{ route('courses.detail', $course->slug) }}" class="edvora-thumb-link" tabindex="-1" aria-hidden="true">
+                                    <img src="{{ $course->thumbnail ? (Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop' }}"
+                                         alt="{{ $course->title }}"
+                                         class="edvora-card-img"
+                                         loading="lazy"
+                                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop';">
+                                  </a>
                                 </div>
 
-                                <div class="safi-card-body">
-                                  <div class="safi-meta-top">
-                                    <span class="safi-category">{{ $course->category ? $course->category->name : 'General' }}</span>
-                                    <span class="safi-price">Free</span>
-                                  </div>
-
-                                  <h2 class="safi-title" title="{{ $course->title }}">
+                                <!-- Card Content Body -->
+                                <div class="edvora-card-content">
+                                  <!-- Title -->
+                                  <h3 class="edvora-card-title">
+                                    <a href="{{ route('courses.detail', $course->slug) }}" title="{{ $course->title }}">
                                       {{ $course->title }}
-                                  </h2>
+                                    </a>
+                                  </h3>
 
-                                  <p class="safi-description">
-                                      {{ Str::limit(strip_tags($course->description ?? 'Learn the essential skills for success in this comprehensive course.'), 90) }}
+                                  <!-- Short Excerpt -->
+                                  <p class="edvora-card-excerpt">
+                                    {{ Str::limit(strip_tags($course->description ?? 'Gain practical skills and hands-on experience in this comprehensive program.'), 80) }}
                                   </p>
 
-                                  <!-- Schedule & Timeline Section -->
-                                  <div class="safi-schedule-bar safi-schedule-bar--{{ $dateStatus['type'] }}">
-                                      <div class="safi-schedule-dates">
-                                          <i class="bi bi-calendar3"></i>
-                                          <span>
-                                              @if($course->start_date && $course->end_date)
-                                                  {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
-                                              @elseif($course->start_date)
-                                                  Starts {{ $course->start_date->format('M d, Y') }}
-                                              @elseif($course->end_date)
-                                                  Ends {{ $course->end_date->format('M d, Y') }}
-                                              @else
-                                                  Flexible Schedule
-                                              @endif
-                                          </span>
-                                      </div>
-                                      <div class="safi-schedule-countdown">
-                                          <span>{{ $dateStatus['countdown_text'] }}</span>
-                                      </div>
+                                  <!-- Glass Timeline & Schedule Bar -->
+                                  <div class="edvora-schedule-capsule schedule-{{ $dateStatus['type'] }}">
+                                    <div class="capsule-countdown-row">
+                                      <i class="{{ $dateStatus['icon'] }}"></i>
+                                      <span class="countdown-text">{{ $dateStatus['countdown_text'] }}</span>
+                                    </div>
+                                    <div class="capsule-date-row">
+                                      <i class="bi bi-calendar-event"></i>
+                                      <span>
+                                        @if($course->start_date && $course->end_date)
+                                          {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
+                                        @elseif($course->start_date)
+                                          Starts {{ $course->start_date->format('M d, Y') }}
+                                        @elseif($course->end_date)
+                                          Ends {{ $course->end_date->format('M d, Y') }}
+                                        @else
+                                          Flexible Schedule
+                                        @endif
+                                      </span>
+                                    </div>
                                   </div>
 
-                                  <div class="safi-footer">
-                                    <div class="safi-footer-meta">
-                                      <span class="safi-lang">en</span>
+                                  <!-- Meta Info & CTA Footer -->
+                                  <div class="edvora-card-footer">
+                                    <div class="edvora-card-meta-chips">
+                                      <span class="meta-chip meta-chip--free">
+                                        <i class="bi bi-gift-fill me-1"></i> Free
+                                      </span>
                                       @if($course->duration_hours)
-                                          <span class="safi-duration"><i class="bi bi-clock me-1"></i>{{ $course->duration_hours }}h</span>
+                                        <span class="meta-chip">
+                                          <i class="bi bi-stopwatch me-1"></i> {{ $course->duration_hours }}h
+                                        </span>
                                       @endif
                                     </div>
-                                    <a href="{{ route('courses.detail', $course->slug) }}" class="safi-explore">
-                                      Explore
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+
+                                    <a href="{{ route('courses.detail', $course->slug) }}" class="edvora-card-cta-btn">
+                                      <span>Explore</span>
+                                      <i class="bi bi-arrow-right"></i>
                                     </a>
                                   </div>
                                 </div>

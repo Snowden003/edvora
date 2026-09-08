@@ -97,372 +97,397 @@
     margin-bottom: 24px;
 }
 
-/* ===== Safi Academy Course Card ===== */
-.safi-course-card {
+/* ===== Edvora Modern Floating Glassmorphism Course Card ===== */
+.edvora-glass-course-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(20px) saturate(190%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    outline: 1px solid rgba(31, 143, 255, 0.14);
+    border-radius: 22px;
     overflow: hidden;
-    border-radius: 2.5rem;
-    background: rgba(15, 23, 42, 0.7); /* Deep dark glass */
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
-    transition: all 0.5s ease;
-    position: relative;
+    box-shadow: 0 10px 30px -6px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(31, 143, 255, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+    transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none !important;
 }
 
-.safi-course-card:hover {
-    border-color: rgba(16, 185, 129, 0.3);
-    box-shadow: 0 25px 80px rgba(16, 185, 129, 0.15);
+.edvora-glass-course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 50px -10px rgba(31, 143, 255, 0.22), 0 12px 24px -4px rgba(15, 23, 42, 0.06), inset 0 2px 4px rgba(255, 255, 255, 1);
+    outline-color: rgba(31, 143, 255, 0.38);
+    border-color: rgba(255, 255, 255, 1);
 }
 
-.safi-course-card .safi-thumb-wrap {
-    position: relative;
-    display: flex;
-    height: 16rem;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background-color: #000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-}
-
-.safi-thumb-wrap .safi-pulse-bg {
-    position: absolute;
-    inset: 0;
-    opacity: 0.2;
-}
-
-.safi-thumb-wrap .safi-pulse-inner {
-    width: 100%;
-    height: 100%;
-    animation: safi-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-    background-size: 20px 20px;
-}
-
-.safi-thumb-wrap .safi-grad-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.2), transparent);
-}
-
-.safi-thumb-wrap .safi-hover-glow {
+/* Specular Glass Highlight */
+.glass-card-specular {
     position: absolute;
     top: 0;
+    left: 0;
     right: 0;
-    width: 8rem;
-    height: 8rem;
-    border-radius: 50%;
-    filter: blur(40px);
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 30%, rgba(31, 143, 255, 0.5) 60%, transparent 100%);
     pointer-events: none;
-    transition: opacity 0.3s;
-    opacity: 0;
-    background-color: rgba(234, 179, 8, 0.1);
+    z-index: 15;
 }
 
-.safi-course-card:hover .safi-hover-glow {
-    opacity: 1;
-}
-
-.safi-thumb-wrap img {
+/* Thumbnail Recessed Glass Box */
+.edvora-card-thumb-box {
     position: relative;
-    z-index: 20;
-    max-height: 100%;
+    aspect-ratio: 16 / 9.5;
+    margin: 10px 10px 0 10px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.edvora-thumb-link {
+    display: block;
     width: 100%;
-    object-fit: contain;
-    transition: all 0.7s ease;
-    border-radius: 0.75rem;
-    filter: drop-shadow(0 25px 25px rgba(0,0,0,0.15));
+    height: 100%;
 }
 
-.safi-course-card:hover .safi-thumb-wrap img {
-    transform: scale(1.1);
-    filter: brightness(1.1) drop-shadow(0 25px 25px rgba(0,0,0,0.15));
+.edvora-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.safi-card-body {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    padding: 1.5rem 2rem;
-    position: relative;
-    z-index: 20;
-    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+.edvora-glass-course-card:hover .edvora-card-img {
+    transform: scale(1.08);
 }
 
-.safi-meta-top {
-    display: flex;
+/* Floating Badges Over Thumbnail */
+.edvora-floating-status-pill {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    transition: all 0.3s ease;
 }
 
-.safi-category {
-    border-radius: 0.375rem;
-    background: rgba(255, 255, 255, 0.05);
+.edvora-floating-status-pill.status-upcoming {
+    background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+}
+
+.edvora-floating-status-pill.status-ongoing {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+}
+
+.edvora-floating-status-pill.status-finished {
+    background: rgba(51, 65, 85, 0.94);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.edvora-floating-status-pill.status-open {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.status-live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: inline-block;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+    animation: edvora-badge-pulse 1.4s infinite ease-in-out;
+}
+
+@keyframes edvora-badge-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(255, 255, 255, 1); }
+    50% { opacity: 0.4; transform: scale(0.65); box-shadow: 0 0 2px rgba(255, 255, 255, 0.4); }
+}
+
+.edvora-floating-vip-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+}
+
+.edvora-floating-category {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    background: rgba(15, 23, 42, 0.76);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.25rem 0.625rem;
-    font-size: 9px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: #9ca3af;
+    -webkit-backdrop-filter: blur(10px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.safi-price {
-    font-size: 1.125rem;
-    font-weight: 900;
-    color: #ffffff;
+.edvora-floating-level {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.safi-title {
-    font-size: 1.25rem;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: -0.025em;
-    transition: color 0.3s ease;
+/* Card Content Body */
+.edvora-card-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.2rem 1.2rem 1.25rem;
+}
+
+.edvora-card-title {
+    font-size: 1.08rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin: 0;
-    line-height: 1.3;
 }
 
-.safi-course-card:hover .safi-title {
-    color: #facc15;
+.edvora-card-title a {
+    color: #0f172a;
+    text-decoration: none;
+    transition: color 0.25s ease;
 }
 
-.safi-description {
-    margin-top: 0.75rem;
+.edvora-glass-course-card:hover .edvora-card-title a {
+    color: #1f8fff;
+}
+
+.edvora-card-excerpt {
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.55;
+    margin: 0 0 0.85rem 0;
     flex: 1;
-    font-size: 0.875rem;
-    line-height: 1.625;
-    color: #9ca3af;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    font-weight: 500;
 }
 
-.safi-thumb-wrap .safi-floating-badge {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    z-index: 25;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0.35rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-.safi-floating-badge--upcoming {
-    background: rgba(14, 165, 233, 0.25);
-    border: 1px solid rgba(56, 189, 248, 0.5);
-    color: #38bdf8;
-    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
-}
-
-.safi-floating-badge--ongoing {
-    background: rgba(16, 185, 129, 0.25);
-    border: 1px solid rgba(52, 211, 153, 0.5);
-    color: #34d399;
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-}
-
-.safi-floating-badge--finished {
-    background: rgba(148, 163, 184, 0.2);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    color: #cbd5e1;
-}
-
-.safi-floating-badge--open {
-    background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(129, 140, 248, 0.4);
-    color: #c7d2fe;
-}
-
-.safi-badge-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: currentColor;
-    display: inline-block;
-    animation: safi-badge-blink 1.5s infinite ease-in-out;
-}
-
-@keyframes safi-badge-blink {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.75); }
-}
-
-.safi-vip-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 25;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 0.3rem 0.65rem;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #ffffff;
-    border: 1px solid rgba(251, 191, 36, 0.5);
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
-}
-
-/* Schedule & Countdown Bar inside Card Body */
-.safi-schedule-bar {
-    margin-top: 1rem;
-    padding: 0.6rem 0.85rem;
-    border-radius: 0.875rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+/* Timeline & Schedule Capsule - High Prominence */
+.edvora-schedule-capsule {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    transition: all 0.3s ease;
+    gap: 5px;
+    padding: 10px 13px;
+    margin-bottom: 1rem;
+    border-radius: 14px;
+    background: rgba(241, 245, 249, 0.85);
+    border: 1px solid rgba(31, 143, 255, 0.16);
+    border-left: 4px solid #1f8fff;
+    transition: all 0.25s ease;
 }
 
-.safi-course-card:hover .safi-schedule-bar {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.15);
+.capsule-countdown-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
 }
 
-.safi-schedule-bar--upcoming {
-    border-left: 3px solid #38bdf8;
+.capsule-countdown-row i {
+    font-size: 0.95rem;
 }
 
-.safi-schedule-bar--ongoing {
-    border-left: 3px solid #34d399;
-}
-
-.safi-schedule-bar--finished {
-    border-left: 3px solid #94a3b8;
-}
-
-.safi-schedule-bar--open {
-    border-left: 3px solid #818cf8;
-}
-
-.safi-schedule-dates {
-    font-size: 0.78rem;
-    color: #e2e8f0;
-    font-weight: 600;
+.capsule-date-row {
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: #475569;
 }
 
-.safi-schedule-dates i {
-    color: #94a3b8;
+.capsule-date-row i {
+    color: #64748b;
     font-size: 0.82rem;
 }
 
-.safi-schedule-countdown {
-    font-size: 0.73rem;
+.edvora-schedule-capsule.schedule-upcoming {
+    border-left-color: #0284c7;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(31, 143, 255, 0.05) 100%);
+    border-color: rgba(14, 165, 233, 0.25);
+}
+
+.edvora-schedule-capsule.schedule-upcoming .countdown-text {
+    color: #0369a1;
+    font-weight: 800;
+}
+
+.edvora-schedule-capsule.schedule-upcoming .capsule-countdown-row i {
+    color: #0284c7;
+}
+
+.edvora-schedule-capsule.schedule-ongoing {
+    border-left-color: #059669;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border-color: rgba(16, 185, 129, 0.25);
+}
+
+.edvora-schedule-capsule.schedule-ongoing .countdown-text {
+    color: #047857;
+    font-weight: 800;
+}
+
+.edvora-schedule-capsule.schedule-ongoing .capsule-countdown-row i {
+    color: #059669;
+}
+
+.edvora-schedule-capsule.schedule-finished {
+    border-left-color: #64748b;
+    background: rgba(148, 163, 184, 0.1);
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+.edvora-schedule-capsule.schedule-finished .countdown-text {
+    color: #475569;
     font-weight: 700;
 }
 
-.safi-schedule-bar--upcoming .safi-schedule-countdown {
-    color: #38bdf8;
+.edvora-schedule-capsule.schedule-finished .capsule-countdown-row i {
+    color: #64748b;
 }
 
-.safi-schedule-bar--ongoing .safi-schedule-countdown {
-    color: #34d399;
+.edvora-schedule-capsule.schedule-open {
+    border-left-color: #4f46e5;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.04) 100%);
+    border-color: rgba(99, 102, 241, 0.22);
 }
 
-.safi-schedule-bar--finished .safi-schedule-countdown {
-    color: #94a3b8;
+.edvora-schedule-capsule.schedule-open .countdown-text {
+    color: #4338ca;
+    font-weight: 800;
 }
 
-.safi-schedule-bar--open .safi-schedule-countdown {
-    color: #a5b4fc;
+.edvora-schedule-capsule.schedule-open .capsule-countdown-row i {
+    color: #4f46e5;
 }
 
-.safi-footer {
-    margin-top: 1.25rem;
+/* Card Footer & CTA */
+.edvora-card-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1rem;
+    gap: 10px;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(31, 143, 255, 0.1);
+    margin-top: auto;
 }
 
-.safi-footer-meta {
+.edvora-card-meta-chips {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.safi-duration {
-    font-size: 10px;
-    font-weight: 800;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
+.meta-chip {
     display: inline-flex;
     align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    background: rgba(241, 245, 249, 0.9);
+    color: #475569;
 }
 
-.safi-explore {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.75rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #000000;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-    display: flex;
+.meta-chip--free {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    font-weight: 700;
+}
+
+.edvora-card-cta-btn {
+    display: inline-flex;
     align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: 11px;
+    font-size: 0.82rem;
+    font-weight: 700;
     text-decoration: none;
+    background: linear-gradient(135deg, #1f8fff 0%, #00b4d8 100%);
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.3);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.safi-explore:hover {
-    background-color: #facc15;
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
-    color: #000000;
+.edvora-card-cta-btn i {
+    font-size: 0.85rem;
+    transition: transform 0.2s ease;
 }
 
-.safi-explore:active {
-    transform: scale(0.95);
+.edvora-card-cta-btn:hover {
+    background: linear-gradient(135deg, #1479e0 0%, #0096c7 100%);
+    box-shadow: 0 6px 18px rgba(31, 143, 255, 0.45);
+    transform: translateY(-2px);
+    color: #ffffff !important;
 }
 
-.safi-explore svg {
-    margin-left: 0.25rem;
-    width: 14px;
-    height: 14px;
-}
-
-@keyframes safi-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: .5; }
+.edvora-card-cta-btn:hover i {
+    transform: translateX(3px);
 }
 
 /* Active Filter Banner / Status Bar */

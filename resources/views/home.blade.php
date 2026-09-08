@@ -241,21 +241,115 @@
                 <button class="recent-courses-carousel__nav recent-courses-carousel__nav--next" type="button" aria-label="Next" onclick="recentCoursesScroll(1)"><i class="bi bi-chevron-right"></i></button>
                 <div class="recent-courses-carousel__track" id="recentCoursesTrack">
                     @foreach($recentCourses as $course)
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            $startDate = $course->start_date ? \Carbon\Carbon::parse($course->start_date)->startOfDay() : null;
+                            $endDate = $course->end_date ? \Carbon\Carbon::parse($course->end_date)->startOfDay() : null;
+
+                            $dateStatus = [
+                                'type' => 'open',
+                                'badge_text' => 'Open Course',
+                                'countdown_text' => 'Flexible Schedule',
+                                'icon' => 'bi bi-lightning-charge-fill',
+                                'pulse' => false,
+                            ];
+
+                            if ($startDate && $startDate->greaterThan($today)) {
+                                $daysUntilStart = (int) $today->diffInDays($startDate, false);
+                                $dateStatus['type'] = 'upcoming';
+                                $dateStatus['icon'] = 'bi bi-rocket-takeoff-fill';
+                                $dateStatus['pulse'] = true;
+
+                                if ($daysUntilStart === 0) {
+                                    $dateStatus['badge_text'] = 'Starts Today';
+                                    $dateStatus['countdown_text'] = 'Starts today';
+                                } elseif ($daysUntilStart === 1) {
+                                    $dateStatus['badge_text'] = 'Starts Tomorrow';
+                                    $dateStatus['countdown_text'] = '1 day left until start';
+                                } else {
+                                    $dateStatus['badge_text'] = "Starts in {$daysUntilStart} days";
+                                    $dateStatus['countdown_text'] = "{$daysUntilStart} days left until start";
+                                }
+                            } elseif (
+                                (($startDate && $startDate->lessThanOrEqualTo($today)) || $course->started_at !== null || $course->status === 'started')
+                                && ($endDate && $endDate->greaterThanOrEqualTo($today))
+                            ) {
+                                $daysUntilEnd = (int) $today->diffInDays($endDate, false);
+                                $dateStatus['type'] = 'ongoing';
+                                $dateStatus['icon'] = 'bi bi-hourglass-split';
+                                $dateStatus['pulse'] = true;
+
+                                if ($daysUntilEnd === 0) {
+                                    $dateStatus['badge_text'] = 'Ends Today';
+                                    $dateStatus['countdown_text'] = 'Ends today';
+                                } elseif ($daysUntilEnd === 1) {
+                                    $dateStatus['badge_text'] = 'Ends Tomorrow';
+                                    $dateStatus['countdown_text'] = '1 day left until class ends';
+                                } else {
+                                    $dateStatus['badge_text'] = "Ends in {$daysUntilEnd} days";
+                                    $dateStatus['countdown_text'] = "{$daysUntilEnd} days left until class ends";
+                                }
+                            } elseif (($endDate && $endDate->lessThan($today)) || in_array($course->status, ['archived', 'completed'])) {
+                                $dateStatus['type'] = 'finished';
+                                $dateStatus['icon'] = 'bi bi-check2-circle';
+                                $dateStatus['badge_text'] = 'Completed';
+                                $dateStatus['countdown_text'] = 'Course completed';
+                                $dateStatus['pulse'] = false;
+                            } elseif ($startDate && $startDate->lessThanOrEqualTo($today)) {
+                                $dateStatus['type'] = 'ongoing';
+                                $dateStatus['icon'] = 'bi bi-play-circle-fill';
+                                $dateStatus['badge_text'] = 'In Progress';
+                                $dateStatus['countdown_text'] = 'Class in progress';
+                                $dateStatus['pulse'] = true;
+                            }
+                        @endphp
                         <div class="recent-courses-carousel__item">
                             <article class="home-course-card">
                                 <div class="home-course-card__image">
+                                    <!-- Floating Live Status Badge -->
+                                    <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}" style="top: 10px; left: 10px; position: absolute; z-index: 5;">
+                                        @if($dateStatus['pulse'])
+                                            <span class="status-live-dot"></span>
+                                        @endif
+                                        <i class="{{ $dateStatus['icon'] }}"></i>
+                                        <span>{{ $dateStatus['badge_text'] }}</span>
+                                    </div>
+
                                     @if($course->thumbnail)
-                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async">
+                                        <img src="{{ Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async" style="object-fit: cover;">
                                     @else
                                         <i class="bi {{ $course->category?->icon ?? 'bi-code-slash' }}"></i>
                                     @endif
-                                    <span class="home-course-card__tag">{{ $course->category->name ?? 'General' }}</span>
+                                    <span class="home-course-card__tag" style="top: auto; bottom: 10px; left: 10px;">{{ $course->category->name ?? 'General' }}</span>
                                     <span class="home-course-card__free">Free</span>
                                 </div>
                                 <div class="home-course-card__body">
                                     <div class="home-course-card__teacher"><i class="bi bi-person-circle"></i>{{ $course->teacher->name ?? 'Edvora Instructor' }}</div>
                                     <h3 class="home-course-card__title"><a href="{{ route('courses.detail', $course->slug) }}">{{ $course->title }}</a></h3>
-                                    <p class="home-course-card__description">{{ Str::limit(strip_tags($course->description), 115) }}</p>
+
+                                    <!-- Schedule & Countdown Capsule -->
+                                    <div class="edvora-schedule-capsule schedule-{{ $dateStatus['type'] }}" style="margin-bottom: 12px; padding: 9px 12px;">
+                                        <div class="capsule-countdown-row">
+                                            <i class="{{ $dateStatus['icon'] }}"></i>
+                                            <span class="countdown-text">{{ $dateStatus['countdown_text'] }}</span>
+                                        </div>
+                                        <div class="capsule-date-row">
+                                            <i class="bi bi-calendar-event"></i>
+                                            <span>
+                                                @if($course->start_date && $course->end_date)
+                                                    {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
+                                                @elseif($course->start_date)
+                                                    Starts {{ $course->start_date->format('M d, Y') }}
+                                                @elseif($course->end_date)
+                                                    Ends {{ $course->end_date->format('M d, Y') }}
+                                                @else
+                                                    Flexible Schedule
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p class="home-course-card__description">{{ Str::limit(strip_tags($course->description), 90) }}</p>
                                     <div class="home-course-card__footer">
                                         <span><i class="bi bi-clock"></i>{{ $course->duration_hours ? $course->duration_hours . ' hours' : 'Self-paced' }}</span>
                                         <a href="{{ route('courses.detail', $course->slug) }}">View course <i class="bi bi-arrow-right"></i></a>
@@ -284,11 +378,82 @@
             <div class="popular-courses-bordered">
                 <div class="row g-4">
                     @foreach($popularCourses as $course)
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            $startDate = $course->start_date ? \Carbon\Carbon::parse($course->start_date)->startOfDay() : null;
+                            $endDate = $course->end_date ? \Carbon\Carbon::parse($course->end_date)->startOfDay() : null;
+
+                            $dateStatus = [
+                                'type' => 'open',
+                                'badge_text' => 'Open Course',
+                                'countdown_text' => 'Flexible Schedule',
+                                'icon' => 'bi bi-lightning-charge-fill',
+                                'pulse' => false,
+                            ];
+
+                            if ($startDate && $startDate->greaterThan($today)) {
+                                $daysUntilStart = (int) $today->diffInDays($startDate, false);
+                                $dateStatus['type'] = 'upcoming';
+                                $dateStatus['icon'] = 'bi bi-rocket-takeoff-fill';
+                                $dateStatus['pulse'] = true;
+
+                                if ($daysUntilStart === 0) {
+                                    $dateStatus['badge_text'] = 'Starts Today';
+                                    $dateStatus['countdown_text'] = 'Starts today';
+                                } elseif ($daysUntilStart === 1) {
+                                    $dateStatus['badge_text'] = 'Starts Tomorrow';
+                                    $dateStatus['countdown_text'] = '1 day left until start';
+                                } else {
+                                    $dateStatus['badge_text'] = "Starts in {$daysUntilStart} days";
+                                    $dateStatus['countdown_text'] = "{$daysUntilStart} days left until start";
+                                }
+                            } elseif (
+                                (($startDate && $startDate->lessThanOrEqualTo($today)) || $course->started_at !== null || $course->status === 'started')
+                                && ($endDate && $endDate->greaterThanOrEqualTo($today))
+                            ) {
+                                $daysUntilEnd = (int) $today->diffInDays($endDate, false);
+                                $dateStatus['type'] = 'ongoing';
+                                $dateStatus['icon'] = 'bi bi-hourglass-split';
+                                $dateStatus['pulse'] = true;
+
+                                if ($daysUntilEnd === 0) {
+                                    $dateStatus['badge_text'] = 'Ends Today';
+                                    $dateStatus['countdown_text'] = 'Ends today';
+                                } elseif ($daysUntilEnd === 1) {
+                                    $dateStatus['badge_text'] = 'Ends Tomorrow';
+                                    $dateStatus['countdown_text'] = '1 day left until class ends';
+                                } else {
+                                    $dateStatus['badge_text'] = "Ends in {$daysUntilEnd} days";
+                                    $dateStatus['countdown_text'] = "{$daysUntilEnd} days left until class ends";
+                                }
+                            } elseif (($endDate && $endDate->lessThan($today)) || in_array($course->status, ['archived', 'completed'])) {
+                                $dateStatus['type'] = 'finished';
+                                $dateStatus['icon'] = 'bi bi-check2-circle';
+                                $dateStatus['badge_text'] = 'Completed';
+                                $dateStatus['countdown_text'] = 'Course completed';
+                                $dateStatus['pulse'] = false;
+                            } elseif ($startDate && $startDate->lessThanOrEqualTo($today)) {
+                                $dateStatus['type'] = 'ongoing';
+                                $dateStatus['icon'] = 'bi bi-play-circle-fill';
+                                $dateStatus['badge_text'] = 'In Progress';
+                                $dateStatus['countdown_text'] = 'Class in progress';
+                                $dateStatus['pulse'] = true;
+                            }
+                        @endphp
                         <div class="col-lg-4 col-md-6">
                             <article class="popular-course-card h-100">
                                 <div class="popular-course-card__media{{ $course->thumbnail ? '' : ' popular-course-card__media--' . ($course->category?->slug ?? 'general') }}">
+                                    <!-- Floating Live Status Badge -->
+                                    <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}" style="top: 12px; left: 12px; position: absolute; z-index: 5;">
+                                        @if($dateStatus['pulse'])
+                                            <span class="status-live-dot"></span>
+                                        @endif
+                                        <i class="{{ $dateStatus['icon'] }}"></i>
+                                        <span>{{ $dateStatus['badge_text'] }}</span>
+                                    </div>
+
                                     @if($course->thumbnail)
-                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async">
+                                        <img src="{{ Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async" style="object-fit: cover;">
                                     @endif
                                 </div>
                                 <div class="popular-course-card__body">
@@ -299,7 +464,7 @@
                                     </div>
                                     <div class="popular-course-card__teacher">
                                         @if($course->teacher?->avatar ?? false)
-                                            <img src="{{ asset('storage/' . $course->teacher->avatar) }}" class="popular-course-card__avatar" alt="{{ $course->teacher->name }}" loading="lazy" decoding="async">
+                                            <img src="{{ Str::startsWith($course->teacher->avatar, ['http://', 'https://']) ? $course->teacher->avatar : asset('storage/' . $course->teacher->avatar) }}" class="popular-course-card__avatar" alt="{{ $course->teacher->name }}" loading="lazy" decoding="async">
                                         @else
                                             <span class="popular-course-card__avatar popular-course-card__avatar--initials">{{ strtoupper(substr($course->teacher?->name ?? 'Edvora Instructor', 0, 1)) }}</span>
                                         @endif
@@ -313,12 +478,35 @@
                                         <span class="popular-course-card__rating-value">{{ number_format($course->rating ?? 0, 1) }}</span>
                                         <span class="popular-course-card__rating-count">({{ $course->total_reviews ?? 0 }})</span>
                                     </div>
-                                    <p class="popular-course-card__description">{{ Str::limit(strip_tags($course->description), 100) }}</p>
+
+                                    <!-- Schedule & Countdown Capsule -->
+                                    <div class="edvora-schedule-capsule schedule-{{ $dateStatus['type'] }}" style="margin-bottom: 14px; padding: 10px 13px;">
+                                        <div class="capsule-countdown-row">
+                                            <i class="{{ $dateStatus['icon'] }}"></i>
+                                            <span class="countdown-text">{{ $dateStatus['countdown_text'] }}</span>
+                                        </div>
+                                        <div class="capsule-date-row">
+                                            <i class="bi bi-calendar-event"></i>
+                                            <span>
+                                                @if($course->start_date && $course->end_date)
+                                                    {{ $course->start_date->format('M d') }} - {{ $course->end_date->format('M d, Y') }}
+                                                @elseif($course->start_date)
+                                                    Starts {{ $course->start_date->format('M d, Y') }}
+                                                @elseif($course->end_date)
+                                                    Ends {{ $course->end_date->format('M d, Y') }}
+                                                @else
+                                                    Flexible Schedule
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p class="popular-course-card__description">{{ Str::limit(strip_tags($course->description), 90) }}</p>
                                     <div class="popular-course-card__meta">
                                         <span><i class="bi bi-people"></i>{{ $course->enrollments_count ?? 0 }} learners</span>
                                         <span><i class="bi bi-clock"></i>{{ $course->duration_hours ? $course->duration_hours . 'h' : 'Self-paced' }}</span>
                                         @if($course->level)
-                                            <span><i class="bi bi-bar-chart"></i>{{ $course->level }}</span>
+                                            <span><i class="bi bi-bar-chart"></i>{{ ucfirst($course->level) }}</span>
                                         @endif
                                     </div>
                                     <a href="{{ route('courses.detail', $course->slug) }}" class="popular-course-card__cta">View Course <i class="bi bi-arrow-right"></i></a>
