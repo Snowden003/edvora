@@ -5,13 +5,16 @@ function getCsrfToken() {
     return meta ? meta.getAttribute('content') : '';
 }
 
-function viewStudentProfile(requestId) {
-    var modal = new bootstrap.Modal(document.getElementById('studentProfileModal'));
+function viewStudentProfile(id, type) {
+    var modalEl = document.getElementById('studentProfileModal');
+    var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
     var content = document.getElementById('studentProfileContent');
     content.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
     modal.show();
 
-    var url = '/teacher/enrollment-requests/' + requestId + '/student';
+    var url = (type === 'user')
+        ? '/teacher/students/' + id + '/profile'
+        : '/teacher/enrollment-requests/' + id + '/student';
 
     fetch(url, {
         headers: {
@@ -159,4 +162,32 @@ function showToast(message, type) {
     new bootstrap.Toast(toast).show();
 
     toast.addEventListener('hidden.bs.toast', function () { toast.remove(); });
+}
+
+function switchEnrollmentTab(tabName) {
+    var tabInput = document.getElementById('filterTabInput');
+    if (tabInput) {
+        tabInput.value = tabName;
+    }
+    document.querySelectorAll('.enroll-nav-tab').forEach(function (btn) {
+        if (btn.getAttribute('data-tab') === tabName) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    var enrolledPane = document.getElementById('pane-enrolled');
+    var requestsPane = document.getElementById('pane-requests');
+    if (enrolledPane && requestsPane) {
+        if (tabName === 'enrolled') {
+            enrolledPane.classList.remove('d-none');
+            requestsPane.classList.add('d-none');
+        } else {
+            enrolledPane.classList.add('d-none');
+            requestsPane.classList.remove('d-none');
+        }
+    }
+    var url = new URL(window.location);
+    url.searchParams.set('tab', tabName);
+    window.history.replaceState({}, '', url);
 }

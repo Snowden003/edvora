@@ -7,6 +7,7 @@ use App\Mail\EnrollmentRejected;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\EnrollmentRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -135,35 +136,84 @@ class EnrollmentRequestController extends Controller
     }
 
     /**
-     * Teacher: list enrollment requests for their courses.
+     * Teacher: list enrolled students and enrollment requests for their courses.
      */
     public function index(Request $request)
     {
         $user = Auth::user();
         $courseIds = Course::where('teacher_id', $user->id)->pluck('id');
+        $activeTab = $request->get('tab', 'enrolled');
 
-        $query = EnrollmentRequest::with(['user', 'course'])
+        // All courses of this teacher for filter dropdown
+        $courses = Course::where('teacher_id', $user->id)->get();
+
+        // 1. Enrolled Students Query (from enrollments table)
+        $enrollQuery = Enrollment::with(['user.studentProfile', 'course'])
             ->whereIn('course_id', $courseIds);
 
-        if ($status = $request->get('status')) {
-            $query->where('status', $status);
+        if ($courseId = $request->get('course_id')) {
+            $enrollQuery->where('course_id', $courseId);
         }
+
+        if ($status = $request->get('status')) {
+            if ($activeTab === 'enrolled') {
+                $enrollQuery->where('status', $status);
+            }
+        }
+
+        if ($search = $request->get('search')) {
+            $enrollQuery->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $enrollments = $enrollQuery->latest()->paginate(15, ['*'], 'enrolled_page')->withQueryString();
+
+        // 2. Enrollment Requests Query (from enrollment_requests table)
+        $requestQuery = EnrollmentRequest::with(['user.studentProfile', 'course'])
+            ->whereIn('course_id', $courseIds);
 
         if ($courseId = $request->get('course_id')) {
-            $query->where('course_id', $courseId);
+            $requestQuery->where('course_id', $courseId);
         }
 
-        $requests = $query->latest()->paginate(15)->withQueryString();
+        if ($status = $request->get('status')) {
+            if ($activeTab === 'requests') {
+                $requestQuery->where('status', $status);
+            }
+        }
 
-        $courses = Course::where('teacher_id', $user->id)
-            ->where('status', 'published')
-            ->get();
+        if ($search = $request->get('search')) {
+            $requestQuery->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
+        $requests = $requestQuery->latest()->paginate(15, ['*'], 'requests_page')->withQueryString();
+
+        // Overall statistics
+        $enrolledTotalCount = Enrollment::whereIn('course_id', $courseIds)->count();
+        $activeEnrolledCount = Enrollment::whereIn('course_id', $courseIds)->where('status', 'active')->count();
+        $completedCount = Enrollment::whereIn('course_id', $courseIds)->where('status', 'completed')->count();
         $pendingCount = EnrollmentRequest::whereIn('course_id', $courseIds)
             ->where('status', 'pending')
             ->count();
+        $requestsTotalCount = EnrollmentRequest::whereIn('course_id', $courseIds)->count();
 
-        return view('teacher.enrollment-requests', compact('requests', 'courses', 'user', 'pendingCount'));
+        return view('teacher.enrollment-requests', compact(
+            'enrollments',
+            'requests',
+            'courses',
+            'user',
+            'pendingCount',
+            'enrolledTotalCount',
+            'activeEnrolledCount',
+            'completedCount',
+            'requestsTotalCount',
+            'activeTab'
+        ));
     }
 
     /**
@@ -193,6 +243,50 @@ class EnrollmentRequestController extends Controller
             'xp' => $student->xp ?? 0,
             'enrolled_courses' => $student->enrollments()->count(),
             'joined_at' => $student->created_at->format('M d, Y'),
+            'profile_complete' => $profile ? $profile->is_complete : false,
+            'father_name' => $profile->father_name ?? null,
+            'education' => $profile->last_education_level ?? null,
+            'school' => $profile->last_school_name ?? null,
+            'national_id' => $profile->national_id ?? null,
+            'phone' => $profile->phone_number ?? null,
+            'address' => $profile->current_address ?? null,
+        ]);
+    }
+
+    /**
+     * Teacher: view student profile for an enrolled student by user ID.
+     */
+    public function studentProfileUser(User $user)
+    {
+        $teacher = Auth::user();
+        $courseIds = Course::where('teacher_id', $teacher->id)->pluck('id');
+
+        // Verify this student is enrolled in or has requested any course of this teacher
+        $isEnrolled = Enrollment::where('user_id', $user->id)
+            ->whereIn('course_id', $courseIds)
+            ->exists();
+        $hasRequest = EnrollmentRequest::where('user_id', $user->id)
+            ->whereIn('course_id', $courseIds)
+            ->exists();
+
+        if (!$isEnrolled && !$hasRequest) {
+            abort(403, 'Unauthorized access to student profile.');
+        }
+
+        $profile = $user->studentProfile;
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar
+                ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar))
+                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&size=150',
+            'bio' => $user->bio,
+            'department' => $user->department,
+            'xp' => $user->xp ?? 0,
+            'enrolled_courses' => $user->enrollments()->count(),
+            'joined_at' => $user->created_at->format('M d, Y'),
             'profile_complete' => $profile ? $profile->is_complete : false,
             'father_name' => $profile->father_name ?? null,
             'education' => $profile->last_education_level ?? null,

@@ -25,8 +25,8 @@
             <a href="{{ route('filament.admin.resources.courses.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-book" style="width: 24px; margin-right: 10px;"></i>Courses
             </a>
-            <a href="{{ route('filament.admin.resources.teacher-applications.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
-                <i class="bi bi-person-video3" style="width: 24px; margin-right: 10px;"></i>Teacher Applications
+            <a href="{{ route('filament.admin.resources.teachers.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
+                <i class="bi bi-person-video3" style="width: 24px; margin-right: 10px;"></i>Teachers
             </a>
             <a href="{{ route('admin.events.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-calendar-event" style="width: 24px; margin-right: 10px;"></i>Events

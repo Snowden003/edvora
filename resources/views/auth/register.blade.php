@@ -75,30 +75,6 @@
             <form method="POST" action="{{ route('register') }}" style="transform-style: preserve-3d;">
                 @csrf
 
-                {{-- Role Selector --}}
-                <div class="mb-3 z-group">
-                    <label class="form-label mb-2">I want to join as</label>
-                    <div class="role-selector">
-                        <label class="role-card">
-                            <input type="radio" name="role" value="student" {{ old('role', 'student') === 'student' ? 'checked' : '' }} required>
-                            <div class="role-card-inner">
-                                <i class="bi bi-mortarboard"></i>
-                                <span class="role-title">Student</span>
-                                <span class="role-desc">Learn & grow</span>
-                            </div>
-                        </label>
-                        <label class="role-card">
-                            <input type="radio" name="role" value="teacher" {{ old('role') === 'teacher' ? 'checked' : '' }}>
-                            <div class="role-card-inner">
-                                <i class="bi bi-person-video3"></i>
-                                <span class="role-title">Teacher</span>
-                                <span class="role-desc">Teach & inspire</span>
-                            </div>
-                        </label>
-                    </div>
-                    @error('role')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                </div>
-
                 {{-- Full Name --}}
                 <div class="mb-3 auth-input-group z-group">
                     <label for="name" class="form-label">Full Name</label>
@@ -160,7 +136,7 @@
                     <i class="bi bi-person-plus-fill me-2"></i>Create Account
                 </button>
 
-                <a href="{{ route('google.redirect') }}?role=student" id="google-auth-link" class="btn btn-google w-100 mb-4 d-flex align-items-center justify-content-center z-group" style="transform: translateZ(25px);">
+                <a href="{{ route('google.redirect') }}" id="google-auth-link" class="btn btn-google w-100 mb-4 d-flex align-items-center justify-content-center z-group" style="transform: translateZ(25px);">
                     <i class="bi bi-google me-2" style="color: #ea4335;"></i>Continue with Google
                 </a>
 

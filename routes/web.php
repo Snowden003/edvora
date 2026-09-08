@@ -214,10 +214,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/your-courses',      [TeacherDashboardController::class, 'yourCourses'])->name('your-courses');
         Route::get('/onboarding',        [TeacherDashboardController::class, 'onboarding'])->name('onboarding');
         Route::post('/onboarding',       [TeacherDashboardController::class, 'submitOnboarding'])->name('onboarding.submit');
-        Route::get('/request-courses',   [\App\Http\Controllers\RequestCoursesController::class, 'index'])->name('request-courses');
-        Route::post('/request-courses',  [\App\Http\Controllers\RequestCoursesController::class, 'store'])->name('request-courses.store');
-        Route::put('/request-courses/{id}',  [\App\Http\Controllers\RequestCoursesController::class, 'update'])->name('request-courses.update');
-        Route::delete('/request-courses/{id}',  [\App\Http\Controllers\RequestCoursesController::class, 'destroy'])->name('request-courses.destroy');
         Route::get('/reviews',           fn() => view('reviews'))->name('reviews');
 
         Route::prefix('notifications')->name('notifications.')->group(function () {
@@ -246,6 +242,7 @@ Route::middleware(['auth'])->group(function () {
         // Enrollment Requests
         Route::get('/enrollment-requests',                    [EnrollmentRequestController::class, 'index'])->name('enrollment-requests');
         Route::get('/enrollment-requests/{enrollmentRequest}/student', [EnrollmentRequestController::class, 'studentProfile'])->name('enrollment-requests.student');
+        Route::get('/students/{user}/profile',                 [EnrollmentRequestController::class, 'studentProfileUser'])->name('students.profile');
         Route::post('/enrollment-requests/{enrollmentRequest}/approve', [EnrollmentRequestController::class, 'approve'])->name('enrollment-requests.approve');
         Route::post('/enrollment-requests/{enrollmentRequest}/reject',  [EnrollmentRequestController::class, 'reject'])->name('enrollment-requests.reject');
 

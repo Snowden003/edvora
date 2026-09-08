@@ -3,19 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Mail\AdminTeacherRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
-    public function redirect(Request $request)
+    public function redirect()
     {
-        $role = $request->query('role', 'student');
-        session(['google_auth_role' => $role]);
-
         return Socialite::driver('google')->redirect();
     }
 
@@ -23,7 +18,6 @@ class GoogleController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            $role = session('google_auth_role', 'student');
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -38,18 +32,14 @@ class GoogleController extends Controller
                     'name' => $googleUser->getName(),
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
-                    'role' => $role,
-                    'status' => $role === 'teacher' ? 'pending' : 'active',
+                    'role' => 'student',
+                    'status' => 'active',
                     'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(24)),
                 ]);
 
                 // Mark email as verified since it's from Google
                 $user->email_verified_at = now();
                 $user->save();
-
-                if ($user->role === 'teacher') {
-                    Mail::to(config('app.admin_notification_email'))->send(new AdminTeacherRegistered($user));
-                }
             }
 
             Auth::login($user);

@@ -31,15 +31,11 @@
                         <div class="row align-items-center">
                             <div class="col-lg-8">
                                 <h1 class="display-5 fw-bold mb-3">My Course Hub</h1>
-                                <p class="lead text-white-50 mb-4">
+                                <p class="lead text-white-50 mb-0">
                                     Manage, organize, and expand your educational impact. You're currently mentoring
                                     <span class="text-white fw-bold">{{ $totalStudents }} students</span>
                                     across all your programs.
                                 </p>
-                                <a href="{{ route('teacher.request-courses') }}"
-                                    class="btn-premium-light rounded-pill px-4 py-2 fw-bold text-primary text-decoration-none">
-                                    <i class="bi bi-plus-lg me-2"></i> REQUEST NEW COURSE
-                                </a>
                             </div>
                             <div class="col-lg-4 d-none d-lg-block text-center">
                                 <i class="bi bi-mortarboard" style="font-size: 8rem; color: rgba(255,255,255,0.2);"></i>
@@ -126,11 +122,8 @@
                     <div class="empty-icon-wrapper mx-auto mb-4">
                         <i class="bi bi-journal-x"></i>
                     </div>
-                    <h4 class="fw-bold text-muted mb-2">No courses found</h4>
-                    <p class="text-muted mb-4">You haven't created any courses yet. Request a new course to get started.</p>
-                    <a href="{{ route('teacher.request-courses') }}" class="btn-premium-cta text-decoration-none">
-                        <i class="bi bi-plus-lg me-2"></i>Request a Course
-                    </a>
+                    <h4 class="fw-bold text-muted mb-2">No courses assigned</h4>
+                    <p class="text-muted mb-0">You do not have any assigned courses at the moment.</p>
                 </div>
                 @else
                 <div class="row g-4" id="coursesGrid">

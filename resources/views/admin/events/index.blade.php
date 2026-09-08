@@ -22,8 +22,8 @@
             <a href="{{ route('filament.admin.resources.courses.index') }}" class="nav-link">
                 <i class="bi bi-book"></i>Courses
             </a>
-            <a href="{{ route('filament.admin.resources.teacher-applications.index') }}" class="nav-link">
-                <i class="bi bi-person-video3"></i>Teacher Applications
+            <a href="{{ route('filament.admin.resources.teachers.index') }}" class="nav-link">
+                <i class="bi bi-person-video3"></i>Teachers
             </a>
             <a href="{{ route('admin.events.index') }}" class="nav-link active">
                 <i class="bi bi-calendar-event"></i>Events

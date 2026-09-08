@@ -195,15 +195,6 @@
             </a>
         </li>
 
-        <!-- Request Course -->
-        <li class="edvora-nav-item">
-            <a href="{{ route('teacher.request-courses') }}"
-               class="edvora-nav-link {{ request()->routeIs('teacher.request-courses') ? 'active' : '' }}" title="Request New Course">
-                <span class="edvora-nav-icon"><i class="bi bi-plus-circle-fill"></i></span>
-                <span class="edvora-nav-text">Request Course</span>
-            </a>
-        </li>
-
         <!-- Quizzes -->
         <li class="edvora-nav-item">
             <a href="{{ route('teacher.exams.index') }}"

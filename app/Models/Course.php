@@ -92,11 +92,6 @@ class Course extends Model
         return $this->hasMany(ClassSession::class)->orderByDesc('started_at');
     }
 
-    public function courseRequests()
-    {
-        return $this->hasMany(CourseRequest::class);
-    }
-
     /**
      * Check if course should auto-start based on enrolled students
      */

@@ -176,174 +176,6 @@
         margin: 0;
     }
 
-    /* ====== REQUEST COURSES MOBILE ====== */
-    /* Mobile tabs - Available Courses & My Requests */
-    .rc-tabs {
-        display: flex;
-        width: 100%;
-        gap: 0.5rem;
-        background: #f1f5f9;
-        border-radius: 12px;
-        padding: 4px;
-        margin-bottom: 1rem;
-    }
-
-    .rc-tab-btn {
-        flex: 1;
-        padding: 10px 8px;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-align: center;
-        white-space: nowrap;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .rc-tab-btn i {
-        font-size: 1rem;
-        margin: 0 !important;
-    }
-
-    .rc-tab-btn .badge {
-        font-size: 0.65rem;
-        padding: 0.15rem 0.4rem;
-        margin: 0 !important;
-    }
-
-    /* Hero section mobile */
-    .rc-hero {
-        padding: 1.5rem 1rem;
-        border-radius: 14px;
-        margin-bottom: 1rem;
-    }
-
-    .rc-hero h1 {
-        font-size: 1.3rem;
-    }
-
-    .rc-hero p {
-        font-size: 0.85rem;
-    }
-
-    /* Category dropdown for mobile - ATTRACTIVE DESIGN */
-    .rc-filter-dropdown {
-        display: block;
-        margin-bottom: 0.75rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        padding: 0.75rem;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-
-    .rc-filter-dropdown .rc-filter-label {
-        display: flex;
-        align-items: center;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #475569;
-        margin-bottom: 0.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .rc-filter-dropdown .rc-filter-label i {
-        color: #1F8FFF;
-        font-size: 0.9rem;
-    }
-
-    .rc-filter-dropdown .rc-filter-select {
-        width: 100%;
-        height: 44px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-        border-radius: 10px;
-        border: 2px solid #e2e8f0;
-        background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231F8FFF' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
-        background-size: 14px;
-        appearance: none;
-        -webkit-appearance: none;
-        color: #1e293b;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .rc-filter-dropdown .rc-filter-select:focus {
-        outline: none;
-        border-color: #1F8FFF;
-        box-shadow: 0 0 0 3px rgba(31, 143, 255, 0.1);
-    }
-
-    .rc-filter-dropdown .rc-filter-select option {
-        font-size: 0.9rem;
-        padding: 0.5rem;
-    }
-
-    /* Hide filter bar on mobile */
-    .rc-filter-bar {
-        display: none;
-    }
-
-    /* Course cards mobile */
-    .rc-card {
-        border-radius: 12px;
-    }
-
-    .rc-card-img {
-        height: 140px;
-    }
-
-    .rc-card-body {
-        padding: 1rem;
-    }
-
-    .rc-card-title {
-        font-size: 0.95rem;
-    }
-
-    .rc-card-desc {
-        font-size: 0.8rem;
-        -webkit-line-clamp: 2;
-    }
-
-    .rc-req-btn {
-        padding: 10px 0;
-        font-size: 0.85rem;
-    }
-
-    /* Request cards in My Requests */
-    .req-card {
-        padding: 1rem;
-        border-radius: 12px;
-        margin-bottom: 0.75rem;
-    }
-
-    .req-card-title {
-        font-size: 0.95rem;
-    }
-
-    .req-card-meta {
-        font-size: 0.8rem;
-    }
-
-    .req-status {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-    }
-
-    /* Empty state */
-    .rc-empty {
-        padding: 2.5rem 1rem;
-    }
-
-    .rc-empty i {
-        font-size: 2.5rem;
-    }
-
     /* ====== STYLISH MOBILE REQUEST CARDS ====== */
     .enrollment-request-card {
         margin-bottom: 1rem;
@@ -550,3 +382,185 @@
 .enrollment-request-card.rejected {
     opacity: 0.6;
 }
+
+/* ============================
+   STATS OVERVIEW CARDS
+   ============================ */
+.enroll-stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1.5px solid #e8f0fe;
+    box-shadow: 0 2px 12px rgba(31, 143, 255, 0.05);
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.25s ease;
+}
+
+.enroll-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(31, 143, 255, 0.12);
+    border-color: #bcd9fd;
+}
+
+.enroll-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.enroll-stat-icon.primary {
+    background: rgba(31, 143, 255, 0.12);
+    color: #1F8FFF;
+}
+
+.enroll-stat-icon.success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.enroll-stat-icon.info {
+    background: rgba(14, 165, 233, 0.12);
+    color: #0ea5e9;
+}
+
+.enroll-stat-icon.warning {
+    background: rgba(245, 158, 11, 0.14);
+    color: #d97706;
+}
+
+.enroll-stat-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.enroll-stat-title {
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ============================
+   ENROLLMENT TABS
+   ============================ */
+.enroll-nav-tabs {
+    display: inline-flex;
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 14px;
+    gap: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.enroll-nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.enroll-nav-tab:hover {
+    color: #1F8FFF;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.enroll-nav-tab.active {
+    background: #ffffff;
+    color: #1F8FFF;
+    box-shadow: 0 3px 10px rgba(31, 143, 255, 0.15);
+}
+
+.enroll-tab-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.enroll-tab-badge.badge-primary {
+    background: rgba(31, 143, 255, 0.12);
+    color: #1F8FFF;
+}
+
+.enroll-tab-badge.badge-warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* Enrolled Card Extras */
+.enrolled-student-card .card {
+    border-radius: 16px;
+    border: 1.5px solid #f1f5f9;
+    transition: all 0.25s ease;
+}
+
+.enrolled-student-card .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07) !important;
+    border-color: #dbeafe;
+}
+
+.student-progress-wrapper {
+    margin-top: 0.4rem;
+}
+
+.student-progress-bar {
+    height: 7px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.student-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+@media (max-width: 768px) {
+    .enroll-nav-tabs {
+        width: 100%;
+        display: flex;
+    }
+
+    .enroll-nav-tab {
+        flex: 1;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .enroll-stat-card {
+        padding: 0.85rem 1rem;
+    }
+
+    .enroll-stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.15rem;
+    }
+
+    .enroll-stat-val {
+        font-size: 1.25rem;
+    }
+}
+

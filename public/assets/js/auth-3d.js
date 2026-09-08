@@ -34,28 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 2. Role Selector Updating Google Auth Link (Register Page)
-    const roleRadios = document.querySelectorAll('input[name="role"]');
-    const googleLink = document.getElementById('google-auth-link');
-
-    function updateGoogleLink() {
-        const selectedRadio = document.querySelector('input[name="role"]:checked');
-        if (selectedRadio && googleLink) {
-            const selectedRole = selectedRadio.value;
-            const currentUrl = new URL(googleLink.href, window.location.origin);
-            currentUrl.searchParams.set('role', selectedRole);
-            googleLink.href = currentUrl.toString();
-        }
-    }
-
-    if (roleRadios.length > 0 && googleLink) {
-        roleRadios.forEach(radio => {
-            radio.addEventListener('change', updateGoogleLink);
-        });
-        updateGoogleLink();
-    }
-
-    // 3. 3D Parallax Tilt Effect (Desktop Only)
+    // 2. 3D Parallax Tilt Effect (Desktop Only)
     const card = document.getElementById('glassCard');
     const wrapper = document.querySelector('.login-wrapper');
 
