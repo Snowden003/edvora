@@ -12,6 +12,29 @@ if (file_exists(__DIR__.'/cache/routes-v7.php')) {
     @unlink(__DIR__.'/cache/routes-v7.php');
 }
 
+// Fallback autoloader for Inertia on shared hosting environments without Composer
+if (!class_exists(\Inertia\Inertia::class)) {
+    $inertiaSrc = dirname(__DIR__) . '/vendor/inertiajs/inertia-laravel/src';
+    if (is_dir($inertiaSrc)) {
+        spl_autoload_register(function ($class) use ($inertiaSrc) {
+            $prefix = 'Inertia\\';
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                return;
+            }
+            $relativeClass = substr($class, $len);
+            $file = $inertiaSrc . '/' . str_replace('\\', '/', $relativeClass) . '.php';
+            if (file_exists($file)) {
+                require_once $file;
+            }
+        });
+        $helpers = dirname(__DIR__) . '/vendor/inertiajs/inertia-laravel/helpers.php';
+        if (file_exists($helpers)) {
+            require_once $helpers;
+        }
+    }
+}
+
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -51,7 +74,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
         });
     })->create();
 
-$app->booting(function () {
+$app->booting(function () use ($app) {
+    if (class_exists(\Inertia\ServiceProvider::class) && !$app->providerIsLoaded(\Inertia\ServiceProvider::class)) {
+        $app->register(\Inertia\ServiceProvider::class);
+    }
+
     config([
         'broadcasting.default' => 'pusher',
         'broadcasting.connections.pusher.key' => config('broadcasting.connections.pusher.key') ?: 'e777bf9f25b68e56f962',
