@@ -59,9 +59,17 @@ function initDirectEnroll() {
                 btn.classList.add('btn-success');
                 btn.disabled = true;
                 showToast(data.message, 'info');
+            } else if (data.status === 'course_completed') {
+                btn.disabled = true;
+                btn.classList.remove('enroll-btn', 'btn-enroll-primary');
+                btn.classList.add('btn-secondary');
+                btn.innerHTML = '<i class="bi bi-calendar-x-fill me-2"></i>Enrollment Closed';
+                showToast(data.message, 'warning');
             } else if (data.status === 'course_full') {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-mortarboard me-2"></i>Enroll Now';
+                btn.disabled = true;
+                btn.classList.remove('enroll-btn', 'btn-enroll-primary');
+                btn.classList.add('btn-secondary');
+                btn.innerHTML = '<i class="bi bi-people-fill me-2"></i>Course Full';
                 showToast(data.message, 'warning');
             } else {
                 btn.disabled = false;

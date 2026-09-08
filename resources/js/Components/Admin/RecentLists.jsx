@@ -1,4 +1,5 @@
 import React from 'react';
+import { router } from '@inertiajs/react';
 import {
     UserCheck,
     GraduationCap,
@@ -8,10 +9,18 @@ import {
     CheckCircle2,
     AlertCircle,
     Mail,
-    ArrowUpRight
+    ArrowUpRight,
+    Check
 } from 'lucide-react';
 
 export default function RecentLists({ pendingTeachers = [], recentCourses = [], recentMessages = [] }) {
+    const handleVerifyTeacher = (id) => {
+        if (confirm('آیا از تایید و فعال‌سازی این استاد اطمینان دارید؟ استاد بلافاصله در آمار و بخش اساتید وبسایت نمایش داده خواهد شد.')) {
+            router.post(`/admin/teachers/${id}/verify`, {}, {
+                preserveScroll: true,
+            });
+        }
+    };
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* 1. Pending Teacher Verifications */}
@@ -53,12 +62,25 @@ export default function RecentLists({ pendingTeachers = [], recentCourses = [], 
                                             <p className="text-[11px] text-slate-400 truncate">{t.specialization}</p>
                                         </div>
                                     </div>
-                                    <a
-                                        href={`/admin-panel/teachers/${t.id}/edit`}
-                                        className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold shrink-0 transition-colors"
-                                    >
-                                        بررسی
-                                    </a>
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleVerifyTeacher(t.id)}
+                                            className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold transition-all active:scale-95 flex items-center gap-1"
+                                            title="تایید و فعال‌سازی فوری"
+                                        >
+                                            <Check size={12} />
+                                            <span>تایید</span>
+                                        </button>
+                                        <a
+                                            href="/admin-panel/teachers"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 text-[11px] font-bold shrink-0 transition-colors"
+                                        >
+                                            بررسی
+                                        </a>
+                                    </div>
                                 </div>
                             ))
                         )}

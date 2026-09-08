@@ -45,7 +45,8 @@ class TeacherController extends Controller
             ->whereNotNull('bio')
             ->where('bio', '!=', '')
             ->whereHas('teacher', function (Builder $query) {
-                $query->whereNotNull('specialization')
+                $query->where('is_verified', true)
+                    ->whereNotNull('specialization')
                     ->where('specialization', '!=', '')
                     ->whereNotNull('expertise')
                     ->where('expertise', '!=', '');

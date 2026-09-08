@@ -70,6 +70,44 @@
                                                     @endif
                                                 </h6>
                                                 <p class="mb-2 text-muted">{{ $notification->message }}</p>
+
+                                                @php
+                                                    $notifData = is_array($notification->data) ? $notification->data : json_decode($notification->data ?? '[]', true);
+                                                    $meetLink = $notifData['meet_link'] ?? $notifData['room_url'] ?? null;
+                                                @endphp
+
+                                                @if($notification->type === \App\Models\Notification::TYPE_CLASS_STARTED && $meetLink)
+                                                    <div class="mt-2 mb-2">
+                                                        <a href="{{ $meetLink }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 fw-bold shadow-sm" onclick="event.stopPropagation()">
+                                                            <i class="bi bi-camera-video-fill me-1"></i> Join Google Meet Now ↗
+                                                        </a>
+                                                    </div>
+                                                @elseif($notification->type === \App\Models\Notification::TYPE_ENROLLMENT_REQUEST)
+                                                    <div class="mt-2 mb-2">
+                                                        <a href="{{ route('teacher.enrollment-requests') }}?tab=requests" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="event.stopPropagation()">
+                                                            <i class="bi bi-person-check-fill me-1"></i> Review Requests
+                                                        </a>
+                                                    </div>
+                                                @elseif($notification->type === \App\Models\Notification::TYPE_STUDENT_ENROLLED)
+                                                    <div class="mt-2 mb-2">
+                                                        <a href="{{ route('teacher.enrollment-requests') }}?tab=enrolled" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="event.stopPropagation()">
+                                                            <i class="bi bi-people-fill me-1"></i> View Students
+                                                        </a>
+                                                    </div>
+                                                @elseif($notification->type === \App\Models\Notification::TYPE_ENROLLMENT_APPROVED && !empty($notifData['course_slug']))
+                                                    <div class="mt-2 mb-2">
+                                                        <a href="{{ route('student.courses.learn', $notifData['course_slug']) }}" class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="event.stopPropagation()">
+                                                            <i class="bi bi-journal-bookmark-fill me-1"></i> Go to Classroom
+                                                        </a>
+                                                    </div>
+                                                @elseif($notification->type === \App\Models\Notification::TYPE_EXAM_PUBLISHED)
+                                                    <div class="mt-2 mb-2">
+                                                        <a href="{{ route('student.exams.index') }}" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold" onclick="event.stopPropagation()">
+                                                            <i class="bi bi-pencil-square me-1"></i> Take Quiz
+                                                        </a>
+                                                    </div>
+                                                @endif
+
                                                 <div class="d-flex align-items-center gap-3">
                                                     <small class="text-muted">
                                                         <i class="bi bi-tag me-1"></i>{{ $notification->type_label }}

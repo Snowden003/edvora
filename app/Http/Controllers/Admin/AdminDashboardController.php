@@ -217,4 +217,30 @@ class AdminDashboardController extends Controller
             'recentMessages' => $recentMessages,
         ]);
     }
+
+    public function verifyTeacher($id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        $teacher->update(['is_verified' => true]);
+        if ($teacher->user) {
+            $teacher->user->update(['status' => 'active']);
+        }
+        \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+        \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+
+        return back()->with('success', 'استاد با موفقیت تایید و فعال شد.');
+    }
+
+    public function rejectTeacher($id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        $teacher->update(['is_verified' => false]);
+        if ($teacher->user) {
+            $teacher->user->update(['status' => 'rejected']);
+        }
+        \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+        \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+
+        return back()->with('success', 'درخواست تایید استاد رد شد.');
+    }
 }

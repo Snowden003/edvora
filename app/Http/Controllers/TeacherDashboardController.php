@@ -491,6 +491,12 @@ class TeacherDashboardController extends Controller
                 'note'            => $request->input('note'),
             ]);
 
+            // Notify enrolled students that class has concluded
+            $enrolledStudentIds = $course->enrollments()->where('status', 'active')->pluck('user_id');
+            foreach ($enrolledStudentIds as $sId) {
+                NotificationController::notifyClassEnded($sId, $course->title);
+            }
+
             // Mark lesson as completed for teacher and all enrolled students (if lesson was specified)
             $completedCount = 0;
             if ($session->lesson_id) {

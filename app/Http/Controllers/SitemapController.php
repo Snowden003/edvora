@@ -142,6 +142,7 @@ class SitemapController extends Controller
         $teachers = User::query()
             ->where('role', 'teacher')
             ->where('status', 'active')
+            ->whereHas('teacher', fn ($q) => $q->where('is_verified', true))
             ->whereNotNull('department')
             ->where('department', '!=', '')
             ->select(['id', 'updated_at'])

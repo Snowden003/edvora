@@ -838,183 +838,51 @@
         }
     }
 
-    // Audio & Notifications
-    let audioContext = null;
-    let notificationSoundEnabled = false;
-
-    function initAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-        notificationSoundEnabled = true;
-
-        const btn = document.getElementById('enableSoundBtn');
-        if (btn) {
-            btn.innerHTML = '<i class="bi bi-volume-up"></i> Enabled';
-            btn.classList.remove('btn-outline-primary');
-            btn.classList.add('btn-success');
-            setTimeout(() => btn.style.display = 'none', 2000);
-        }
-
-        playNotificationSound();
-    }
-
-    function playNotificationSound() {
-        if (!notificationSoundEnabled) return;
-        try {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(1100, audioContext.currentTime + 0.1);
-            oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.2);
-
-            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.4);
-        } catch (e) {
-            console.log('Audio play failed:', e);
-        }
-    }
-
-    document.addEventListener('click', initAudioContext, { once: true });
-    document.addEventListener('touchstart', initAudioContext, { once: true });
-    document.addEventListener('keydown', initAudioContext, { once: true });
-
-    function showBrowserNotification(message, title) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Edvora - Class Started!', {
-                body: message,
-                icon: '{{ asset('assets/images/logo1.jpg') }}',
-                tag: 'class-started'
-            });
-        }
-    }
-
-    function addNotificationToList(data) {
+    function addNotificationToList(notif) {
         const notifList = document.querySelector('.notif-list');
         if (notifList) {
             const newNotif = document.createElement('div');
             newNotif.className = 'notif-card-item is-unread';
+            const actionBtn = notif.action_url ? `<a href="${notif.action_url}" target="${notif.action_url.startsWith('http') ? '_blank' : '_self'}" class="btn btn-sm btn-primary rounded-pill px-3">${notif.action_text || 'Open'}</a>` : '';
             newNotif.innerHTML = `
-                <div class="notif-icon-box bg-success bg-opacity-10 text-success">
-                    <i class="bi bi-camera-video-fill"></i>
+                <div class="notif-icon-box bg-primary bg-opacity-10 text-primary">
+                    <i class="${notif.icon || 'bi bi-bell-fill'}"></i>
                 </div>
                 <div class="flex-grow-1 min-width-0">
-                    <div class="fw-bold text-dark small">${data.course_title}</div>
-                    <div class="text-muted small mb-1">${data.message}</div>
+                    <div class="fw-bold text-dark small">${notif.title}</div>
+                    <div class="text-muted small mb-1">${notif.message}</div>
                     <span class="text-muted" style="font-size:0.72rem;">Just now</span>
                 </div>
-                <a href="${data.room_url}" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3">Join</a>
+                ${actionBtn}
             `;
             notifList.insertBefore(newNotif, notifList.firstChild);
         }
     }
 
-    function showToastNotification(data) {
-        let toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'toast-container';
-            toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 360px;';
-            document.body.appendChild(toastContainer);
+    // Listen to global Edvora real-time notification engine events
+    window.addEventListener('edvora:new-notification', function (event) {
+        const notif = event.detail;
+        if (!notif) return;
+
+        if (notif.type === 'class_ended') {
+            showClassEndedAlert({
+                course_title: notif.data?.course_title || notif.title || 'Your class'
+            });
         }
 
-        const toast = document.createElement('div');
-        toast.style.cssText = 'background: #fff; border-left: 4px solid #22c55e; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);';
-        toast.innerHTML = `
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <div style="background: #22c55e; color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i class="bi bi-camera-video-fill"></i>
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; color: #1f2937; margin-bottom: 2px;">${data.course_title}</div>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0 0 8px 0;">${data.message}</p>
-                    <a href="${data.room_url}" target="_blank" style="display: inline-block; background: #1f8fff; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600;">
-                        Join Class →
-                    </a>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 0;">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-        `;
-        toastContainer.appendChild(toast);
-        setTimeout(() => toast.remove(), 10000);
-    }
+        addNotificationToList(notif);
+    });
 
-    // Polling setup
-    let lastCheck = new Date().toISOString();
-    const processedNotifIds = new Set();
-
-    function checkNewNotifications() {
-        fetch('/student/notifications/check-new?since=' + encodeURIComponent(lastCheck), {
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.notifications && data.notifications.length > 0) {
-                data.notifications.forEach(notif => {
-                    if (processedNotifIds.has(notif.id)) return;
-                    processedNotifIds.add(notif.id);
-
-                    playNotificationSound();
-                    const notifData = {
-                        course_title: notif.course_title,
-                        message: notif.message,
-                        room_url: notif.data?.room_url || notif.data?.meet_link || '#',
-                        started_at: notif.created_at
-                    };
-                    showToastNotification(notifData);
-                    showBrowserNotification(notif.message, notif.course_title);
-                    addNotificationToList(notifData);
-                });
-            }
-            lastCheck = new Date().toISOString();
-        })
-        .catch(err => console.log('Polling error:', err));
-    }
-
-    let wasInClass = false;
-    let activeCourseSlug = null;
-
-    function checkActiveClass() {
-        fetch('/student/active-class/check', {
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.has_active_class) {
-                wasInClass = true;
-                activeCourseSlug = data.course_slug;
-            } else if (wasInClass && !data.has_active_class) {
-                showClassEndedAlert({
-                    course_title: data.course_title || 'Your class',
-                    message: 'The class has been ended by the teacher.'
-                });
-                wasInClass = false;
-                activeCourseSlug = null;
-            }
-        })
-        .catch(err => console.log('Active class check error:', err));
-    }
-
-    setInterval(checkNewNotifications, 10000);
-    setInterval(checkActiveClass, 8000);
-    checkNewNotifications();
-    checkActiveClass();
+    // Mark all as read button click handler
+    document.addEventListener('DOMContentLoaded', function () {
+        const markAllBtn = document.querySelector('.btn-mark-all-read');
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', function () {
+                if (typeof window.markAllAsRead === 'function') {
+                    window.markAllAsRead();
+                }
+            });
+        }
+    });
 </script>
 @endpush

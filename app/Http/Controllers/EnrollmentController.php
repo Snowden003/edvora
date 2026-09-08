@@ -23,6 +23,14 @@ class EnrollmentController extends Controller
             ], 403);
         }
 
+        // Check if course has ended or is completed
+        if ($course->isCompleted()) {
+            return response()->json([
+                'status'  => 'course_completed',
+                'message' => 'This course has ended. Enrollment is closed.',
+            ], 422);
+        }
+
         // Check if course is full
         if ($course->isFull()) {
             return response()->json([
@@ -50,6 +58,16 @@ class EnrollmentController extends Controller
         ]);
 
         $course->increment('enrolled_count');
+
+        // Notify teacher of the new enrollment
+        if ($course->teacher_id) {
+            NotificationController::notifyStudentEnrolled(
+                $course->teacher_id,
+                $user->name,
+                $course->title,
+                $course->id
+            );
+        }
 
         // Check if course should auto-start
         if ($course->shouldAutoStart()) {

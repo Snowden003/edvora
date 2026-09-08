@@ -159,6 +159,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/courses/{course}/enrollment-request', [EnrollmentRequestController::class, 'store'])->name('courses.enrollment-request.store');
     Route::delete('/enrollment-requests/{enrollmentRequest}/cancel', [EnrollmentRequestController::class, 'cancel'])->name('courses.enrollment-request.cancel');
 
+    // Global notifications (accessible by student, teacher, admin on any page)
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/live-check',        [NotificationController::class, 'liveCheck'])->name('live-check');
+        Route::get('/unread-count',      [NotificationController::class, 'unreadCount'])->name('unread-count');
+        Route::post('/{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all',         [NotificationController::class, 'markAllAsRead'])->name('read-all');
+        Route::delete('/delete-all',     [NotificationController::class, 'destroyAll'])->name('delete-all');
+        Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
+
     // Profile (both student & teacher)
     Route::middleware(['role:student,teacher'])->group(function () {
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -282,6 +292,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index']);
         Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/teachers/{id}/verify', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'verifyTeacher'])->name('teachers.verify');
+        Route::post('/teachers/{id}/reject', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'rejectTeacher'])->name('teachers.reject');
 
         // Courses Management (React SPA)
         Route::prefix('courses')->name('courses.')->group(function () {

@@ -47,6 +47,7 @@
     <link href="{{ asset('assets/css/modern-footer.css') }}?v={{ file_exists(public_path('assets/css/modern-footer.css')) ? filemtime(public_path('assets/css/modern-footer.css')) : time() }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/ai-chatbot.css') }}?v={{ file_exists(public_path('assets/css/ai-chatbot.css')) ? filemtime(public_path('assets/css/ai-chatbot.css')) : time() }}" rel="stylesheet" />
     @auth
+    <link href="{{ asset('assets/css/notifications.css') }}?v={{ file_exists(public_path('assets/css/notifications.css')) ? filemtime(public_path('assets/css/notifications.css')) : time() }}" rel="stylesheet" />
     @vite('resources/js/app.js')
     @endauth
     @if(app()->environment('production'))

@@ -27,7 +27,10 @@ class HowWeWorkController extends Controller
     {
         // Calculate real stats from database
         $totalStudents = User::where('role', 'student')->count();
-        $totalTeachers = User::where('role', 'teacher')->count();
+        $totalTeachers = User::where('role', 'teacher')
+            ->where('status', 'active')
+            ->whereHas('teacher', fn ($q) => $q->where('is_verified', true))
+            ->count();
 
         // Count distinct provinces from student_profiles as a proxy for regions/countries
         $distinctProvinces = StudentProfile::distinct('province')->count('province');

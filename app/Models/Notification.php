@@ -53,9 +53,13 @@ class Notification extends Model
     const TYPE_MEETING_STATUS = 'meeting_status';
     const TYPE_EXAM_PUBLISHED = 'exam_published';
     const TYPE_CLASS_STARTED = 'class_started';
+    const TYPE_CLASS_ENDED = 'class_ended';
     const TYPE_DOCUMENT_UPLOADED = 'document_uploaded';
     const TYPE_CLASS_NOTE_ADDED = 'class_note_added';
     const TYPE_ENROLLMENT_REQUEST = 'enrollment_request';
+    const TYPE_ENROLLMENT_APPROVED = 'enrollment_approved';
+    const TYPE_ENROLLMENT_REJECTED = 'enrollment_rejected';
+    const TYPE_STUDENT_ENROLLED = 'student_enrolled';
     const TYPE_POINTS_EARNED = 'points_earned';
     const TYPE_POINTS_DEDUCTED = 'points_deducted';
 
@@ -68,9 +72,13 @@ class Notification extends Model
             self::TYPE_MEETING_STATUS => 'bi bi-camera-video-fill text-success',
             self::TYPE_EXAM_PUBLISHED => 'bi bi-pencil-square text-danger',
             self::TYPE_CLASS_STARTED => 'bi bi-camera-video-fill text-success',
+            self::TYPE_CLASS_ENDED => 'bi bi-stop-circle-fill text-secondary',
             self::TYPE_DOCUMENT_UPLOADED => 'bi bi-file-earmark-arrow-down-fill text-primary',
             self::TYPE_CLASS_NOTE_ADDED => 'bi bi-sticky-fill text-info',
             self::TYPE_ENROLLMENT_REQUEST => 'bi bi-person-plus-fill text-success',
+            self::TYPE_ENROLLMENT_APPROVED => 'bi bi-check-circle-fill text-success',
+            self::TYPE_ENROLLMENT_REJECTED => 'bi bi-x-circle-fill text-danger',
+            self::TYPE_STUDENT_ENROLLED => 'bi bi-person-check-fill text-primary',
             self::TYPE_POINTS_EARNED => 'bi bi-plus-circle-fill text-success',
             self::TYPE_POINTS_DEDUCTED => 'bi bi-dash-circle-fill text-danger',
             default => 'bi bi-bell-fill text-secondary',
@@ -86,9 +94,13 @@ class Notification extends Model
             self::TYPE_MEETING_STATUS => 'Meeting Update',
             self::TYPE_EXAM_PUBLISHED => 'New Exam',
             self::TYPE_CLASS_STARTED => 'Class Started',
+            self::TYPE_CLASS_ENDED => 'Class Ended',
             self::TYPE_DOCUMENT_UPLOADED => 'New Document',
             self::TYPE_CLASS_NOTE_ADDED => 'New Class Note',
             self::TYPE_ENROLLMENT_REQUEST => 'Enrollment Request',
+            self::TYPE_ENROLLMENT_APPROVED => 'Enrollment Approved',
+            self::TYPE_ENROLLMENT_REJECTED => 'Enrollment Rejected',
+            self::TYPE_STUDENT_ENROLLED => 'New Student Enrolled',
             self::TYPE_POINTS_EARNED => 'Points Earned',
             self::TYPE_POINTS_DEDUCTED => 'Points Deducted',
             default => 'Notification',

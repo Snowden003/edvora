@@ -84,6 +84,19 @@
                 <a href="{{ route('login') }}" class="btn btn-outline-light rounded-pill">Login</a>
                 <a href="{{ route('register') }}" class="btn btn-primary rounded-pill btn-glow">Sign Up</a>
             @else
+                @php
+                    $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : url('/admin-panel'));
+                    $unreadHeaderCount = \App\Models\Notification::where('user_id', Auth::id())->unread()->count();
+                @endphp
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <a href="{{ $notifRoute }}" class="edvora-nav-notif-link" title="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="edvora-nav-notif-badge {{ $unreadHeaderCount > 0 ? 'has-unread' : '' }}" data-notif-badge style="{{ $unreadHeaderCount > 0 ? '' : 'display:none;' }}">
+                            {{ $unreadHeaderCount }}
+                        </span>
+                    </a>
+                    <a href="{{ $notifRoute }}" class="text-white text-decoration-none small fw-semibold">Notifications</a>
+                </div>
                 <div class="dropdown">
                     <button class="btn btn-outline-light rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-2"></i>{{ Auth::user()->name }}
@@ -177,11 +190,22 @@
                 </li>
             </ul>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex align-items-center gap-2">
                 @guest
                     <button class="btn btn-outline-light btn-sm rounded-pill px-4" onclick="location.href='{{ route('login') }}'">Login</button>
                     <button class="btn btn-primary btn-sm rounded-pill px-4 btn-glow" onclick="location.href='{{ route('register') }}'">Sign Up</button>
                 @else
+                    @php
+                        $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : url('/admin-panel'));
+                        $unreadHeaderCount = \App\Models\Notification::where('user_id', Auth::id())->unread()->count();
+                    @endphp
+                    <a href="{{ $notifRoute }}" class="edvora-nav-notif-link me-1" title="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="edvora-nav-notif-badge {{ $unreadHeaderCount > 0 ? 'has-unread' : '' }}" data-notif-badge style="{{ $unreadHeaderCount > 0 ? '' : 'display:none;' }}">
+                            {{ $unreadHeaderCount }}
+                        </span>
+                    </a>
+
                     <div class="dropdown">
                         <button class="btn btn-outline-light btn-sm rounded-pill px-4 dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             {{ Auth::user()->name }}

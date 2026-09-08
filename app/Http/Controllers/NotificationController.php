@@ -58,20 +58,108 @@ class NotificationController extends Controller
     // Check for new notifications since timestamp (for real-time polling)
     public function checkNew(Request $request)
     {
+        return $this->liveCheck($request);
+    }
+
+    /**
+     * Unified real-time polling endpoint for all authenticated users (students & teachers).
+     * Returns:
+     * - unread_count
+     * - notifications (recent unread with rich actionable URLs & icons)
+     * - active_class (for students: currently live Google Meet session if any)
+     */
+    public function liveCheck(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['unread_count' => 0, 'notifications' => [], 'active_class' => null]);
+        }
+
         $since = $request->query('since');
-        
-        $query = Notification::where('user_id', Auth::id())
+
+        $unreadCount = Notification::where('user_id', $user->id)
+            ->unread()
+            ->count();
+
+        $query = Notification::where('user_id', $user->id)
+            ->unread()
             ->orderBy('created_at', 'desc');
-            
+
         if ($since) {
             $query->where('created_at', '>', $since);
         }
-        
-        $notifications = $query->limit(5)->get();
-        
+
+        $notifications = $query->limit(10)->get()->map(function ($n) use ($user) {
+            $data = is_array($n->data) ? $n->data : json_decode($n->data ?? '[]', true);
+            $actionUrl = null;
+            $actionText = 'View';
+
+            if ($n->type === Notification::TYPE_CLASS_STARTED) {
+                $actionUrl = $data['meet_link'] ?? $data['room_url'] ?? null;
+                $actionText = 'Join Google Meet';
+            } elseif ($n->type === Notification::TYPE_ENROLLMENT_REQUEST) {
+                $actionUrl = route('teacher.enrollment-requests') . '?tab=requests';
+                $actionText = 'Review Request';
+            } elseif ($n->type === Notification::TYPE_STUDENT_ENROLLED) {
+                $actionUrl = route('teacher.enrollment-requests') . '?tab=enrolled';
+                $actionText = 'View Students';
+            } elseif ($n->type === Notification::TYPE_ENROLLMENT_APPROVED && !empty($data['course_slug'])) {
+                $actionUrl = route('student.courses.learn', $data['course_slug']);
+                $actionText = 'Go to Classroom';
+            } elseif ($n->type === Notification::TYPE_EXAM_PUBLISHED) {
+                $actionUrl = route('student.exams.index');
+                $actionText = 'Take Quiz';
+            } elseif (!empty($data['course_slug'])) {
+                $actionUrl = route('student.courses.learn', $data['course_slug']);
+                $actionText = 'Open Course';
+            }
+
+            return [
+                'id'          => $n->id,
+                'type'        => $n->type,
+                'title'       => $n->title,
+                'message'     => $n->message,
+                'icon'        => $n->icon,
+                'type_label'  => $n->type_label,
+                'data'        => $data,
+                'action_url'  => $actionUrl,
+                'action_text' => $actionText,
+                'is_read'     => (bool) $n->is_read,
+                'created_at'  => $n->created_at ? $n->created_at->toISOString() : now()->toISOString(),
+                'time_ago'    => $n->created_at ? $n->created_at->diffForHumans() : 'Just now',
+            ];
+        });
+
+        // Check if user is a student with an active class session currently running
+        $activeClass = null;
+        if ($user->role === 'student') {
+            $enrolledCourseIds = $user->enrollments()
+                ->where('status', 'active')
+                ->pluck('course_id');
+
+            $activeSession = \App\Models\ClassSession::whereIn('course_id', $enrolledCourseIds)
+                ->where('status', 'active')
+                ->with('course')
+                ->latest('started_at')
+                ->first();
+
+            if ($activeSession && $activeSession->course) {
+                $activeClass = [
+                    'session_id'   => $activeSession->id,
+                    'course_id'    => $activeSession->course_id,
+                    'course_title' => $activeSession->course->title,
+                    'course_slug'  => $activeSession->course->slug,
+                    'meet_link'    => $activeSession->meet_link,
+                    'started_at'   => $activeSession->started_at ? $activeSession->started_at->toISOString() : null,
+                ];
+            }
+        }
+
         return response()->json([
+            'unread_count'  => $unreadCount,
             'notifications' => $notifications,
-            'count' => $notifications->count()
+            'active_class'  => $activeClass,
+            'timestamp'     => now()->toISOString(),
         ]);
     }
 
@@ -205,6 +293,67 @@ class NotificationController extends Controller
             'message' => "A new note" . ($noteTitle ? " '{$noteTitle}'" : "") . " has been added in '{$courseTitle}'.",
             'data' => [
                 'course_slug' => $courseSlug,
+            ],
+        ]);
+    }
+
+    public static function notifyClassEnded($userId, $courseTitle)
+    {
+        return Notification::create([
+            'user_id' => $userId,
+            'type'    => Notification::TYPE_CLASS_ENDED,
+            'title'   => 'Class Ended',
+            'message' => "The live class for '{$courseTitle}' has ended.",
+            'data'    => [
+                'course_title' => $courseTitle,
+            ],
+        ]);
+    }
+
+    public static function notifyEnrollmentApproved($studentId, $courseTitle, $courseSlug)
+    {
+        return Notification::create([
+            'user_id' => $studentId,
+            'type'    => Notification::TYPE_ENROLLMENT_APPROVED,
+            'title'   => 'Enrollment Approved! 🎉',
+            'message' => "Your enrollment in '{$courseTitle}' has been approved! You can now access all course lessons and live classes.",
+            'data'    => [
+                'course_title' => $courseTitle,
+                'course_slug'  => $courseSlug,
+            ],
+        ]);
+    }
+
+    public static function notifyEnrollmentRejected($studentId, $courseTitle, $reason = null)
+    {
+        $message = "Your enrollment request for '{$courseTitle}' was not approved.";
+        if ($reason) {
+            $message .= " Reason: {$reason}";
+        }
+
+        return Notification::create([
+            'user_id' => $studentId,
+            'type'    => Notification::TYPE_ENROLLMENT_REJECTED,
+            'title'   => 'Enrollment Update',
+            'message' => $message,
+            'data'    => [
+                'course_title' => $courseTitle,
+                'reason'       => $reason,
+            ],
+        ]);
+    }
+
+    public static function notifyStudentEnrolled($teacherId, $studentName, $courseTitle, $courseId)
+    {
+        return Notification::create([
+            'user_id' => $teacherId,
+            'type'    => Notification::TYPE_STUDENT_ENROLLED,
+            'title'   => 'New Student Enrolled 🎓',
+            'message' => "{$studentName} has enrolled in your course '{$courseTitle}'.",
+            'data'    => [
+                'course_id'    => $courseId,
+                'course_title' => $courseTitle,
+                'student_name' => $studentName,
             ],
         ]);
     }

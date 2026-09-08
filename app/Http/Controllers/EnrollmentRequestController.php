@@ -31,6 +31,14 @@ class EnrollmentRequestController extends Controller
             ], 403);
         }
 
+        // Check if course has ended or is completed
+        if ($course->isCompleted()) {
+            return response()->json([
+                'status'  => 'course_completed',
+                'message' => 'This course has ended. Enrollment requests are closed.',
+            ], 422);
+        }
+
         // Check if already enrolled
         $alreadyEnrolled = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
@@ -316,6 +324,13 @@ class EnrollmentRequestController extends Controller
             ]);
         }
 
+        if ($enrollmentRequest->course->isCompleted()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'This course has ended. You cannot approve enrollments for completed courses.',
+            ], 422);
+        }
+
         // Approve the request
         $enrollmentRequest->update([
             'status' => 'approved',
@@ -342,6 +357,13 @@ class EnrollmentRequestController extends Controller
         // Send approval email
         Mail::to($enrollmentRequest->user->email)->send(
             new EnrollmentApproved($enrollmentRequest->user, $enrollmentRequest->course)
+        );
+
+        // Send in-app push notification
+        NotificationController::notifyEnrollmentApproved(
+            $enrollmentRequest->user_id,
+            $enrollmentRequest->course->title,
+            $enrollmentRequest->course->slug
         );
 
         return response()->json([
@@ -385,6 +407,13 @@ class EnrollmentRequestController extends Controller
         // Send rejection email
         Mail::to($enrollmentRequest->user->email)->send(
             new EnrollmentRejected($enrollmentRequest->user, $enrollmentRequest->course, $reason)
+        );
+
+        // Send in-app push notification
+        NotificationController::notifyEnrollmentRejected(
+            $enrollmentRequest->user_id,
+            $enrollmentRequest->course->title,
+            $reason
         );
 
         return response()->json([

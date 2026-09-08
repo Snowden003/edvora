@@ -212,26 +212,44 @@
                     </div>
 
                     <!-- Call to Action -->
-                    @auth
-                        @php
-                            $studentProfileComplete = auth()->user()->studentProfile?->is_complete ?? false;
-                        @endphp
-                        @if(!$isEnrolled && !$studentProfileComplete)
-                            <div class="alert alert-warning d-flex align-items-center gap-2 mb-4 rounded-3 border-0 bg-warning bg-opacity-25 text-white" role="alert" style="backdrop-filter: blur(10px);">
-                                <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
-                                <div>
-                                    <strong class="text-warning">Profile Incomplete.</strong>
-                                    You must <a href="{{ route('student.profile-details') }}" class="text-white text-decoration-underline">complete your profile details</a> before enrolling.
-                                </div>
+                    @if($course->isCompleted())
+                        <div class="alert alert-secondary d-flex align-items-center gap-2 mb-4 rounded-3 border-0 bg-secondary bg-opacity-25 text-white" role="alert" style="backdrop-filter: blur(10px);">
+                            <i class="bi bi-info-circle-fill fs-5 text-warning"></i>
+                            <div>
+                                <strong class="text-warning">Course Ended:</strong>
+                                This course concluded on {{ $course->end_date ? $course->end_date->format('M d, Y') : 'the scheduled date' }} and is no longer accepting new enrollments.
                             </div>
-                        @endif
-                    @endauth
+                        </div>
+                    @else
+                        @auth
+                            @php
+                                $studentProfileComplete = auth()->user()->studentProfile?->is_complete ?? false;
+                            @endphp
+                            @if(!$isEnrolled && !$studentProfileComplete)
+                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-4 rounded-3 border-0 bg-warning bg-opacity-25 text-white" role="alert" style="backdrop-filter: blur(10px);">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+                                    <div>
+                                        <strong class="text-warning">Profile Incomplete.</strong>
+                                        You must <a href="{{ route('student.profile-details') }}" class="text-white text-decoration-underline">complete your profile details</a> before enrolling.
+                                    </div>
+                                </div>
+                            @endif
+                        @endauth
+                    @endif
 
                     <div class="hero-actions d-flex gap-3 flex-wrap">
                         @auth
                             @if($isEnrolled)
-                                <button class="btn btn-enroll-primary opacity-75" disabled>
-                                    <i class="bi bi-check-circle-fill"></i> Already Enrolled
+                                <a href="{{ route('student.courses.learn', $course->slug) }}" class="btn btn-enroll-primary">
+                                    <i class="bi bi-play-circle-fill"></i> Go to Course (Enrolled)
+                                </a>
+                            @elseif($course->isCompleted())
+                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Course has ended. Enrollment is closed.">
+                                    <i class="bi bi-calendar-x-fill me-1"></i> Enrollment Closed
+                                </button>
+                            @elseif($course->isFull())
+                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;">
+                                    <i class="bi bi-people-fill me-1"></i> Course Full
                                 </button>
                             @else
                                 <button class="btn btn-enroll-primary enroll-btn"
@@ -249,9 +267,15 @@
                                 <span class="wishlist-text">{{ $isWishlisted ? 'In Wishlist' : 'Add to Wishlist' }}</span>
                             </button>
                         @else
-                            <a href="{{ route('login') }}" class="btn btn-enroll-primary">
-                                <i class="bi bi-box-arrow-in-right"></i> Login to Enroll
-                            </a>
+                            @if($course->isCompleted())
+                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Course has ended. Enrollment is closed.">
+                                    <i class="bi bi-calendar-x-fill me-1"></i> Enrollment Closed
+                                </button>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-enroll-primary">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login to Enroll
+                                </a>
+                            @endif
                             <a href="{{ route('login') }}" class="btn btn-wishlist-glass">
                                 <i class="bi bi-heart"></i> Login to Wishlist
                             </a>
@@ -463,7 +487,13 @@
                                     </button>
                                 </h3>
                                 <div id="courseFaqEnrollment" class="accordion-collapse collapse" data-bs-parent="#courseFaqAccordion">
-                                    <div class="accordion-body">Simply create an Edvora account, fill out your student profile details, and click the "Enroll Now" button at the top of this page.</div>
+                                    <div class="accordion-body">
+                                        @if($course->isCompleted())
+                                            Enrollment for this course has ended as the scheduled course duration is complete. Please browse our other active courses to enroll!
+                                        @else
+                                            Simply create an Edvora account, fill out your student profile details, and click the "Enroll Now" button at the top of this page.
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

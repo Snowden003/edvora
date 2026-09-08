@@ -217,11 +217,100 @@ class TeacherResource extends Resource
                             ->send();
                     }),
 
+                Action::make('activate')
+                    ->label('Activate / تایید')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Activate & Verify Teacher')
+                    ->modalDescription('Are you sure you want to activate and verify this teacher? They will appear in the Expert Teachers count and public directory.')
+                    ->modalSubmitActionLabel('Yes, Activate')
+                    ->visible(fn (User $record) => !($record->status === 'active' && optional($record->teacher)->is_verified))
+                    ->action(function (User $record): void {
+                        $record->update(['status' => 'active']);
+                        if ($record->teacher) {
+                            $record->teacher->update(['is_verified' => true]);
+                        } else {
+                            $record->teacher()->create(['is_verified' => true]);
+                        }
+                        \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+                        \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+                        Notification::make()
+                            ->title("Teacher {$record->name} activated and verified successfully.")
+                            ->success()
+                            ->send();
+                    }),
+
+                Action::make('deactivate')
+                    ->label('Deactivate / لغو تایید')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Deactivate Teacher')
+                    ->modalDescription('Are you sure you want to deactivate/unverify this teacher? They will be removed from the Expert Teachers count and public directory.')
+                    ->modalSubmitActionLabel('Yes, Deactivate')
+                    ->visible(fn (User $record) => $record->status === 'active' || optional($record->teacher)->is_verified)
+                    ->action(function (User $record): void {
+                        $record->update(['status' => 'pending']);
+                        if ($record->teacher) {
+                            $record->teacher->update(['is_verified' => false]);
+                        }
+                        \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+                        \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+                        Notification::make()
+                            ->title("Teacher {$record->name} deactivated.")
+                            ->warning()
+                            ->send();
+                    }),
+
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('bulk_activate')
+                        ->label('Activate Selected / تایید و فعال‌سازی')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records): void {
+                            foreach ($records as $record) {
+                                $record->update(['status' => 'active']);
+                                if ($record->teacher) {
+                                    $record->teacher->update(['is_verified' => true]);
+                                } else {
+                                    $record->teacher()->create(['is_verified' => true]);
+                                }
+                            }
+                            \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+                            \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+                            Notification::make()
+                                ->title($records->count().' teacher(s) activated and verified successfully.')
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('bulk_deactivate')
+                        ->label('Deactivate Selected / لغو تایید')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records): void {
+                            foreach ($records as $record) {
+                                $record->update(['status' => 'pending']);
+                                if ($record->teacher) {
+                                    $record->teacher->update(['is_verified' => false]);
+                                }
+                            }
+                            \Illuminate\Support\Facades\Cache::forget('home:page-data:v2');
+                            \Illuminate\Support\Facades\Cache::forget('home:page-data:v3');
+                            Notification::make()
+                                ->title($records->count().' teacher(s) deactivated.')
+                                ->warning()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     BulkAction::make('bulk_email')
                         ->label('Send Email to Selected')
                         ->icon('heroicon-o-envelope')

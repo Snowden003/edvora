@@ -125,6 +125,28 @@ class Course extends Model
     }
 
     /**
+     * Check if course has ended or is marked completed/archived
+     */
+    public function isCompleted(): bool
+    {
+        if (in_array($this->status, ['completed', 'archived'])) {
+            return true;
+        }
+
+        if ($this->end_date) {
+            $endDate = $this->end_date instanceof \Carbon\CarbonInterface
+                ? $this->end_date
+                : \Carbon\Carbon::parse($this->end_date);
+
+            if ($endDate->startOfDay()->lessThan(now()->startOfDay())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Start the course
      */
     public function startCourse(): void

@@ -17,10 +17,15 @@ class HomePageController extends Controller
 {
     public function index()
     {
-        $homeData = Cache::remember('home:page-data:v2', now()->addMinutes(10), function () {
+        $homeData = Cache::remember('home:page-data:v3', now()->addMinutes(10), function () {
             return [
                 'totalCourses' => Course::where('status', '!=', 'draft')->count(),
-                'totalTeachers' => User::where('role', 'teacher')->count(),
+                'totalTeachers' => User::where('role', 'teacher')
+                    ->where('status', 'active')
+                    ->whereHas('teacher', function ($q) {
+                        $q->where('is_verified', true);
+                    })
+                    ->count(),
                 'totalStudents' => User::where('role', 'student')->count(),
                 'completedCourses' => Enrollment::where('status', 'completed')->count(),
                 'featuredCourseIds' => Course::where('status', '!=', 'draft')

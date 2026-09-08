@@ -141,6 +141,7 @@ class CourseResource extends Resource
                                 'draft'     => 'Draft (visible to teachers for requests)',
                                 'published' => 'Published (visible to students)',
                                 'started'   => 'Started (in progress)',
+                                'completed' => 'Completed',
                                 'archived'  => 'Archived',
                             ])
                             ->disableOptionWhen(fn (string $value, Forms\Get $get): bool => in_array($value, ['published', 'started'], true) && blank($get('teacher_id')))
@@ -496,6 +497,7 @@ class CourseResource extends Resource
                         'gray' => 'draft',
                         'success' => 'published',
                         'warning' => 'started',
+                        'info' => 'completed',
                         'danger' => 'archived',
                     ]),
 
@@ -537,6 +539,7 @@ class CourseResource extends Resource
                         'draft'     => 'Draft (Open for Requests)',
                         'published' => 'Published (Waiting for Students)',
                         'started'   => 'Started (In Progress)',
+                        'completed' => 'Completed',
                         'archived'  => 'Archived',
                     ]),
                 Tables\Filters\SelectFilter::make('level')

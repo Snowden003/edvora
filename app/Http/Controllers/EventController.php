@@ -40,6 +40,7 @@ class EventController extends Controller
 
         $activeTeachersCount = \App\Models\User::where('role', 'teacher')
             ->where('status', 'active')
+            ->whereHas('teacher', fn ($q) => $q->where('is_verified', true))
             ->count();
 
         $totalSpeakers = max($speakersCount, $activeTeachersCount);
