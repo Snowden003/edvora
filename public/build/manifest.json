@@ -1,13 +1,29 @@
 {
+  "__commonjsHelpers-CqkleIqs.js": {
+    "file": "assets/_commonjsHelpers-CqkleIqs.js",
+    "name": "_commonjsHelpers"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-B7-CiSB6.css",
+    "file": "assets/app-d7VCvlT0.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/js/app.js": {
+    "file": "assets/app-DEzeMMpD.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "__commonjsHelpers-CqkleIqs.js"
+    ]
+  },
   "resources/js/app.jsx": {
-    "file": "assets/app-CdIh5tZK.js",
+    "file": "assets/app-D0mJVNWO.js",
     "name": "app",
     "src": "resources/js/app.jsx",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "__commonjsHelpers-CqkleIqs.js"
+    ]
   }
 }
