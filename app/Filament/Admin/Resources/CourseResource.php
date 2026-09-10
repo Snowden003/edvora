@@ -169,8 +169,8 @@ class CourseResource extends Resource
                             ->after('start_date'),
 
                         Forms\Components\Toggle::make('is_featured')
-                            ->label('Show in Homepage Hero (Special/Featured Course)')
-                            ->helperText('Featured courses appear in the special-courses slide on the homepage hero.')
+                            ->label('دوره ویژه (Featured / VIP Course)')
+                            ->helperText('فعال‌سازی استایل و طراحی ویژه (VIP)، حاشیه درخشان طلایی و برچسب اختصاصی در سراسر وب‌سایت.')
                             ->columnSpanFull(),
                     ]),
 

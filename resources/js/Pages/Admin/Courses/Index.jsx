@@ -515,7 +515,7 @@ export default function Index({ courses, summary = {}, categories = [], teachers
                                                             ? 'text-amber-400 bg-amber-500/10 hover:bg-amber-500/20'
                                                             : 'text-slate-600 hover:text-slate-400 hover:bg-slate-800'
                                                     }`}
-                                                    title={c.is_featured ? 'ویژه در صفحه اصلی' : 'تنظیم به عنوان ویژه'}
+                                                    title={c.is_featured ? 'دوره ویژه فعال است (طراحی و نمایش VIP در وب‌سایت)' : 'تنظیم به عنوان دوره ویژه (VIP)'}
                                                 >
                                                     <Star size={17} className={c.is_featured ? 'fill-amber-400' : ''} />
                                                 </button>
@@ -599,6 +599,7 @@ export default function Index({ courses, summary = {}, categories = [], teachers
                                                         ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                                                         : 'bg-slate-900/80 text-slate-400 hover:text-white'
                                                 }`}
+                                                title={c.is_featured ? 'دوره ویژه فعال است (طراحی و نمایش VIP در وب‌سایت)' : 'تنظیم به عنوان دوره ویژه (VIP)'}
                                             >
                                                 <Star size={15} className={c.is_featured ? 'fill-amber-400' : ''} />
                                             </button>

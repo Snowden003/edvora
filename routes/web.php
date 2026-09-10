@@ -270,7 +270,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/courses/{id}/sessions/leave',        [TeacherDashboardController::class, 'leaveClass'])->name('courses.sessions.leave');
         Route::get('/courses/{id}/attendance',            [TeacherDashboardController::class, 'attendance'])->name('courses.attendance');
         Route::post('/courses/{id}/sessions/{sessionId}/attendance', [TeacherDashboardController::class, 'saveAttendance'])->name('courses.sessions.attendance');
-        Route::post('/courses/{id}/lessons/{lessonId}/recording',   [TeacherDashboardController::class, 'saveRecording'])->name('courses.lessons.recording');
         Route::post('/courses/{id}/notes',                [TeacherDashboardController::class, 'storeClassNote'])->name('courses.notes.store');
         Route::put('/courses/{id}/notes/{noteId}',        [TeacherDashboardController::class, 'updateClassNote'])->name('courses.notes.update');
         Route::delete('/courses/{id}/notes/{noteId}',     [TeacherDashboardController::class, 'deleteClassNote'])->name('courses.notes.delete');

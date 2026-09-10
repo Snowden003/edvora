@@ -304,7 +304,7 @@
                             }
                         @endphp
                         <div class="recent-courses-carousel__item">
-                            <article class="home-course-card">
+                            <article class="home-course-card {{ $course->is_featured ? 'is-featured-course' : '' }}">
                                 <div class="home-course-card__image">
                                     <!-- Floating Live Status Badge -->
                                     <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}" style="top: 10px; left: 10px; position: absolute; z-index: 5;">
@@ -314,6 +314,13 @@
                                         <i class="{{ $dateStatus['icon'] }}"></i>
                                         <span>{{ $dateStatus['badge_text'] }}</span>
                                     </div>
+
+                                    @if($course->is_featured)
+                                        <!-- VIP Floating Badge -->
+                                        <span class="home-course-card__vip-badge">
+                                            <i class="bi bi-star-fill"></i> VIP
+                                        </span>
+                                    @endif
 
                                     @if($course->thumbnail)
                                         <img src="{{ Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async" style="object-fit: cover;">
@@ -441,7 +448,7 @@
                             }
                         @endphp
                         <div class="col-lg-4 col-md-6">
-                            <article class="popular-course-card h-100">
+                            <article class="popular-course-card h-100 {{ $course->is_featured ? 'is-featured-course' : '' }}">
                                 <div class="popular-course-card__media{{ $course->thumbnail ? '' : ' popular-course-card__media--' . ($course->category?->slug ?? 'general') }}">
                                     <!-- Floating Live Status Badge -->
                                     <div class="edvora-floating-status-pill status-{{ $dateStatus['type'] }}" style="top: 12px; left: 12px; position: absolute; z-index: 5;">
@@ -452,12 +459,21 @@
                                         <span>{{ $dateStatus['badge_text'] }}</span>
                                     </div>
 
+                                    @if($course->is_featured)
+                                        <span class="popular-course-vip-tag">
+                                            <i class="bi bi-star-fill"></i> VIP
+                                        </span>
+                                    @endif
+
                                     @if($course->thumbnail)
                                         <img src="{{ Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" loading="lazy" decoding="async" style="object-fit: cover;">
                                     @endif
                                 </div>
                                 <div class="popular-course-card__body">
                                     <div class="popular-course-card__badges">
+                                        @if($course->is_featured)
+                                            <span class="popular-course-card__badge popular-course-card__badge--vip"><i class="bi bi-star-fill"></i> Featured</span>
+                                        @endif
                                         <span class="popular-course-card__badge popular-course-card__badge--rank"><i class="bi bi-trophy-fill"></i> Top {{ $loop->iteration }}</span>
                                         <span class="popular-course-card__badge popular-course-card__badge--category"><i class="bi {{ $course->category?->icon ?? 'bi-grid' }}"></i> {{ $course->category?->name ?? 'General' }}</span>
                                         <span class="popular-course-card__badge popular-course-card__badge--free">Free</span>
@@ -1273,9 +1289,202 @@
             </div>
         </div>
     </section>
+
+    {{-- VIP Course Announcement Popup Modal --}}
+    @php
+        $vipPromoCourse = (isset($featuredCourses) && $featuredCourses->isNotEmpty())
+            ? $featuredCourses->first()
+            : \App\Models\Course::with(['teacher', 'category'])->where('is_featured', true)->where('status', '!=', 'draft')->latest()->first();
+
+        if ($vipPromoCourse) {
+            $today = \Carbon\Carbon::today();
+            $startDate = $vipPromoCourse->start_date ? \Carbon\Carbon::parse($vipPromoCourse->start_date)->startOfDay() : null;
+            $endDate = $vipPromoCourse->end_date ? \Carbon\Carbon::parse($vipPromoCourse->end_date)->startOfDay() : null;
+
+            // Schedule & Countdown
+            $scheduleCountdown = 'Flexible Schedule';
+            $scheduleDateFormatted = null;
+            if ($startDate) {
+                $scheduleDateFormatted = $startDate->format('M d, Y');
+                if ($startDate->greaterThan($today)) {
+                    $daysRemaining = (int) $today->diffInDays($startDate, false);
+                    if ($daysRemaining === 0) {
+                        $scheduleCountdown = 'Starts Today';
+                    } elseif ($daysRemaining === 1) {
+                        $scheduleCountdown = 'Starts Tomorrow (1 day left)';
+                    } else {
+                        $scheduleCountdown = "Starts in {$daysRemaining} days";
+                    }
+                } elseif ($startDate->equalTo($today)) {
+                    $scheduleCountdown = 'Starts Today';
+                } else {
+                    $scheduleCountdown = 'Ongoing Course';
+                }
+            }
+
+            // Duration (Bootcamp days / Weeks / Months / Hours)
+            $durationFormatted = null;
+            if ($startDate && $endDate) {
+                $diffDays = (int) $startDate->diffInDays($endDate, false) + 1;
+                if ($diffDays > 0) {
+                    if ($diffDays <= 21) {
+                        $durationFormatted = "{$diffDays}-Day Bootcamp";
+                    } elseif ($diffDays <= 60) {
+                        $weeks = max(1, (int) round($diffDays / 7));
+                        $durationFormatted = "{$weeks} Weeks Program";
+                    } else {
+                        $months = max(1, (int) round($diffDays / 30));
+                        $durationFormatted = "{$months} Months Program";
+                    }
+                }
+            }
+            if (!$durationFormatted && $vipPromoCourse->duration_hours) {
+                $durationFormatted = "{$vipPromoCourse->duration_hours} Hours";
+            }
+
+            $thumbUrl = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop';
+            if ($vipPromoCourse->thumbnail) {
+                $thumbUrl = Str::startsWith($vipPromoCourse->thumbnail, ['http://', 'https://'])
+                    ? $vipPromoCourse->thumbnail
+                    : asset('storage/' . $vipPromoCourse->thumbnail);
+            }
+
+            $teacherAvatarUrl = null;
+            if ($vipPromoCourse->teacher && $vipPromoCourse->teacher->avatar) {
+                $teacherAvatarUrl = Str::startsWith($vipPromoCourse->teacher->avatar, ['http://', 'https://'])
+                    ? $vipPromoCourse->teacher->avatar
+                    : asset('storage/' . $vipPromoCourse->teacher->avatar);
+            }
+        }
+    @endphp
+
+    @if($vipPromoCourse)
+        <div id="edvoraVipPopupModal" class="edvora-vip-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="vipModalTitle" style="display: none;">
+            <div class="edvora-vip-modal-card">
+                <!-- Top Header: VIP Pill & Close Button -->
+                <div class="edvora-vip-modal-topbar">
+                    <div class="edvora-vip-badge-pill">
+                        <i class="bi bi-star-fill"></i>
+                        <span>VIP Class</span>
+                    </div>
+                    <button type="button" class="edvora-vip-modal-close-btn" id="closeVipModalXBtn" aria-label="Close">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Fitted Poster Box (Fully accommodates vertical or landscape posters without cropping) -->
+                <div class="edvora-vip-poster-box">
+                    <div class="edvora-vip-poster-ambient" style="background-image: url('{{ $thumbUrl }}');"></div>
+                    <img src="{{ $thumbUrl }}"
+                         alt="{{ $vipPromoCourse->title }}"
+                         class="edvora-vip-poster-img"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=380&fit=crop';">
+                </div>
+
+                <!-- Minimal Content -->
+                <div class="edvora-vip-modal-content">
+                    <h3 class="edvora-vip-modal-title" id="vipModalTitle">
+                        {{ $vipPromoCourse->title }}
+                    </h3>
+
+                    <div class="edvora-vip-teacher-row">
+                        @if($teacherAvatarUrl)
+                            <img src="{{ $teacherAvatarUrl }}" alt="{{ $vipPromoCourse->teacher->name ?? 'Instructor' }}" class="edvora-vip-teacher-avatar">
+                        @else
+                            <div class="edvora-vip-teacher-avatar-fallback">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        @endif
+                        <div class="edvora-vip-teacher-meta">
+                            <span class="edvora-vip-teacher-label">Instructor</span>
+                            <span class="edvora-vip-teacher-name">{{ $vipPromoCourse->teacher->name ?? 'Edvora Senior Instructor' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="edvora-vip-meta-grid">
+                        <div class="edvora-vip-meta-item">
+                            <div class="edvora-vip-meta-icon">
+                                <i class="bi bi-calendar2-week"></i>
+                            </div>
+                            <div class="edvora-vip-meta-text">
+                                <span class="edvora-vip-meta-label">Schedule</span>
+                                <span class="edvora-vip-meta-value">{{ $scheduleCountdown }}</span>
+                                @if($scheduleDateFormatted)
+                                    <span class="edvora-vip-meta-sub">{{ $scheduleDateFormatted }}</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        @if($durationFormatted)
+                        <div class="edvora-vip-meta-item">
+                            <div class="edvora-vip-meta-icon">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div class="edvora-vip-meta-text">
+                                <span class="edvora-vip-meta-label">Duration</span>
+                                <span class="edvora-vip-meta-value">{{ $durationFormatted }}</span>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="edvora-vip-actions">
+                        <a href="{{ route('courses.detail', $vipPromoCourse->slug) }}" class="btn-vip-modal-enroll" id="vipModalEnrollBtn">
+                            <span>View Course Details</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const vipModal = document.getElementById('edvoraVipPopupModal');
+            if (!vipModal) return;
+
+            // Check if dismissed in this session
+            const isDismissed = sessionStorage.getItem('edvora_vip_modal_dismissed');
+            if (isDismissed) return;
+
+            // Show after 1.2s delay for smooth entrance
+            setTimeout(() => {
+                vipModal.style.display = 'flex';
+                // Trigger reflow for smooth transition
+                void vipModal.offsetWidth;
+                vipModal.classList.add('is-visible');
+            }, 1200);
+
+            function closeVipModal() {
+                vipModal.classList.remove('is-visible');
+                sessionStorage.setItem('edvora_vip_modal_dismissed', 'true');
+                setTimeout(() => {
+                    vipModal.style.display = 'none';
+                }, 350);
+            }
+
+            const closeBtn = document.getElementById('closeVipModalXBtn');
+            const dismissBtn = document.getElementById('dismissVipModalBtn');
+            if (closeBtn) closeBtn.addEventListener('click', closeVipModal);
+            if (dismissBtn) dismissBtn.addEventListener('click', closeVipModal);
+
+            vipModal.addEventListener('click', function (e) {
+                if (e.target === vipModal) {
+                    closeVipModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && vipModal.classList.contains('is-visible')) {
+                    closeVipModal();
+                }
+            });
+        });
+    </script>
     <script src="{{ asset('assets/js/home-hero.js') }}" defer></script>
     <script src="{{ asset('assets/js/home-roadmap.js') }}" defer></script>
     <script src="{{ asset('assets/js/continue-learning.js') }}" defer></script>

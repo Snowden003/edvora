@@ -599,7 +599,7 @@ export default function Form({ course = null, categories = [], teachers = [], is
                                 />
                             </div>
 
-                            {/* Featured on Homepage */}
+                            {/* Featured / VIP Course */}
                             <div className="flex items-center gap-3 pt-6">
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input
@@ -611,8 +611,11 @@ export default function Form({ course = null, categories = [], teachers = [], is
                                     <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                                 <div>
-                                    <span className="text-xs font-bold text-white block">دوره ویژه (Hero هوم‌پیج)</span>
-                                    <span className="text-[11px] text-slate-400">نمایش در اسلایدر ویژه بالای صفحه اصلی</span>
+                                    <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <span>دوره ویژه (VIP / Featured)</span>
+                                        <span className="px-1.5 py-0.5 text-[10px] rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">طراحی متمایز</span>
+                                    </span>
+                                    <span className="text-[11px] text-slate-400">نمایش با استایل طلایی، حاشیه درخشان، برچسب VIP و دیزاین ویژه در سراسر وب‌سایت</span>
                                 </div>
                             </div>
                         </div>

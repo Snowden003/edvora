@@ -284,11 +284,7 @@
                     @if($lesson->content)
                       <div>{!! nl2br(e(Str::limit($lesson->content, 500))) !!}</div>
                     @endif
-                    @if($lesson->video_url)
-                      <a href="{{ $lesson->video_url }}" target="_blank" class="lesson-video-link">
-                        <i class="bi bi-play-circle-fill"></i> Watch Video
-                      </a>
-                    @endif
+
 
                     {{-- Documents attached to this lesson --}}
                     @php $lessonDocs = $documents->where('lesson_id', $lesson->id); @endphp

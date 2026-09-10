@@ -626,21 +626,6 @@ class TeacherDashboardController extends Controller
         ]);
     }
 
-    public function saveRecording(Request $request, $id, $lessonId)
-    {
-        $user   = Auth::user();
-        $course = Course::where('teacher_id', $user->id)->findOrFail($id);
-
-        $request->validate([
-            'video_url' => ['required', 'url', 'max:500'],
-        ]);
-
-        $lesson = \App\Models\Lesson::where('course_id', $course->id)->findOrFail($lessonId);
-        $lesson->update(['video_url' => $request->video_url]);
-
-        return back()->with('recording_saved', 'Recording link saved for "' . $lesson->title . '".');
-    }
-
     public function uploadDocument(Request $request, $id)
     {
         $user = Auth::user();

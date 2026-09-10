@@ -155,6 +155,11 @@
                 <div class="col-lg-7">
                     <!-- Badges -->
                     <div class="hero-badges mb-4 d-flex gap-2 flex-wrap">
+                        @if($course->is_featured)
+                            <span class="badge badge-featured-vip">
+                                <i class="bi bi-star-fill text-warning me-1"></i> VIP Featured Course
+                            </span>
+                        @endif
                         <span class="badge badge-category">
                             <i class="bi bi-tag-fill me-1"></i> {{ $course->category->name ?? 'General' }}
                         </span>
@@ -426,27 +431,18 @@
                                             <span class="lesson-title">{{ $lesson->title }}</span>
                                             
                                             <div class="lesson-meta">
-                                                @if($lesson->video_url)
-                                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2"><i class="bi bi-play-circle-fill me-1"></i> Video</span>
-                                                @else
-                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-2"><i class="bi bi-file-earmark-text-fill me-1"></i> Text</span>
+                                                @if($lesson->duration_minutes)
+                                                    <span><i class="bi bi-clock-history me-1"></i>{{ $lesson->duration_minutes }}m</span>
                                                 @endif
-                                                <span><i class="bi bi-clock-history me-1"></i>{{ $lesson->duration_minutes }}m</span>
                                             </div>
                                         </button>
                                     </h2>
                                     <div id="collapse-{{ $lesson->id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ $lesson->id }}" data-bs-parent="#curriculumAccordion">
                                         <div class="accordion-body">
                                             @if($lesson->description)
-                                                <p class="mb-3">{{ $lesson->description }}</p>
+                                                <p class="mb-0">{{ $lesson->description }}</p>
                                             @else
-                                                <p class="mb-3 text-muted fst-italic">No additional description provided.</p>
-                                            @endif
-                                            
-                                            @if($lesson->video_url)
-                                                <a href="{{ $lesson->video_url }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4">
-                                                    <i class="bi bi-play-fill fs-5 align-middle me-1"></i> Watch Lesson
-                                                </a>
+                                                <p class="mb-0 text-muted fst-italic">No additional description provided.</p>
                                             @endif
                                         </div>
                                     </div>

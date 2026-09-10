@@ -144,7 +144,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return match($this->role) {
             'teacher' => route('teacher.dashboard'),
-            'admin'   => url('/admin-panel'),
+            'admin'   => route('admin.dashboard'),
             default   => route('student.dashboard'),
         };
     }

@@ -85,7 +85,7 @@
                 <a href="{{ route('register') }}" class="btn btn-primary rounded-pill btn-glow">Sign Up</a>
             @else
                 @php
-                    $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : url('/admin-panel'));
+                    $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : route('admin.dashboard'));
                     $unreadHeaderCount = \App\Models\Notification::where('user_id', Auth::id())->unread()->count();
                 @endphp
                 <div class="d-flex align-items-center gap-2 mb-3">
@@ -108,7 +108,7 @@
                         @elseif(Auth::user()->role === 'teacher')
                             <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
                         @elseif(Auth::user()->role === 'admin')
-                            <li><a class="dropdown-item" href="{{ url('/admin-panel') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin-panel/company-pages') }}"><i class="bi bi-file-earmark-text"></i>Company Pages</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin-panel/site-settings') }}"><i class="bi bi-gear"></i>Site Settings</a></li>
                         @endif
@@ -196,7 +196,7 @@
                     <button class="btn btn-primary btn-sm rounded-pill px-4 btn-glow" onclick="location.href='{{ route('register') }}'">Sign Up</button>
                 @else
                     @php
-                        $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : url('/admin-panel'));
+                        $notifRoute = Auth::user()->role === 'teacher' ? route('teacher.notifications.index') : (Auth::user()->role === 'student' ? route('student.notifications.index') : route('admin.dashboard'));
                         $unreadHeaderCount = \App\Models\Notification::where('user_id', Auth::id())->unread()->count();
                     @endphp
                     <a href="{{ $notifRoute }}" class="edvora-nav-notif-link me-1" title="Notifications">
@@ -217,7 +217,7 @@
                             @elseif(Auth::user()->role === 'teacher')
                                 <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
                             @elseif(Auth::user()->role === 'admin')
-                                <li><a class="dropdown-item" href="{{ url('/admin-panel') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Admin Panel</a></li>
                                 <li><a class="dropdown-item" href="{{ url('/admin-panel/company-pages') }}"><i class="bi bi-file-earmark-text"></i>Company Pages</a></li>
                                 <li><a class="dropdown-item" href="{{ url('/admin-panel/site-settings') }}"><i class="bi bi-gear"></i>Site Settings</a></li>
                             @endif

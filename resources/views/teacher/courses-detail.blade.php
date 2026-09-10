@@ -496,58 +496,11 @@
                                         @if($lesson->description)
                                             <div class="lesson-desc">{{ Str::limit($lesson->description,80) }}</div>
                                         @endif
-                                        {{-- Recording link if exists --}}
-                                        @if($lesson->video_url)
-                                        <div class="mt-2 d-flex align-items-center gap-2">
-                                            <span style="font-size:.75rem;color:#10b981;font-weight:600;">
-                                                <i class="bi bi-camera-video-fill me-1"></i>Recording available
-                                            </span>
-                                            <a href="{{ $lesson->video_url }}" target="_blank"
-                                               class="badge rounded-pill px-2" style="background:#f0fdf4;color:#10b981;font-size:.7rem;text-decoration:none;">
-                                                <i class="bi bi-box-arrow-up-right me-1"></i>View
-                                            </a>
-                                            <button class="badge rounded-pill px-2 border-0"
-                                                    style="background:#fff7ed;color:#ea580c;font-size:.7rem;cursor:pointer;"
-                                                    onclick="toggleRecordingForm({{ $lesson->id }})">
-                                                <i class="bi bi-pencil me-1"></i>Update
-                                            </button>
-                                        </div>
-                                        @endif
                                     </div>
                                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                         @if($lesson->duration_minutes)
                                             <div class="lesson-dur"><i class="bi bi-clock me-1"></i>{{ $lesson->duration_minutes }} min</div>
                                         @endif
-                                        @if(!$lesson->video_url)
-                                        <button class="btn btn-sm rounded-pill px-3"
-                                                style="background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;font-size:.78rem;font-weight:600;"
-                                                onclick="toggleRecordingForm({{ $lesson->id }})">
-                                            <i class="bi bi-camera-video me-1"></i>Add Recording
-                                        </button>
-                                        @endif
-                                    </div>
-
-                                    {{-- Recording form (hidden by default) --}}
-                                    <div class="recording-form w-100 mt-3" id="rec-form-{{ $lesson->id }}" style="display:none;">
-                                        <form method="POST"
-                                              action="{{ route('teacher.courses.lessons.recording', [$course->id, $lesson->id]) }}"
-                                              class="d-flex gap-2 align-items-start">
-                                            @csrf
-                                            <div class="flex-grow-1">
-                                                <input type="url" name="video_url" class="form-control form-control-sm rounded-3"
-                                                       placeholder="YouTube or Google Drive link..."
-                                                       value="{{ $lesson->video_url }}" required>
-                                            </div>
-                                            <button type="submit" class="btn btn-sm rounded-3 fw-bold px-3"
-                                                    style="background:linear-gradient(135deg,#1F8FFF,#6366f1);color:#fff;border:none;white-space:nowrap;">
-                                                <i class="bi bi-save me-1"></i>Save
-                                            </button>
-                                            <button type="button" class="btn btn-sm rounded-3 px-3"
-                                                    style="background:#f1f5f9;color:#64748b;border:none;"
-                                                    onclick="toggleRecordingForm({{ $lesson->id }})">
-                                                Cancel
-                                            </button>
-                                        </form>
                                     </div>
                                 </div>
                                 @empty
@@ -1719,11 +1672,7 @@
                                                             <i class="bi bi-clock me-1"></i>{{ $lesson->duration_minutes }} min
                                                         </span>
                                                     @endif
-                                                    @if($lesson->video_url)
-                                                        <span class="badge rounded-pill px-2" style="background:#f0fdf4;color:#10b981;font-size:.68rem;">
-                                                            <i class="bi bi-camera-video-fill me-1"></i>Has Recording
-                                                        </span>
-                                                    @endif
+
                                                 </div>
                                                 @if($lesson->description)
                                                     <p style="color:#64748b;font-size:.82rem;margin:0;">{{ Str::limit($lesson->description, 120) }}</p>

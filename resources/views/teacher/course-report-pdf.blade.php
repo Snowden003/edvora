@@ -241,7 +241,6 @@
                     <th>#</th>
                     <th>Title</th>
                     <th>Duration</th>
-                    <th>Recording</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,13 +249,6 @@
                     <td>{{ $l->order ?: $loop->iteration }}</td>
                     <td>{{ $l->title }}</td>
                     <td>{{ $l->duration_minutes ? $l->duration_minutes . ' min' : '—' }}</td>
-                    <td>
-                        @if($l->video_url)
-                            <span class="badge badge-green">Available</span>
-                        @else
-                            <span class="badge badge-gray">None</span>
-                        @endif
-                    </td>
                 </tr>
                 @endforeach
             </tbody>
