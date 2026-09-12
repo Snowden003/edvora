@@ -13,7 +13,8 @@ function initSidebar() {
     const overlay = document.getElementById('sidebarOverlay');
     const mainContent = document.getElementById('mainContent');
 
-    if (!sidebar) return;
+    if (!sidebar || sidebar.dataset.sbInit === '1') return;
+    sidebar.dataset.sbInit = '1';
 
     // Desktop: load saved collapsed state
     if (sidebarCollapse) {

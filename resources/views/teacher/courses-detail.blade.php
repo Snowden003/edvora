@@ -1765,7 +1765,7 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/beta-notice.js') }}"></script>
-<script src="{{ asset('assets/js/pages/teacher-dashboard.js') }}"></script>
+<script src="{{ asset('assets/js/teacher-dashboard.js') }}"></script>
 <script src="{{ asset('assets/js/attendance.js') }}"></script>
 <script>
 // Class Note Notification Handler

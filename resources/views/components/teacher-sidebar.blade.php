@@ -14,6 +14,10 @@
         <i class="bi bi-chevron-left"></i>
     </div>
 
+    <button type="button" class="sidebar-mobile-close d-flex d-lg-none" id="sidebarMobileClose" aria-label="Close sidebar">
+        <i class="bi bi-x-lg"></i>
+    </button>
+
     <!-- Brand Header -->
     <a href="{{ route('home') }}" class="edvora-brand">
         <div class="edvora-brand-logo-wrap">
@@ -243,3 +247,95 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/sidebar-v2.css') }}">
 @endpush
+
+<script>
+(function() {
+    function initTeacherSidebarComponent() {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar || sidebar.dataset.sbInit === '1') return;
+        sidebar.dataset.sbInit = '1';
+
+        const mobileToggle = document.getElementById('sidebarMobileToggle');
+        const mobileClose = document.getElementById('sidebarMobileClose');
+        const overlay = document.getElementById('sidebarOverlay');
+        const collapseBtn = document.getElementById('sidebarCollapse');
+        const mainContent = document.querySelector('.main-content, #mainContent');
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+            document.body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
+        }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (sidebar.classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
+
+        if (mobileClose) {
+            mobileClose.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeSidebar();
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeSidebar();
+            });
+        }
+
+        if (collapseBtn) {
+            const isCollapsed = localStorage.getItem('teacherSidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                if (mainContent) mainContent.classList.add('sidebar-collapsed');
+            }
+
+            collapseBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('collapsed');
+                if (mainContent) mainContent.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('teacherSidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
+        }
+
+        // Close when clicking nav items or tabs on mobile
+        sidebar.querySelectorAll('.edvora-nav-link, .edvora-sublink, .edvora-sublink-all, .edvora-course-title, .edvora-action-btn, .edvora-view-all-link, .edvora-sidebar-tab-btn').forEach(function(el) {
+            el.addEventListener('click', function() {
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTeacherSidebarComponent);
+    } else {
+        initTeacherSidebarComponent();
+    }
+})();
+</script>
+
