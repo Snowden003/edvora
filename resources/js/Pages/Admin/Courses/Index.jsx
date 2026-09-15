@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import CourseStudentsModal from '@/Components/Admin/CourseStudentsModal';
 import {
     GraduationCap,
     PlusCircle,
@@ -34,6 +35,9 @@ export default function Index({ courses, summary = {}, categories = [], teachers
     const [categoryId, setCategoryId] = useState(filters.category_id || '');
     const [isFeatured, setIsFeatured] = useState(filters.is_featured || '');
     const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
+
+    // Viewing students of a specific course
+    const [viewingStudentsCourse, setViewingStudentsCourse] = useState(null);
 
     // Selected courses for bulk actions
     const [selectedIds, setSelectedIds] = useState([]);
@@ -501,9 +505,14 @@ export default function Index({ courses, summary = {}, categories = [], teachers
 
                                             {/* Students Count */}
                                             <td className="p-4 text-center">
-                                                <span className="font-bold text-white">
-                                                    {c.enrolled_count.toLocaleString('fa-IR')}
-                                                </span>
+                                                <button
+                                                    onClick={() => setViewingStudentsCourse(c)}
+                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800/90 hover:bg-brand-500/20 text-slate-300 hover:text-brand-300 border border-slate-700/70 hover:border-brand-500/40 font-bold transition-all group/btn shadow-sm"
+                                                    title="مشاهده مشخصات تمام شاگردان این کلاس"
+                                                >
+                                                    <Users size={13} className="text-brand-400 group-hover/btn:scale-110 transition-transform" />
+                                                    <span>{c.enrolled_count.toLocaleString('fa-IR')}</span>
+                                                </button>
                                             </td>
 
                                             {/* Featured in Hero Toggle */}
@@ -524,6 +533,13 @@ export default function Index({ courses, summary = {}, categories = [], teachers
                                             {/* Actions */}
                                             <td className="p-4 text-center">
                                                 <div className="flex items-center justify-center gap-1.5">
+                                                    <button
+                                                        onClick={() => setViewingStudentsCourse(c)}
+                                                        className="p-1.5 rounded-lg text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors"
+                                                        title="مشاهده مشخصات شاگردان کلاس"
+                                                    >
+                                                        <Users size={16} />
+                                                    </button>
                                                     <a
                                                         href={`/courses/${c.slug}`}
                                                         target="_blank"
@@ -625,12 +641,24 @@ export default function Index({ courses, summary = {}, categories = [], teachers
 
                                 {/* Card Footer Stats & Actions */}
                                 <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                                    <div className="flex items-center gap-1.5 text-slate-400">
-                                        <Users size={14} className="text-brand-400" />
-                                        <span>{c.enrolled_count.toLocaleString('fa-IR')} دانشجو</span>
-                                    </div>
+                                    <button
+                                        onClick={() => setViewingStudentsCourse(c)}
+                                        className="flex items-center gap-1.5 text-slate-400 hover:text-brand-400 transition-colors group/btn"
+                                        title="مشاهده مشخصات شاگردان این کلاس"
+                                    >
+                                        <Users size={14} className="text-brand-400 group-hover/btn:scale-110 transition-transform" />
+                                        <span className="font-semibold">{c.enrolled_count.toLocaleString('fa-IR')} دانشجو</span>
+                                    </button>
 
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1.5">
+                                        <button
+                                            onClick={() => setViewingStudentsCourse(c)}
+                                            className="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-colors flex items-center gap-1"
+                                            title="مشاهده شاگردان صنف"
+                                        >
+                                            <Users size={13} />
+                                            <span>شاگردان</span>
+                                        </button>
                                         <Link
                                             href={`/admin/courses/${c.id}/edit`}
                                             className="px-3 py-1.5 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold transition-colors"
@@ -746,6 +774,19 @@ export default function Index({ courses, summary = {}, categories = [], teachers
                     </div>
                 </div>
             )}
+
+            {/* Course Students Viewer Modal */}
+            <CourseStudentsModal
+                course={viewingStudentsCourse}
+                isOpen={Boolean(viewingStudentsCourse)}
+                onClose={() => setViewingStudentsCourse(null)}
+                onCountUpdated={(courseId, newCount) => {
+                    const found = courses.data.find((c) => c.id === courseId);
+                    if (found) {
+                        found.enrolled_count = newCount;
+                    }
+                }}
+            />
         </AdminLayout>
     );
 }

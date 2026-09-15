@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use Closure;
 use App\Filament\Admin\Resources\CourseResource\Pages;
+use App\Filament\Admin\Resources\CourseResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
@@ -581,7 +582,9 @@ class CourseResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            RelationManagers\StudentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

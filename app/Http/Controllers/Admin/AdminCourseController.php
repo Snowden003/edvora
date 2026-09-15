@@ -496,4 +496,165 @@ class AdminCourseController extends Controller
             'message' => 'دسته‌بندی جدید با موفقیت اضافه شد.',
         ]);
     }
+
+    /**
+     * Get all enrolled students with detailed profiles for a specific course
+     */
+    public function students(Course $course)
+    {
+        $course->load(['teacher', 'category']);
+
+        $enrollments = $course->enrollments()
+            ->with(['user.studentProfile'])
+            ->latest('created_at')
+            ->get();
+
+        $students = $enrollments->map(function ($enrollment) {
+            $user = $enrollment->user;
+            if (!$user) {
+                return null;
+            }
+
+            $profile = $user->studentProfile;
+
+            return [
+                'enrollment_id' => $enrollment->id,
+                'status' => $enrollment->status ?? 'active',
+                'progress_percentage' => (int) ($enrollment->progress_percentage ?? 0),
+                'enrolled_at' => $enrollment->created_at ? $enrollment->created_at->format('Y-m-d H:i') : null,
+                'completed_at' => $enrollment->completed_at ? $enrollment->completed_at->format('Y-m-d H:i') : null,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone ?? ($profile?->phone_number),
+                    'avatar' => $user->avatar ? (Str::startsWith($user->avatar, ['http://', 'https://']) ? $user->avatar : Storage::url($user->avatar)) : null,
+                    'status' => $user->status ?? 'active',
+                    'created_at' => $user->created_at ? $user->created_at->format('Y-m-d') : null,
+                ],
+                'profile' => $profile ? [
+                    'id' => $profile->id,
+                    'first_name' => $profile->first_name,
+                    'last_name' => $profile->last_name,
+                    'father_name' => $profile->father_name,
+                    'mother_name' => $profile->mother_name,
+                    'gender' => $profile->gender,
+                    'date_of_birth' => $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : null,
+                    'national_id' => $profile->national_id,
+                    'phone_number' => $profile->phone_number,
+                    'whatsapp_number' => $profile->whatsapp_number,
+                    'passport_number' => $profile->passport_number,
+                    'marital_status' => $profile->marital_status,
+                    'blood_type' => $profile->blood_type,
+                    'province' => $profile->province,
+                    'district' => $profile->district,
+                    'current_address' => $profile->current_address,
+                    'permanent_address' => $profile->permanent_address,
+                    'postal_code' => $profile->postal_code,
+                    'last_education_level' => $profile->last_education_level,
+                    'last_school_name' => $profile->last_school_name,
+                    'graduation_year' => $profile->graduation_year,
+                    'field_of_study' => $profile->field_of_study,
+                    'university_name' => $profile->university_name,
+                    'gpa' => $profile->gpa,
+                    'other_certifications' => $profile->other_certifications,
+                    'emergency_contact_name' => $profile->emergency_contact_name,
+                    'emergency_contact_phone' => $profile->emergency_contact_phone,
+                    'emergency_contact_relation' => $profile->emergency_contact_relation,
+                    'skills' => $profile->skills,
+                    'languages' => $profile->languages,
+                    'about_me' => $profile->about_me,
+                    'profile_photo' => $profile->profile_photo ? (Str::startsWith($profile->profile_photo, ['http://', 'https://']) ? $profile->profile_photo : Storage::url($profile->profile_photo)) : null,
+                    'is_complete' => (bool) $profile->is_complete,
+                ] : null,
+            ];
+        })->filter()->values();
+
+        $totalCount = $students->count();
+        $activeCount = $students->where('status', 'active')->count();
+        $completedCount = $students->where('status', 'completed')->count();
+        $withProfileCount = $students->filter(fn($s) => !empty($s['profile']))->count();
+        $avgProgress = $totalCount > 0 ? (int) round($students->avg('progress_percentage')) : 0;
+
+        return response()->json([
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'category_name' => $course->category?->name ?? 'بدون دسته‌بندی',
+                'teacher_name' => $course->teacher?->name ?? 'تعیین نشده',
+                'teacher_email' => $course->teacher?->email,
+                'status' => $course->status,
+                'duration_hours' => $course->duration_hours,
+                'thumbnail' => $course->thumbnail ? (Str::startsWith($course->thumbnail, ['http://', 'https://']) ? $course->thumbnail : Storage::url($course->thumbnail)) : null,
+                'start_date' => $course->start_date?->format('Y-m-d'),
+                'end_date' => $course->end_date?->format('Y-m-d'),
+            ],
+            'students' => $students,
+            'stats' => [
+                'total' => $totalCount,
+                'active' => $activeCount,
+                'completed' => $completedCount,
+                'with_profile' => $withProfileCount,
+                'average_progress' => $avgProgress,
+            ],
+        ]);
+    }
+
+    /**
+     * Update a student's enrollment status in a course
+     */
+    public function updateStudentStatus(Course $course, User $user, Request $request)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:active,completed,dropped',
+            'progress_percentage' => 'nullable|integer|min:0|max:100',
+        ]);
+
+        $enrollment = $course->enrollments()->where('user_id', $user->id)->first();
+        if (!$enrollment) {
+            return response()->json(['success' => false, 'message' => 'شاگرد در این دوره ثبت‌نام نشده است.'], 404);
+        }
+
+        $updateData = ['status' => $validated['status']];
+        if (isset($validated['progress_percentage'])) {
+            $updateData['progress_percentage'] = $validated['progress_percentage'];
+        }
+        if ($validated['status'] === 'completed' && !$enrollment->completed_at) {
+            $updateData['completed_at'] = now();
+            if (!isset($validated['progress_percentage'])) {
+                $updateData['progress_percentage'] = 100;
+            }
+        }
+
+        $enrollment->update($updateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'وضعیت شاگرد با موفقیت بروزرسانی شد.',
+        ]);
+    }
+
+    /**
+     * Remove a student from a course (unenroll)
+     */
+    public function removeStudent(Course $course, User $user)
+    {
+        $enrollment = $course->enrollments()->where('user_id', $user->id)->first();
+        if (!$enrollment) {
+            return response()->json(['success' => false, 'message' => 'شاگرد در این دوره ثبت‌نام نشده است.'], 404);
+        }
+
+        $enrollment->delete();
+
+        // Update course enrolled_count
+        $actualCount = $course->enrollments()->count();
+        $course->update(['enrolled_count' => $actualCount]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'شاگرد با موفقیت از این دوره حذف شد.',
+            'enrolled_count' => $actualCount,
+        ]);
+    }
 }

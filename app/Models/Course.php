@@ -72,6 +72,13 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'user_id')
+            ->withPivot(['id', 'status', 'progress_percentage', 'completed_at', 'created_at', 'updated_at'])
+            ->withTimestamps();
+    }
+
     public function quizzes()
     {
         return $this->hasMany(Quiz::class);

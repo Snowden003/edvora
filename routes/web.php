@@ -303,6 +303,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/import-curriculum', [\App\Http\Controllers\Admin\AdminCourseController::class, 'importCurriculum'])->name('import-curriculum');
             Route::post('/categories', [\App\Http\Controllers\Admin\AdminCourseController::class, 'storeCategory'])->name('categories.store');
             Route::get('/{course}/edit', [\App\Http\Controllers\Admin\AdminCourseController::class, 'edit'])->name('edit');
+            Route::get('/{course}/students', [\App\Http\Controllers\Admin\AdminCourseController::class, 'students'])->name('students');
+            Route::patch('/{course}/students/{user}/status', [\App\Http\Controllers\Admin\AdminCourseController::class, 'updateStudentStatus'])->name('students.update-status');
+            Route::delete('/{course}/students/{user}', [\App\Http\Controllers\Admin\AdminCourseController::class, 'removeStudent'])->name('students.remove');
             Route::post('/{course}/toggle-featured', [\App\Http\Controllers\Admin\AdminCourseController::class, 'toggleFeatured'])->name('toggle-featured');
             Route::post('/{course}', [\App\Http\Controllers\Admin\AdminCourseController::class, 'update'])->name('update');
             Route::delete('/{course}', [\App\Http\Controllers\Admin\AdminCourseController::class, 'destroy'])->name('destroy');
