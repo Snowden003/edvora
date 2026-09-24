@@ -3,10 +3,14 @@
 @section('title', 'Notifications - Edvora Tech')
 
 @push('styles')
+<link href="{{ asset('assets/css/student-dashboard.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/teacher-dashboard.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/notifications.css') }}" rel="stylesheet" />
 @endpush
+
+@section('hide_header', true)
+@section('hide_footer', true)
 
 @section('content')
 <div class="dashboard-wrapper">
@@ -18,8 +22,8 @@
     @endif
 
     <!-- Main Dashboard Content -->
-    <main class="main-content">
-        <div class="container-fluid py-5">
+    <main class="main-content" id="mainContent">
+        <div class="container-fluid py-4 py-lg-5 px-3 px-md-4">
             <!-- Page Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -73,12 +77,15 @@
 
                                                 @php
                                                     $notifData = is_array($notification->data) ? $notification->data : json_decode($notification->data ?? '[]', true);
-                                                    $meetLink = $notifData['meet_link'] ?? $notifData['room_url'] ?? null;
+                                                    $rawMeetLink = $notifData['meet_link'] ?? $notifData['room_url'] ?? null;
+                                                    $joinActionUrl = !empty($notifData['course_slug'])
+                                                        ? route('student.courses.sessions.join', $notifData['course_slug'])
+                                                        : $rawMeetLink;
                                                 @endphp
 
-                                                @if($notification->type === \App\Models\Notification::TYPE_CLASS_STARTED && $meetLink)
+                                                @if($notification->type === \App\Models\Notification::TYPE_CLASS_STARTED && $joinActionUrl)
                                                     <div class="mt-2 mb-2">
-                                                        <a href="{{ $meetLink }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 fw-bold shadow-sm" onclick="event.stopPropagation()">
+                                                        <a href="{{ $joinActionUrl }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 fw-bold shadow-sm" onclick="event.stopPropagation()">
                                                             <i class="bi bi-camera-video-fill me-1"></i> Join Google Meet Now ↗
                                                         </a>
                                                     </div>

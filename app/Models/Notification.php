@@ -62,6 +62,8 @@ class Notification extends Model
     const TYPE_STUDENT_ENROLLED = 'student_enrolled';
     const TYPE_POINTS_EARNED = 'points_earned';
     const TYPE_POINTS_DEDUCTED = 'points_deducted';
+    const TYPE_STUDENT_BANNED = 'student_banned';
+    const TYPE_STUDENT_UNBANNED = 'student_unbanned';
 
     public function getIconAttribute()
     {
@@ -81,6 +83,8 @@ class Notification extends Model
             self::TYPE_STUDENT_ENROLLED => 'bi bi-person-check-fill text-primary',
             self::TYPE_POINTS_EARNED => 'bi bi-plus-circle-fill text-success',
             self::TYPE_POINTS_DEDUCTED => 'bi bi-dash-circle-fill text-danger',
+            self::TYPE_STUDENT_BANNED => 'bi bi-slash-circle-fill text-danger',
+            self::TYPE_STUDENT_UNBANNED => 'bi bi-check-circle-fill text-success',
             default => 'bi bi-bell-fill text-secondary',
         };
     }

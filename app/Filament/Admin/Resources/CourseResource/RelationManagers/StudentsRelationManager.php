@@ -3,8 +3,10 @@
 namespace App\Filament\Admin\Resources\CourseResource\RelationManagers;
 
 use App\Models\User;
+use App\Notifications\AdminMessageToStudentNotification;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,9 +27,9 @@ class StudentsRelationManager extends RelationManager
                 Forms\Components\Select::make('status')
                     ->label('Enrollment Status / وضعیت شمولیت')
                     ->options([
-                        'active' => 'Active / فعال',
+                        'active'    => 'Active / فعال',
                         'completed' => 'Completed / فارغ‌التحصیل',
-                        'dropped' => 'Dropped / انصراف',
+                        'dropped'   => 'Dropped / انصراف',
                     ])
                     ->required(),
 
@@ -86,8 +88,8 @@ class StudentsRelationManager extends RelationManager
                     ->label('Status / وضعیت')
                     ->colors([
                         'success' => 'active',
-                        'info' => 'completed',
-                        'danger' => 'dropped',
+                        'info'    => 'completed',
+                        'danger'  => 'dropped',
                     ]),
 
                 Tables\Columns\TextColumn::make('progress_percentage')
@@ -103,16 +105,57 @@ class StudentsRelationManager extends RelationManager
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'active' => 'Active',
+                        'active'    => 'Active',
                         'completed' => 'Completed',
-                        'dropped' => 'Dropped',
+                        'dropped'   => 'Dropped',
                     ]),
             ])
             ->headerActions([])
             ->actions([
+                Tables\Actions\Action::make('send_message')
+                    ->label('ارسال پیام')
+                    ->icon('heroicon-o-envelope')
+                    ->color('info')
+                    ->form([
+                        Forms\Components\TextInput::make('subject')
+                            ->label('موضوع / Subject')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('body')
+                            ->label('متن پیام / Message')
+                            ->required()
+                            ->rows(5),
+                    ])
+                    ->action(function (array $data, $record, StudentsRelationManager $livewire): void {
+                        try {
+                            $record->notify(
+                                new AdminMessageToStudentNotification(
+                                    subject: $data['subject'],
+                                    body: $data['body'],
+                                    courseName: $livewire->getOwnerRecord()->title ?? null,
+                                )
+                            );
+
+                            Notification::make()
+                                ->title('پیام با موفقیت ارسال شد')
+                                ->body("پیام برای {$record->name} ارسال شد.")
+                                ->success()
+                                ->send();
+                        } catch (\Throwable $e) {
+                            Notification::make()
+                                ->title('خطا در ارسال پیام')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->modalHeading('ارسال پیام به شاگرد')
+                    ->modalSubmitActionLabel('ارسال'),
+
                 Tables\Actions\EditAction::make()
                     ->label('تغییر وضعیت')
                     ->modalHeading('Edit Enrollment Status'),
+
                 Tables\Actions\DetachAction::make()
                     ->label('حذف از دوره')
                     ->modalHeading('Remove student from course'),

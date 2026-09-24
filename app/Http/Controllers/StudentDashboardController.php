@@ -14,6 +14,7 @@ use App\Services\ScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class StudentDashboardController extends Controller
 {
@@ -21,11 +22,21 @@ class StudentDashboardController extends Controller
     {
         $user = Auth::user();
 
+        // Auto-close any expired courses (cached throttle to avoid table locks on every request)
+        if (\Illuminate\Support\Facades\Cache::add('cron_close_expired_courses', 1, 600)) {
+            \App\Models\Course::closeExpiredCourses();
+        }
+
         $enrollments = $user->enrollments()
             ->with(['course.category', 'course.lessons'])
             ->where('status', 'active')
             ->latest()
             ->take(5)
+            ->get();
+
+        $bannedEnrollments = $user->enrollments()
+            ->with(['course.teacher'])
+            ->where('status', 'banned')
             ->get();
 
         // Calculate real progress from CompletedLesson for each enrollment
@@ -107,33 +118,117 @@ class StudentDashboardController extends Controller
             ->unread()
             ->count();
 
-        return view('student.dashboard', compact(
-            'user',
-            'enrollments',
-            'upcomingEvents',
-            'leaderboard',
-            'achievements',
-            'activities',
-            'certificates',
-            'completedEnrollments',
-            'stats',
-            'weeklyProgress',
-            'courseStats',
-            'examStats',
-            'notifications',
-            'unreadNotifCount',
-            'scoreHistory'
-        ));
+        $enrollmentsList = $enrollments->map(function ($enrollment) {
+            $course = $enrollment->course;
+            return [
+                'id' => $enrollment->id,
+                'status' => $enrollment->status,
+                'progress_percentage' => (int) $enrollment->progress_percentage,
+                'course' => [
+                    'id' => $course?->id,
+                    'title' => $course?->title,
+                    'slug' => $course?->slug,
+                    'duration_weeks' => $course?->duration_weeks ?? 'Self-paced',
+                    'category' => $course?->category ? ['name' => $course->category->name] : null,
+                    'thumbnail' => $course?->thumbnail ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : null,
+                ],
+            ];
+        });
+
+        $bannedList = $bannedEnrollments->map(function ($banned) {
+            return [
+                'id' => $banned->id,
+                'course_title' => $banned->course?->title,
+                'teacher_name' => $banned->course?->teacher?->name ?? 'Instructor',
+            ];
+        });
+
+        $eventsList = $upcomingEvents->map(fn($e) => [
+            'id' => $e->id,
+            'title' => $e->title,
+            'start_date' => $e->start_date ? $e->start_date->format('M d, Y \a\t g:i A') : '',
+            'type' => $e->type,
+        ]);
+
+        $leaderboardList = $leaderboard->map(fn($entry, $idx) => [
+            'rank' => $idx + 1,
+            'user_id' => $entry->user_id,
+            'name' => $entry->user?->name,
+            'avatar' => $entry->user?->publicAvatarUrl(),
+            'xp' => (int) $entry->xp,
+            'is_me' => $entry->user_id === $user->id,
+        ]);
+
+        $achievementsList = $achievements->map(fn($a) => [
+            'id' => $a->id,
+            'title' => $a->title,
+            'description' => $a->description,
+            'icon' => $a->icon,
+            'earned_at' => optional($a->pivot->earned_at ?? null)?->format('M d, Y') ?? now()->format('M d, Y'),
+        ]);
+
+        $certsList = $certificates->map(fn($c) => [
+            'id' => $c->id,
+            'title' => $c->title,
+            'issued_at' => $c->issued_at ? $c->issued_at->format('M d, Y') : $c->created_at->format('M d, Y'),
+            'course_title' => $c->course?->title,
+        ]);
+
+        $completedList = $completedEnrollments->map(fn($e) => [
+            'id' => $e->id,
+            'course_title' => $e->course?->title,
+        ]);
+
+        $activitiesList = $activities->map(fn($a) => [
+            'id' => $a->id,
+            'message' => $a->message,
+            'type' => $a->type,
+            'created_at' => $a->created_at?->diffForHumans(),
+        ]);
+
+        $notificationsList = $notifications->map(fn($n) => [
+            'id' => $n->id,
+            'title' => $n->title,
+            'message' => $n->message,
+            'is_read' => (bool) $n->is_read,
+            'created_at' => $n->created_at?->diffForHumans(),
+        ]);
+
+        return Inertia::render('Student/Dashboard', [
+            'stats' => $stats,
+            'level' => $user->level(),
+            'enrollments' => $enrollmentsList,
+            'bannedEnrollments' => $bannedList,
+            'upcomingEvents' => $eventsList,
+            'leaderboard' => $leaderboardList,
+            'achievements' => $achievementsList,
+            'certificates' => $certsList,
+            'completedEnrollments' => $completedList,
+            'weeklyProgress' => $weeklyProgress,
+            'courseStats' => $courseStats,
+            'examStats' => $examStats,
+            'activities' => $activitiesList,
+            'notifications' => $notificationsList,
+            'unreadNotifCount' => $unreadNotifCount,
+        ]);
     }
 
     public function certificates()
     {
         $user = Auth::user();
 
-        $certificates = Certificate::with('course')
+        $certificates = Certificate::with('course.category')
             ->where('user_id', $user->id)
             ->latest('issued_at')
-            ->get();
+            ->get()
+            ->map(fn($c) => [
+                'id' => $c->id,
+                'title' => $c->title,
+                'certificate_number' => $c->certificate_number ?? ('EDV-' . str_pad($c->id, 6, '0', STR_PAD_LEFT)),
+                'issued_at' => $c->issued_at ? $c->issued_at->format('F d, Y') : $c->created_at->format('F d, Y'),
+                'course_title' => $c->course?->title ?? 'Certificate of Completion',
+                'category' => $c->course?->category?->name ?? 'General',
+            ]);
 
         $completedEnrollments = collect();
         if ($certificates->isEmpty()) {
@@ -144,32 +239,49 @@ class StudentDashboardController extends Controller
                       ->orWhere('progress_percentage', 100);
                 })
                 ->latest()
-                ->get();
+                ->get()
+                ->map(fn($e) => [
+                    'id' => $e->id,
+                    'course_title' => $e->course?->title,
+                    'category' => $e->course?->category?->name ?? 'General',
+                    'completed_at' => $e->updated_at ? $e->updated_at->format('F d, Y') : now()->format('F d, Y'),
+                ]);
         }
 
-        return view('student.certificates', compact('user', 'certificates', 'completedEnrollments'));
+        return Inertia::render('Student/Certificates', [
+            'certificates' => $certificates,
+            'completedEnrollments' => $completedEnrollments,
+        ]);
     }
 
     private function getDashboardStats($user)
     {
-        $totalCourses = $user->enrollments()->count();
-        $completedCourses = $user->enrollments()->where(function ($q) {
-            $q->where('status', 'completed')->orWhere('progress_percentage', 100);
-        })->count();
-        $activeCourses = $user->enrollments()->where('status', 'active')->count();
+        $enrollmentCounts = $user->enrollments()
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'completed' OR progress_percentage >= 100 THEN 1 ELSE 0 END) as completed
+            ")
+            ->first();
 
-        $quizAttempts = QuizAttempt::where('user_id', $user->id);
-        $totalExams = $quizAttempts->count();
-        $passedExams = $quizAttempts->clone()->where('passed', true)->count();
+        $totalCourses = (int) ($enrollmentCounts->total ?? 0);
+        $completedCourses = (int) ($enrollmentCounts->completed ?? 0);
+        $activeCourses = max(0, $totalCourses - $completedCourses);
+
+        $quizCounts = QuizAttempt::where('user_id', $user->id)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN passed = 1 THEN 1 ELSE 0 END) as passed
+            ")
+            ->first();
+
+        $totalExams = (int) ($quizCounts->total ?? 0);
+        $passedExams = (int) ($quizCounts->passed ?? 0);
 
         $currentStreak = $this->calculateStreak($user);
         $totalScore = $user->totalScore();
         $earnedPoints = $user->earnedPoints();
         $deductedPoints = $user->deductedPoints();
         $rank = $user->leaderboardRank();
-
-        // Certificates (completed courses count as certificates)
-        $certificates = $completedCourses;
 
         return [
             'total_courses' => $totalCourses,
@@ -183,7 +295,7 @@ class StudentDashboardController extends Controller
             'earned_points' => $earnedPoints,
             'deducted_points' => $deductedPoints,
             'rank' => $rank,
-            'certificates' => $certificates,
+            'certificates' => $completedCourses,
             'completion_rate' => $totalCourses > 0 ? round(($completedCourses / $totalCourses) * 100) : 0,
         ];
     }
@@ -252,18 +364,19 @@ class StudentDashboardController extends Controller
 
     private function getWeeklyProgress($user)
     {
-        $data = [];
+        $startDate = now()->subDays(6)->startOfDay();
+        $activities = $user->activities()
+            ->where('created_at', '>=', $startDate)
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
+            ->groupBy('date')
+            ->pluck('count', 'date');
+
         $labels = [];
-
+        $data = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $labels[] = $date->format('D'); // Mon, Tue, etc.
-
-            $count = $user->activities()
-                ->whereDate('created_at', $date)
-                ->count();
-
-            $data[] = $count;
+            $d = now()->subDays($i);
+            $labels[] = $d->format('D');
+            $data[] = (int) ($activities[$d->toDateString()] ?? 0);
         }
 
         return [
@@ -309,7 +422,7 @@ class StudentDashboardController extends Controller
         $enrollment = $user->enrollments()->where('course_id', $course->id)->firstOrFail();
 
         if ($enrollment->status === 'banned') {
-            return redirect()->route('student.courses')->with('error', 'You have been removed from this course by the instructor.');
+            return redirect()->route('student.courses')->with('error', 'Your access to this course has been restricted by Instructor ' . ($course->teacher?->name ?? 'Instructor') . '. You cannot access this course dashboard.');
         }
 
         // Load relationships
@@ -317,6 +430,9 @@ class StudentDashboardController extends Controller
         $documents = $course->documents()->with('lesson')->orderByDesc('created_at')->get();
         $classNotes = $course->classNotes()->with('teacher')->get();
         $sessions = $course->sessions()->get();
+
+        // Clean up any sessions older than 3 minutes without attendance
+        \App\Models\ClassSession::checkAndCloseExpiredSessions($course->id);
 
         // Get active session for live class join (with lesson info)
         $activeSession = \App\Models\ClassSession::where('course_id', $course->id)
@@ -389,13 +505,131 @@ class StudentDashboardController extends Controller
             ->whereIn('review_id', $reviews->pluck('id'))
             ->pluck('type', 'review_id');
 
-        return view('student.course-learning', compact(
-            'user', 'course', 'enrollment', 'lessons', 'documents',
-            'classNotes', 'sessions', 'quizzes', 'quizAttempts',
-            'lessonCompletion', 'stats', 'activeSession',
-            'completedLessonIds', 'completedLessonsCount', 'totalLessons', 'progressPercent',
-            'reviews', 'userReview', 'userReviewLikes'
-        ));
+        $courseData = [
+            'id' => $course->id,
+            'title' => $course->title,
+            'slug' => $course->slug,
+            'description' => $course->description,
+            'level' => $course->level,
+            'category' => $course->category ? ['id' => $course->category->id, 'name' => $course->category->name] : null,
+            'teacher' => $course->teacher ? [
+                'id' => $course->teacher->id,
+                'name' => $course->teacher->name,
+                'avatar' => method_exists($course->teacher, 'publicAvatarUrl') ? $course->teacher->publicAvatarUrl() : null,
+            ] : null,
+            'schedule' => [
+                'start_time' => $course->primary_class_start ? \Carbon\Carbon::parse($course->primary_class_start)->format('h:i A') : null,
+                'end_time' => $course->primary_class_end ? \Carbon\Carbon::parse($course->primary_class_end)->format('h:i A') : null,
+                'days' => $course->primary_class_days ?? [],
+                'start_date' => $course->start_date?->format('Y/m/d'),
+                'end_date' => $course->end_date?->format('Y/m/d'),
+            ],
+        ];
+
+        $lessonsData = $lessons->map(fn($l) => [
+            'id' => $l->id,
+            'title' => $l->title,
+            'description' => $l->description,
+            'content' => $l->content,
+            'order' => $l->order,
+            'duration_minutes' => $l->duration_minutes,
+            'is_free' => (bool) $l->is_free,
+            'is_completed' => in_array($l->id, $completedLessonIds),
+            'documents' => $documents->where('lesson_id', $l->id)->map(fn($d) => [
+                'id' => $d->id,
+                'title' => $d->title ?: $d->file_name,
+                'file_name' => $d->file_name,
+                'file_path' => asset('storage/' . $d->file_path),
+            ])->values(),
+        ]);
+
+        $documentsData = $documents->map(fn($d) => [
+            'id' => $d->id,
+            'title' => $d->title ?: $d->file_name,
+            'file_name' => $d->file_name,
+            'file_path' => asset('storage/' . $d->file_path),
+            'file_size' => $d->file_size,
+            'lesson_id' => $d->lesson_id,
+            'lesson_title' => $d->lesson?->title,
+            'created_at' => $d->created_at?->diffForHumans(),
+        ]);
+
+        $classNotesData = $classNotes->map(fn($n) => [
+            'id' => $n->id,
+            'title' => $n->title,
+            'content' => $n->content,
+            'teacher_name' => $n->teacher?->name ?? 'Instructor',
+            'created_at' => $n->created_at?->diffForHumans(),
+        ]);
+
+        $sessionsData = $sessions->map(fn($s) => [
+            'id' => $s->id,
+            'title' => $s->title ?? 'جلسه درسی',
+            'status' => $s->status,
+            'room_name' => $s->room_name,
+            'meet_link' => $s->meet_link,
+            'started_at' => $s->started_at?->format('Y/m/d H:i'),
+            'ended_at' => $s->ended_at?->format('Y/m/d H:i'),
+            'duration' => $s->started_at && $s->ended_at ? $s->started_at->diffInMinutes($s->ended_at) : null,
+        ]);
+
+        $quizzesData = $quizzes->map(function($q) use ($quizAttempts) {
+            $att = $quizAttempts->get($q->id);
+            return [
+                'id' => $q->id,
+                'title' => $q->title,
+                'description' => $q->description,
+                'duration_minutes' => $q->duration_minutes ?? 30,
+                'xp_reward' => $q->xp_reward ?? 50,
+                'questions_count' => $q->questions_count ?? 0,
+                'attempt' => $att ? [
+                    'score' => $att->score,
+                    'total_points' => $att->total_points,
+                    'passed' => (bool) $att->passed,
+                    'earned_xp' => $att->earned_xp,
+                ] : null,
+            ];
+        });
+
+        $activeSessionData = $activeSession ? [
+            'id' => $activeSession->id,
+            'title' => $activeSession->title,
+            'room_name' => $activeSession->room_name,
+            'meet_link' => $activeSession->meet_link,
+            'lesson' => $activeSession->lesson ? [
+                'id' => $activeSession->lesson->id,
+                'title' => $activeSession->lesson->title,
+                'order' => $activeSession->lesson->order,
+            ] : null,
+        ] : null;
+
+        $reviewsData = $reviews->map(fn($r) => [
+            'id' => $r->id,
+            'rating' => $r->rating,
+            'comment' => $r->comment,
+            'user_name' => $r->user?->name ?? 'Student',
+            'user_avatar' => method_exists($r->user, 'publicAvatarUrl') ? $r->user->publicAvatarUrl() : null,
+            'created_at' => $r->created_at?->diffForHumans(),
+            'likes_count' => $r->likes_count ?? 0,
+            'user_liked' => $userReviewLikes->get($r->id) ?? null,
+        ]);
+
+        return Inertia::render('Student/CourseLearning', [
+            'course' => $courseData,
+            'lessons' => $lessonsData,
+            'documents' => $documentsData,
+            'classNotes' => $classNotesData,
+            'sessions' => $sessionsData,
+            'quizzes' => $quizzesData,
+            'activeSession' => $activeSessionData,
+            'stats' => $stats,
+            'reviews' => $reviewsData,
+            'userReview' => $userReview ? [
+                'id' => $userReview->id,
+                'rating' => $userReview->rating,
+                'comment' => $userReview->comment,
+            ] : null,
+        ]);
     }
 
     public function joinClass(\Illuminate\Http\Request $request, $slug)
@@ -432,6 +666,11 @@ class StudentDashboardController extends Controller
                 'joined_at' => now(),
             ]
         );
+
+        $session->update([
+            'last_participant_at' => now(),
+            'participants_count'  => SessionAttendance::where('session_id', $session->id)->count(),
+        ]);
 
         if ($request->ajax()) {
             return response()->json(['url' => $session->meet_link]);
@@ -489,6 +728,9 @@ class StudentDashboardController extends Controller
     {
         $user = Auth::user();
 
+        // Close any abandoned sessions older than 3 minutes without attendance
+        ClassSession::checkAndCloseExpiredSessions();
+
         $enrolledCourseIds = $user->enrollments()
             ->where('status', 'active')
             ->pluck('course_id');
@@ -505,6 +747,7 @@ class StudentDashboardController extends Controller
                 'course_title' => $session->course->title ?? null,
                 'room_name'    => 'Google Meet',
                 'room_url'     => $session->meet_link,
+                'join_url'     => route('student.courses.sessions.join', $session->course->slug),
                 'started_at'   => $session->started_at,
             ]);
         }
@@ -520,6 +763,9 @@ class StudentDashboardController extends Controller
     {
         $course = Course::where('slug', $slug)->firstOrFail();
 
+        // Close any abandoned sessions older than 3 minutes without attendance
+        ClassSession::checkAndCloseExpiredSessions($course->id);
+
         $session = ClassSession::where('course_id', $course->id)
             ->where('status', 'active')
             ->first();
@@ -530,6 +776,7 @@ class StudentDashboardController extends Controller
             'course_title' => $course->title,
             'room_name' => $session ? 'Google Meet' : null,
             'room_url' => $session ? $session->meet_link : null,
+            'join_url' => $session ? route('student.courses.sessions.join', $course->slug) : null,
             'started_at' => $session ? $session->started_at : null,
         ]);
     }
@@ -564,7 +811,52 @@ class StudentDashboardController extends Controller
     {
         $user = Auth::user();
 
-        $query = $user->enrollments()->with(['course.category', 'course.lessons']);
+        // Automatically sync any courses whose time/end_date has expired
+        \App\Models\Course::closeExpiredCourses();
+
+        $baseQuery = $user->enrollments()->with(['course.category', 'course.lessons']);
+
+        // Calculate counts for the tabs
+        $allCount = (clone $baseQuery)->count();
+        $bannedCount = (clone $baseQuery)->where('status', 'banned')->count();
+        $completedCount = (clone $baseQuery)->where('status', '!=', 'banned')->where(function ($q) {
+            $q->where('status', 'completed')
+              ->orWhere('progress_percentage', 100)
+              ->orWhereHas('course', function ($c) {
+                  $c->whereIn('status', ['completed', 'archived'])
+                    ->orWhere(fn($sub) => $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay()));
+              });
+        })->count();
+
+        $inProgressCount = (clone $baseQuery)->where('status', 'active')
+            ->where('progress_percentage', '<', 100)
+            ->whereDoesntHave('course', function ($c) {
+                $c->whereIn('status', ['completed', 'archived'])
+                  ->orWhere(fn($sub) => $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay()));
+            })->count();
+
+        $query = clone $baseQuery;
+
+        $statusFilter = $request->get('status');
+        if ($statusFilter === 'completed') {
+            $query->where('status', '!=', 'banned')->where(function ($q) {
+                $q->where('status', 'completed')
+                  ->orWhere('progress_percentage', 100)
+                  ->orWhereHas('course', function ($c) {
+                      $c->whereIn('status', ['completed', 'archived'])
+                        ->orWhere(fn($sub) => $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay()));
+                  });
+            });
+        } elseif ($statusFilter === 'in_progress' || $statusFilter === 'active') {
+            $query->where('status', 'active')
+                  ->where('progress_percentage', '<', 100)
+                  ->whereDoesntHave('course', function ($c) {
+                      $c->whereIn('status', ['completed', 'archived'])
+                        ->orWhere(fn($sub) => $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay()));
+                  });
+        } elseif ($statusFilter === 'banned') {
+            $query->where('status', 'banned');
+        }
 
         if ($search = $request->get('search')) {
             $query->whereHas('course', fn($q) => $q->where('title', 'like', "%{$search}%"));
@@ -602,15 +894,39 @@ class StudentDashboardController extends Controller
                 $enrollment->total_lessons_count = 0;
             }
 
+            // Flag if course is completed
+            $enrollment->is_course_completed = ($enrollment->status === 'completed' || $enrollment->actual_progress >= 100 || ($course && $course->isCompleted()));
+
+            if ($course) {
+                $enrollment->course->thumbnail_url = $course->thumbnail
+                    ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail))
+                    : null;
+            }
+
             return $enrollment;
         });
 
         // Calculate average progress from actual calculated progress
         $avgProgress = $enrollments->getCollection()->avg('actual_progress') ?? 0;
 
-        $categories = \App\Models\Category::all();
+        $categories = \App\Models\Category::select('id', 'name', 'slug')->get();
 
-        return view('student.your-courses', compact('enrollments', 'categories', 'user', 'avgProgress'));
+        return Inertia::render('Student/YourCourses', [
+            'enrollments' => $enrollments,
+            'categories' => $categories,
+            'avgProgress' => round($avgProgress),
+            'counts' => [
+                'all' => $allCount,
+                'inProgress' => $inProgressCount,
+                'completed' => $completedCount,
+                'banned' => $bannedCount,
+            ],
+            'filters' => [
+                'status' => $statusFilter ?? '',
+                'search' => $request->get('search', ''),
+                'category' => $request->get('category', ''),
+            ],
+        ]);
     }
 
     public function storeReview(Request $request, $slug)

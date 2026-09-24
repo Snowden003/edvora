@@ -142,6 +142,11 @@ Route::get('/foundation',      [\App\Http\Controllers\FoundationController::clas
 Route::get('/about',        fn() => view('about', ['content' => \App\Models\PageContent::get('page_about', [])]))->name('about');
 Route::get('/story',        fn() => view('story', ['content' => \App\Models\PageContent::get('page_story', [])]))->name('story');
 Route::get('/how-we-work',  [\App\Http\Controllers\HowWeWorkController::class, 'index'])->name('how-we-work');
+
+// Referral link redirect
+Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'join'])->name('referral.join');
+
+// Contact
 Route::get('/contact',      fn() => view('contact'))->name('contact');
 Route::get('/faq',          fn() => view('faq'))->name('faq');
 Route::get('/terms',        fn() => view('terms', ['content' => \App\Models\PageContent::get('page_terms', [])]))->name('terms');
@@ -154,6 +159,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/courses/{course}/chat', [CourseChatController::class, 'show'])->name('courses.chat.show');
     Route::get('/courses/{course}/chat/messages', [CourseChatController::class, 'index'])->name('courses.chat.index');
     Route::post('/courses/{course}/chat/messages', [CourseChatController::class, 'store'])->name('courses.chat.store');
+    Route::put('/courses/{course}/chat/messages/{message}', [CourseChatController::class, 'update'])->name('courses.chat.update');
+    Route::delete('/courses/{course}/chat/messages/{message}', [CourseChatController::class, 'destroy'])->name('courses.chat.destroy');
+    Route::post('/courses/{course}/chat/messages/{message}/pin', [CourseChatController::class, 'togglePin'])->name('courses.chat.pin');
     Route::post('/courses/{course}/enroll',  [EnrollmentController::class, 'enroll'])->name('courses.enroll');
     Route::post('/courses/{course}/wishlist', [WishlistController::class, 'toggle'])->name('courses.wishlist.toggle');
     Route::post('/courses/{course}/enrollment-request', [EnrollmentRequestController::class, 'store'])->name('courses.enrollment-request.store');
@@ -249,14 +257,17 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{quiz}/publish',   [QuizController::class, 'publish'])->name('publish');
         });
 
-        // Enrollment Requests
+        // Enrollment Requests & Students
         Route::get('/enrollment-requests',                    [EnrollmentRequestController::class, 'index'])->name('enrollment-requests');
         Route::get('/enrollment-requests/{enrollmentRequest}/student', [EnrollmentRequestController::class, 'studentProfile'])->name('enrollment-requests.student');
         Route::get('/students/{user}/profile',                 [EnrollmentRequestController::class, 'studentProfileUser'])->name('students.profile');
+        Route::post('/students/{user}/points/adjust',          [EnrollmentRequestController::class, 'adjustPoints'])->name('students.points.adjust');
         Route::post('/enrollment-requests/{enrollmentRequest}/approve', [EnrollmentRequestController::class, 'approve'])->name('enrollment-requests.approve');
         Route::post('/enrollment-requests/{enrollmentRequest}/reject',  [EnrollmentRequestController::class, 'reject'])->name('enrollment-requests.reject');
 
         Route::get('/courses/{id}',                       [TeacherDashboardController::class, 'courseDetail'])->name('courses.detail');
+        Route::post('/courses/{id}/toggle-enrollment',    [TeacherDashboardController::class, 'toggleEnrollment'])->name('courses.toggle-enrollment');
+        Route::post('/courses/{id}/regenerate-referral',  [TeacherDashboardController::class, 'regenerateReferralCode'])->name('courses.referral.regenerate');
         Route::post('/courses/{id}/documents',            [TeacherDashboardController::class, 'uploadDocument'])->name('courses.documents.upload');
         Route::delete('/courses/{id}/documents/{docId}',  [TeacherDashboardController::class, 'deleteDocument'])->name('courses.documents.delete');
         Route::get('/courses/{id}/export-pdf',            [TeacherDashboardController::class, 'exportPdf'])->name('courses.export-pdf');

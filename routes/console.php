@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('notifications:class-reminders')->everyMinute();
 Schedule::command('notifications:prune --days=7')->weekly();
+Schedule::command('courses:close-expired')->hourly();

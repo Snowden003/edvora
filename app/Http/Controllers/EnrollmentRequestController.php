@@ -7,7 +7,9 @@ use App\Mail\EnrollmentRejected;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\EnrollmentRequest;
+use App\Models\Point;
 use App\Models\User;
+use App\Services\ScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -31,11 +33,11 @@ class EnrollmentRequestController extends Controller
             ], 403);
         }
 
-        // Check if course has ended or is completed
-        if ($course->isCompleted()) {
+        // Check if enrollment is closed (5 days after start, manually closed, completed, or full)
+        if ($course->isEnrollmentClosed()) {
             return response()->json([
-                'status'  => 'course_completed',
-                'message' => 'This course has ended. Enrollment requests are closed.',
+                'status'  => 'enrollment_closed',
+                'message' => 'Enrollment for this course is closed.',
             ], 422);
         }
 
@@ -109,6 +111,32 @@ class EnrollmentRequestController extends Controller
                 $course->title,
                 $course->id
             );
+        }
+
+        // Track teacher referral for course request
+        $refCode = session('teacher_referral_code') ?? $request->cookie('edvora_ref');
+        $referral = null;
+        if ($refCode) {
+            $referral = \App\Models\TeacherReferral::where('code', $refCode)->first();
+        }
+        if (!$referral) {
+            $existingRecord = \App\Models\TeacherReferralRecord::where('course_id', $course->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if ($existingRecord) {
+                $referral = $existingRecord->referral;
+            }
+        }
+        if ($referral && (int) $referral->course_id === (int) $course->id) {
+            \App\Models\TeacherReferralRecord::updateOrCreate([
+                'course_id' => $course->id,
+                'user_id'   => $user->id,
+            ], [
+                'teacher_referral_id' => $referral->id,
+                'teacher_id'          => $referral->teacher_id,
+                'status'              => 'requested',
+                'ip_address'          => $request->ip(),
+            ]);
         }
 
         return response()->json([
@@ -209,6 +237,7 @@ class EnrollmentRequestController extends Controller
             ->where('status', 'pending')
             ->count();
         $requestsTotalCount = EnrollmentRequest::whereIn('course_id', $courseIds)->count();
+        $totalPointsAwarded = (int) Point::whereIn('course_id', $courseIds)->where('amount', '>', 0)->sum('amount');
 
         return view('teacher.enrollment-requests', compact(
             'enrollments',
@@ -220,6 +249,7 @@ class EnrollmentRequestController extends Controller
             'activeEnrolledCount',
             'completedCount',
             'requestsTotalCount',
+            'totalPointsAwarded',
             'activeTab'
         ));
     }
@@ -237,28 +267,7 @@ class EnrollmentRequestController extends Controller
         }
 
         $student = $enrollmentRequest->user;
-        $profile = $student->studentProfile;
-
-        return response()->json([
-            'id' => $student->id,
-            'name' => $student->name,
-            'email' => $student->email,
-            'avatar' => $student->avatar
-                ? (str_starts_with($student->avatar, 'http') ? $student->avatar : asset('storage/' . $student->avatar))
-                : 'https://ui-avatars.com/api/?name=' . urlencode($student->name) . '&size=150',
-            'bio' => $student->bio,
-            'department' => $student->department,
-            'xp' => $student->xp ?? 0,
-            'enrolled_courses' => $student->enrollments()->count(),
-            'joined_at' => $student->created_at->format('M d, Y'),
-            'profile_complete' => $profile ? $profile->is_complete : false,
-            'father_name' => $profile->father_name ?? null,
-            'education' => $profile->last_education_level ?? null,
-            'school' => $profile->last_school_name ?? null,
-            'national_id' => $profile->national_id ?? null,
-            'phone' => $profile->phone_number ?? null,
-            'address' => $profile->current_address ?? null,
-        ]);
+        return $this->buildFullStudentProfileResponse($student, $courseIds);
     }
 
     /**
@@ -277,31 +286,197 @@ class EnrollmentRequestController extends Controller
             ->whereIn('course_id', $courseIds)
             ->exists();
 
-        if (!$isEnrolled && !$hasRequest) {
+        if (!$isEnrolled && !$hasRequest && !$teacher->isAdmin()) {
             abort(403, 'Unauthorized access to student profile.');
         }
 
-        $profile = $user->studentProfile;
+        return $this->buildFullStudentProfileResponse($user, $courseIds);
+    }
+
+    /**
+     * Helper to build complete student profile response.
+     */
+    private function buildFullStudentProfileResponse(User $student, $teacherCourseIds)
+    {
+        $profile = $student->studentProfile;
+
+        // Student's enrollments
+        $enrollments = Enrollment::with('course:id,title,slug,thumbnail')
+            ->where('user_id', $student->id)
+            ->get()
+            ->map(function ($en) use ($teacherCourseIds) {
+                return [
+                    'course_id' => $en->course_id,
+                    'course_title' => $en->course?->title ?? 'Course',
+                    'status' => $en->status,
+                    'progress' => (int) ($en->progress_percentage ?? 0),
+                    'is_teacher_course' => $teacherCourseIds->contains($en->course_id),
+                    'enrolled_at' => $en->created_at ? $en->created_at->format('M d, Y') : 'N/A',
+                ];
+            });
+
+        // Points history
+        $pointsHistory = Point::where('user_id', $student->id)
+            ->with('creator:id,name')
+            ->latest()
+            ->take(15)
+            ->get()
+            ->map(function ($pt) {
+                return [
+                    'id' => $pt->id,
+                    'amount' => (int) $pt->amount,
+                    'reason' => $pt->reason ?? 'Manual adjustment',
+                    'type' => $pt->type ?? 'manual',
+                    'created_by' => $pt->creator?->name ?? 'Instructor',
+                    'date' => $pt->created_at ? $pt->created_at->format('M d, Y - H:i') : '',
+                    'relative_date' => $pt->created_at ? $pt->created_at->diffForHumans() : '',
+                ];
+            });
+
+        // Teacher courses where student is enrolled
+        $teacherCourses = Course::whereIn('id', $teacherCourseIds)
+            ->whereHas('enrollments', function ($q) use ($student) {
+                $q->where('user_id', $student->id);
+            })
+            ->get(['id', 'title']);
 
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'avatar' => $user->avatar
-                ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar))
-                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&size=150',
-            'bio' => $user->bio,
-            'department' => $user->department,
-            'xp' => $user->xp ?? 0,
-            'enrolled_courses' => $user->enrollments()->count(),
-            'joined_at' => $user->created_at->format('M d, Y'),
-            'profile_complete' => $profile ? $profile->is_complete : false,
-            'father_name' => $profile->father_name ?? null,
-            'education' => $profile->last_education_level ?? null,
-            'school' => $profile->last_school_name ?? null,
-            'national_id' => $profile->national_id ?? null,
-            'phone' => $profile->phone_number ?? null,
-            'address' => $profile->current_address ?? null,
+            'id' => $student->id,
+            'name' => $student->name,
+            'email' => $student->email,
+            'phone' => $profile?->phone_number ?? $student->phone ?? null,
+            'avatar' => $student->avatar
+                ? (str_starts_with($student->avatar, 'http') ? $student->avatar : asset('storage/' . $student->avatar))
+                : ($profile?->profile_photo ? asset('storage/' . $profile->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($student->name) . '&size=150'),
+            'bio' => $student->bio ?? $profile?->about_me ?? null,
+            'department' => $student->department,
+            'status' => $student->status ?? 'active',
+            'role' => $student->role ?? 'student',
+            'joined_at' => $student->created_at ? $student->created_at->format('M d, Y') : 'N/A',
+            'email_verified' => (bool) $student->email_verified_at,
+
+            // Gamification / Scores
+            'total_score' => $student->totalScore(),
+            'xp' => $student->totalScore(),
+            'earned_points' => $student->earnedPoints(),
+            'deducted_points' => $student->deductedPoints(),
+            'points_history' => $pointsHistory,
+
+            // Courses
+            'enrolled_courses_count' => $enrollments->count(),
+            'enrollments' => $enrollments,
+            'teacher_courses' => $teacherCourses,
+
+            // Personal Information
+            'profile_complete' => $profile ? (bool) $profile->is_complete : false,
+            'first_name' => $profile?->first_name,
+            'last_name' => $profile?->last_name,
+            'father_name' => $profile?->father_name,
+            'mother_name' => $profile?->mother_name,
+            'nickname' => $profile?->nickname,
+            'gender' => $profile?->gender,
+            'date_of_birth' => $profile?->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : null,
+            'marital_status' => $profile?->marital_status,
+            'blood_type' => $profile?->blood_type,
+            'national_id' => $profile?->national_id,
+            'passport_number' => $profile?->passport_number,
+            'whatsapp_number' => $profile?->whatsapp_number,
+
+            // Address Information
+            'province' => $profile?->province,
+            'district' => $profile?->district,
+            'current_address' => $profile?->current_address,
+            'permanent_address' => $profile?->permanent_address,
+            'postal_code' => $profile?->postal_code,
+
+            // Academic & Education Information
+            'education_level' => $profile?->last_education_level,
+            'school_name' => $profile?->last_school_name,
+            'university_name' => $profile?->university_name,
+            'field_of_study' => $profile?->field_of_study,
+            'graduation_year' => $profile?->graduation_year,
+            'gpa' => $profile?->gpa,
+            'other_certifications' => $profile?->other_certifications,
+
+            // Emergency Contact Information
+            'emergency_contact_name' => $profile?->emergency_contact_name,
+            'emergency_contact_phone' => $profile?->emergency_contact_phone,
+            'emergency_contact_relation' => $profile?->emergency_contact_relation,
+
+            // Skills & Languages & About
+            'skills' => $profile?->skills,
+            'languages' => $profile?->languages,
+            'about_me' => $profile?->about_me,
+        ]);
+    }
+
+    /**
+     * Teacher: adjust student points (add or deduct).
+     */
+    public function adjustPoints(Request $request, User $user)
+    {
+        $teacher = Auth::user();
+        $courseIds = Course::where('teacher_id', $teacher->id)->pluck('id');
+
+        // Verify student is enrolled in this teacher's courses
+        $isEnrolled = Enrollment::where('user_id', $user->id)
+            ->whereIn('course_id', $courseIds)
+            ->exists();
+
+        if (!$isEnrolled && !$teacher->isAdmin()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Unauthorized. This student is not enrolled in any of your courses.',
+            ], 403);
+        }
+
+        $request->validate([
+            'amount' => ['required', 'integer', 'not_in:0'],
+            'reason' => ['required', 'string', 'max:500'],
+            'course_id' => ['nullable', 'integer'],
+        ]);
+
+        $amount = (int) $request->input('amount');
+        $reason = $request->input('reason');
+        $courseId = $request->input('course_id');
+
+        if ($courseId && !$courseIds->contains($courseId) && !$teacher->isAdmin()) {
+            $courseId = null;
+        }
+
+        if (!$courseId) {
+            $courseId = Enrollment::where('user_id', $user->id)
+                ->whereIn('course_id', $courseIds)
+                ->value('course_id');
+        }
+
+        $point = ScoreService::adjust(
+            user: $user,
+            amount: $amount,
+            type: 'manual',
+            reason: $reason,
+            courseId: $courseId,
+            createdBy: $teacher,
+            notify: true
+        );
+
+        $fresh = $user->fresh();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => ($amount > 0 ? "Added +{$amount}" : "Deducted " . abs($amount)) . " points for {$user->name}.",
+            'new_score' => $fresh->totalScore(),
+            'earned_points' => $fresh->earnedPoints(),
+            'deducted_points' => $fresh->deductedPoints(),
+            'point' => [
+                'id' => $point->id,
+                'amount' => $point->amount,
+                'reason' => $point->reason,
+                'type' => $point->type,
+                'created_by' => $teacher->name,
+                'date' => $point->created_at ? $point->created_at->format('M d, Y - H:i') : '',
+                'relative_date' => 'Just now',
+            ],
         ]);
     }
 
@@ -353,6 +528,14 @@ class EnrollmentRequestController extends Controller
 
         // Increment enrolled_count
         $enrollmentRequest->course->increment('enrolled_count');
+
+        // Update referral record to enrolled if student was referred
+        \App\Models\TeacherReferralRecord::where('course_id', $enrollmentRequest->course_id)
+            ->where('user_id', $enrollmentRequest->user_id)
+            ->update([
+                'status'      => 'enrolled',
+                'enrolled_at' => now(),
+            ]);
 
         // Send approval email
         Mail::to($enrollmentRequest->user->email)->send(

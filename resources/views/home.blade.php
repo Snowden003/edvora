@@ -3,7 +3,7 @@
 @section('title', 'Edvora Tech - Free Practical Skills for Afghan Women')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/home-hero.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/home-hero.css') }}?v={{ file_exists(public_path('assets/css/home-hero.css')) ? filemtime(public_path('assets/css/home-hero.css')) : time() }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/home-value-proposition.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/courses.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/popular-courses.css') }}" />
@@ -21,198 +21,173 @@
 @endpush
 
 @section('content')
-    <section class="hero2">
-        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="7000" data-bs-pause="hover">
-            <div class="carousel-inner">
+    <section class="hero2" id="heroSection">
+        <!-- 1. Interactive 3D Cosmic Background Canvas -->
+        <canvas id="hero3DCanvas" class="hero2__3d-canvas"></canvas>
 
-                {{-- Slide 1: Main value proposition --}}
-                <div class="carousel-item active">
-                    <div class="hero2__glow hero2__glow--a"></div>
-                    <div class="hero2__glow hero2__glow--b"></div>
-                    <div class="hero2__glow hero2__glow--c"></div>
-                    <div class="container">
-                        <div class="hero2__inner">
-                            <div class="hero2__content">
-                                <span class="hero2__eyebrow"><i class="bi bi-stars"></i> Edvora Tech Platform</span>
-                                <h1 class="hero2__title">Everything You Need to Learn.<br><span class="gradient-text">100% Free Forever.</span></h1>
-                                <p class="hero2__desc">Master high-demand tech skills with interactive courses, hands-on projects, expert mentors, and a thriving global community — completely free of charge.</p>
+        <!-- 2. Ambient Volumetric Auroras & Grid -->
+        <div class="hero2__aurora hero2__aurora--1"></div>
+        <div class="hero2__aurora hero2__aurora--2"></div>
+        <div class="hero2__aurora hero2__aurora--3"></div>
+        <div class="hero2__grid-lines"></div>
 
-                                <div class="hero2__features">
-                                    <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>Expert Mentors</span></div>
-                                    <div class="hero2__feature"><i class="bi bi-code-slash"></i><span>Interactive Labs</span></div>
-                                    <div class="hero2__feature"><i class="bi bi-award-fill"></i><span>Verified Certificates</span></div>
-                                    <div class="hero2__feature"><i class="bi bi-book-fill"></i><span>Best Tech Books</span></div>
-                                    <div class="hero2__feature"><i class="bi bi-globe2"></i><span>Global Community</span></div>
-                                </div>
+        <div class="container">
+            <div class="hero2__inner">
+                <!-- Left: Hero Content -->
+                <div class="hero2__content">
+                    <div class="hero2__eyebrow">
+                        <span class="hero2__eyebrow-ping"></span>
+                        <i class="bi bi-stars"></i>
+                        <span>Next-Gen Tech Platform for Afghan Women</span>
+                    </div>
 
-                                <div class="hero2__actions">
-                                    <a href="{{ route('courses.index') }}" class="btn-hero-primary">
-                                        Start Learning Free <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                    <a href="{{ auth()->check() ? (auth()->user()->role === 'teacher' ? route('teacher.your-courses') : route('student.courses')) : route('register') }}" class="btn-hero-secondary">
-                                        <i class="bi bi-rocket-takeoff-fill"></i> {{ auth()->check() ? 'My Dashboard' : 'Create Free Account' }}
-                                    </a>
-                                </div>
+                    <h1 class="hero2__title">
+                        Master In-Demand Tech.<br>
+                        <span class="hero2__gradient-text">100% Free Forever.</span>
+                    </h1>
 
-                                <div class="hero2__stats">
-                                    <div class="hero2__stat">
-                                        <span class="hero2__stat-num" data-target="{{ $totalStudents }}">{{ $totalStudents }}</span>
-                                        <span class="hero2__stat-label">Active Learners</span>
-                                    </div>
-                                    <div class="hero2__stat">
-                                        <span class="hero2__stat-num" data-target="{{ $totalCourses }}">{{ $totalCourses }}</span>
-                                        <span class="hero2__stat-label">Free Courses</span>
-                                    </div>
-                                    <div class="hero2__stat">
-                                        <span class="hero2__stat-num" data-target="{{ $completedCourses }}">{{ $completedCourses }}</span>
-                                        <span class="hero2__stat-label">Graduated</span>
-                                    </div>
-                                </div>
-                            </div>
+                    <p class="hero2__desc">
+                        Unlock high-impact career opportunities with hands-on coding courses, live interactive labs, female mentorship, and verified credentials — built to break boundaries with zero cost.
+                    </p>
 
-                            <div class="hero2__visual">
-                                <!-- Floating Live Badge -->
-                                <div class="hero2__badge-floating">
-                                    <div class="hero2__pulse-dot"></div>
-                                    <div class="hero2__badge-text">
-                                        <span class="hero2__badge-title">Interactive Learning</span>
-                                        <span class="hero2__badge-sub">Join +2,500 Active Students</span>
-                                    </div>
-                                </div>
+                    <div class="hero2__features">
+                        <div class="hero2__feature"><i class="bi bi-shield-check"></i><span>Free Verified Certs</span></div>
+                        <div class="hero2__feature"><i class="bi bi-code-slash"></i><span>Interactive Labs</span></div>
+                        <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>Female Mentors</span></div>
+                        <div class="hero2__feature"><i class="bi bi-globe2"></i><span>Global Network</span></div>
+                    </div>
 
-                                <!-- Central Showcase Card -->
-                                <div class="hero2__card-showcase">
-                                    <div class="hero2__card-header">
-                                        <div class="hero2__card-badge"><i class="bi bi-lightning-charge-fill"></i> Live Class</div>
-                                        <div class="hero2__card-dots">
-                                            <div class="hero2__card-dot hero2__card-dot--red"></div>
-                                            <div class="hero2__card-dot hero2__card-dot--yellow"></div>
-                                            <div class="hero2__card-dot hero2__card-dot--green"></div>
-                                        </div>
-                                    </div>
-                                    <div class="hero2__card-media">
-                                        <img src="{{ asset('assets/images/hero_logo_design.png') }}" alt="Edvora Tech" class="hero2__card-img" fetchpriority="high">
-                                        <div class="hero2__play-btn"><i class="bi bi-play-fill"></i></div>
-                                    </div>
-                                    <div class="hero2__card-title">Full-Stack Development & AI</div>
-                                    <div class="hero2__card-sub">
-                                        <span><i class="bi bi-mortarboard-fill text-info"></i> Hands-on Labs</span>
-                                        <span><i class="bi bi-patch-check-fill text-success"></i> Free Cert</span>
-                                    </div>
-                                </div>
+                    <div class="hero2__actions">
+                        <a href="{{ route('courses.index') }}" class="btn-hero-primary">
+                            <span>Explore Free Courses</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{{ auth()->check() ? (auth()->user()->role === 'teacher' ? route('teacher.your-courses') : route('student.courses')) : route('register') }}" class="btn-hero-secondary">
+                            <i class="bi bi-rocket-takeoff-fill"></i>
+                            <span>{{ auth()->check() ? 'My Dashboard' : 'Join Edvora Free' }}</span>
+                        </a>
+                    </div>
 
-                                <!-- Floating Code Snippet Widget -->
-                                <div class="hero2__code-widget">
-                                    <div class="hero2__code-header">
-                                        <span class="hero2__code-lang">app.js</span>
-                                        <i class="bi bi-code-square text-info" style="font-size: 0.8rem;"></i>
-                                    </div>
-                                    <div class="hero2__code-content"><span id="heroCodeTyped"></span><span class="hero2__code-cursor"></span></div>
-                                </div>
-                            </div>
+                    <div class="hero2__stats">
+                        <div class="hero2__stat">
+                            <span class="hero2__stat-num" data-target="{{ $totalStudents }}">{{ $totalStudents }}</span>
+                            <span class="hero2__stat-label">Active Learners</span>
+                        </div>
+                        <div class="hero2__stat-divider"></div>
+                        <div class="hero2__stat">
+                            <span class="hero2__stat-num" data-target="{{ $totalCourses }}">{{ $totalCourses }}</span>
+                            <span class="hero2__stat-label">Free Courses</span>
+                        </div>
+                        <div class="hero2__stat-divider"></div>
+                        <div class="hero2__stat">
+                            <span class="hero2__stat-num" data-target="{{ $completedCourses }}">{{ $completedCourses }}</span>
+                            <span class="hero2__stat-label">Graduated</span>
                         </div>
                     </div>
                 </div>
 
-                {{-- Slide 2: Featured Course --}}
-                @if($featuredCourses->isNotEmpty())
-                    @php $fc = $featuredCourses->first(); @endphp
-                    <div class="carousel-item">
-                        <div class="hero2__glow hero2__glow--a"></div>
-                        <div class="hero2__glow hero2__glow--b"></div>
-                        <div class="container">
-                            <div class="hero2__inner">
-                                <div class="hero2__content">
-                                    <span class="hero2__eyebrow"><i class="bi bi-award-fill"></i> {{ $fc->category->name ?? 'Featured Course' }}</span>
-                                    <h1 class="hero2__title">{{ \Illuminate\Support\Str::limit($fc->title, 40) }}<br><span class="gradient-text">Featured Masterclass</span></h1>
-                                    <p class="hero2__desc">{{ \Illuminate\Support\Str::limit($fc->description, 140) }}</p>
+                <!-- Right: High-End 3D Interactive Cyber Deck -->
+                <div class="hero2__visual-wrapper" id="heroVisualStage">
+                    <div class="hero2__visual-3d" id="heroCard3D">
+                        <!-- Holographic Energy Orbit Rings -->
+                        <div class="hero2__holo-ring hero2__holo-ring--outer"></div>
+                        <div class="hero2__holo-ring hero2__holo-ring--inner"></div>
 
-                                    <div class="hero2__features">
-                                        <div class="hero2__feature"><i class="bi bi-bar-chart-fill"></i><span>{{ ucfirst($fc->level) }}</span></div>
-                                        <div class="hero2__feature"><i class="bi bi-clock-fill"></i><span>{{ $fc->duration_hours }} Hours</span></div>
-                                        <div class="hero2__feature"><i class="bi bi-people-fill"></i><span>{{ $fc->enrolled_count }} Enrolled</span></div>
-                                        @if($fc->has_certificate)
-                                            <div class="hero2__feature"><i class="bi bi-patch-check-fill"></i><span>Certificate</span></div>
-                                        @endif
-                                    </div>
+                        <!-- Floating Hologram Widget 1: Live Status Chip (Top Right) -->
+                        <div class="hero2__floating-chip--top">
+                            <span class="hero2__live-dot"></span>
+                            <div class="hero2__chip-text">
+                                <strong>Live Class In Progress</strong>
+                                <span>+2,500 Afghan Women Enrolled</span>
+                            </div>
+                        </div>
 
-                                    <div class="hero2__actions">
-                                        <a href="{{ route('courses.detail', $fc->slug) }}" class="btn-hero-primary">
-                                            Explore Course <i class="bi bi-arrow-right ms-2"></i>
-                                        </a>
-                                    </div>
+                        <!-- Central 3D Holo-Card -->
+                        <div class="hero2__main-card">
+                            <div class="hero2__card-glare"></div>
+                            
+                            <div class="hero2__card-topbar">
+                                <div class="hero2__card-pill">
+                                    <i class="bi bi-broadcast"></i>
+                                    <span>Interactive Masterclass</span>
                                 </div>
+                                <div class="hero2__card-dots">
+                                    <span class="dot dot--red"></span>
+                                    <span class="dot dot--yellow"></span>
+                                    <span class="dot dot--green"></span>
+                                </div>
+                            </div>
 
-                                <div class="hero2__visual">
-                                    <div class="hero2__card-showcase">
-                                        <div class="hero2__card-header">
-                                            <div class="hero2__card-badge"><i class="bi bi-star-fill text-warning"></i> Featured</div>
-                                            <div class="hero2__card-dots">
-                                                <div class="hero2__card-dot hero2__card-dot--red"></div>
-                                                <div class="hero2__card-dot hero2__card-dot--yellow"></div>
-                                                <div class="hero2__card-dot hero2__card-dot--green"></div>
-                                            </div>
-                                        </div>
-                                        <div class="hero2__card-media">
-                                            <img src="{{ $fc->thumbnail ? asset('storage/' . $fc->thumbnail) : asset('assets/images/hero_logo_design.png') }}" alt="{{ $fc->title }}" class="hero2__card-img" style="object-fit: cover;">
-                                            <div class="hero2__play-btn"><i class="bi bi-play-fill"></i></div>
-                                        </div>
-                                        <div class="hero2__card-title">{{ \Illuminate\Support\Str::limit($fc->title, 32) }}</div>
-                                        <div class="hero2__card-sub">
-                                            <span><i class="bi bi-person-fill text-info"></i> {{ $fc->teacher->name ?? 'Edvora Mentor' }}</span>
-                                        </div>
-                                    </div>
+                            <div class="hero2__card-screen">
+                                <img src="{{ asset('assets/images/hero_logo_design.png') }}" alt="Edvora Tech Showcase" class="hero2__card-img" fetchpriority="high">
+                                <div class="hero2__play-pulse">
+                                    <div class="play-ring play-ring--1"></div>
+                                    <div class="play-ring play-ring--2"></div>
+                                    <div class="play-icon"><i class="bi bi-play-fill"></i></div>
+                                </div>
+                                <div class="hero2__card-badge-overlay">
+                                    <i class="bi bi-award-fill"></i> Verified
+                                </div>
+                            </div>
+
+                            <div class="hero2__card-footer">
+                                <div class="hero2__card-title">Full-Stack Development & AI</div>
+                                <div class="hero2__card-meta">
+                                    <span class="meta-tag"><i class="bi bi-star-fill text-warning"></i> 4.9 (1.2k)</span>
+                                    <span class="meta-tag"><i class="bi bi-patch-check-fill text-cyan"></i> Free Cert</span>
+                                    <span class="meta-tag"><i class="bi bi-layers-fill text-purple"></i> 14 Labs</span>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Floating Hologram Widget 2: 3D Live Code Terminal (Bottom Left) -->
+                        <div class="hero2__code-terminal">
+                            <div class="terminal-bar">
+                                <div class="terminal-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="terminal-title"><i class="bi bi-terminal"></i> edvora-kernel.ts</span>
+                                <span class="terminal-status">● Live</span>
+                            </div>
+                            <div class="terminal-body">
+                                <pre id="heroCodeTyped"></pre><span class="terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <!-- Floating Hologram Widget 3: Achievement Pill (Bottom Right) -->
+                        <div class="hero2__floating-chip--bottom">
+                            <div class="achievement-icon"><i class="bi bi-trophy-fill"></i></div>
+                            <div>
+                                <strong>100% Free Forever</strong>
+                                <span>No Credit Card Required</span>
+                            </div>
+                        </div>
                     </div>
-                @endif
-
-            </div>
-
-            <!-- Controls & Indicators -->
-            @php
-                $hasFeatured = $featuredCourses->isNotEmpty();
-                $heroSlideNum = 0;
-            @endphp
-            @if($hasFeatured)
-                <div class="hero2__navigation-container container">
-                    <button class="hero2__arrow hero2__arrow--prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <button class="hero2__arrow hero2__arrow--next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-                </div>
-                <div class="carousel-indicators hero2__indicators">
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                </div>
-            @endif
-
-            <!-- Tech Marquee Bar -->
-            <div class="hero2__marquee-wrap">
-                <div class="hero2__marquee-track">
-                    <div class="hero2__marquee-item"><i class="bi bi-filetype-py"></i> Python Programming</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-code-slash"></i> Web Development</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-cpu-fill"></i> Artificial Intelligence</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-palette-fill"></i> UI/UX Design</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-shield-lock-fill"></i> Cyber Security</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-diagram-3-fill"></i> Data Science</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-filetype-php"></i> Laravel & PHP</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-braces"></i> JavaScript & React</div>
-                    <!-- Duplicate for infinite seamless scroll -->
-                    <div class="hero2__marquee-item"><i class="bi bi-filetype-py"></i> Python Programming</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-code-slash"></i> Web Development</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-cpu-fill"></i> Artificial Intelligence</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-palette-fill"></i> UI/UX Design</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-shield-lock-fill"></i> Cyber Security</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-diagram-3-fill"></i> Data Science</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-filetype-php"></i> Laravel & PHP</div>
-                    <div class="hero2__marquee-item"><i class="bi bi-braces"></i> JavaScript & React</div>
                 </div>
             </div>
+        </div>
 
+        <!-- Tech Marquee Ribbon -->
+        <div class="hero2__marquee-wrap">
+            <div class="hero2__marquee-track">
+                <div class="hero2__marquee-item"><i class="bi bi-filetype-py"></i> Python Programming</div>
+                <div class="hero2__marquee-item"><i class="bi bi-code-slash"></i> Web Development</div>
+                <div class="hero2__marquee-item"><i class="bi bi-cpu-fill"></i> Artificial Intelligence</div>
+                <div class="hero2__marquee-item"><i class="bi bi-palette-fill"></i> UI/UX Design</div>
+                <div class="hero2__marquee-item"><i class="bi bi-shield-lock-fill"></i> Cyber Security</div>
+                <div class="hero2__marquee-item"><i class="bi bi-diagram-3-fill"></i> Data Science</div>
+                <div class="hero2__marquee-item"><i class="bi bi-filetype-php"></i> Laravel & PHP</div>
+                <div class="hero2__marquee-item"><i class="bi bi-braces"></i> JavaScript & React</div>
+                <!-- Duplicate for seamless loop -->
+                <div class="hero2__marquee-item"><i class="bi bi-filetype-py"></i> Python Programming</div>
+                <div class="hero2__marquee-item"><i class="bi bi-code-slash"></i> Web Development</div>
+                <div class="hero2__marquee-item"><i class="bi bi-cpu-fill"></i> Artificial Intelligence</div>
+                <div class="hero2__marquee-item"><i class="bi bi-palette-fill"></i> UI/UX Design</div>
+                <div class="hero2__marquee-item"><i class="bi bi-shield-lock-fill"></i> Cyber Security</div>
+                <div class="hero2__marquee-item"><i class="bi bi-diagram-3-fill"></i> Data Science</div>
+                <div class="hero2__marquee-item"><i class="bi bi-filetype-php"></i> Laravel & PHP</div>
+                <div class="hero2__marquee-item"><i class="bi bi-braces"></i> JavaScript & React</div>
+            </div>
         </div>
     </section>
 
@@ -1548,6 +1523,7 @@
             });
         });
     </script>
+    <script src="{{ asset('assets/js/home-hero.js') }}?v={{ file_exists(public_path('assets/js/home-hero.js')) ? filemtime(public_path('assets/js/home-hero.js')) : time() }}" defer></script>
     <script src="{{ asset('assets/js/contact-form.js') }}" defer></script>
     <script>
         function recentCoursesScroll(direction) {

@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                     'avatar' => $user->avatar ?? null,
                     'avatar_url' => $user->avatar_url ?? null,
                     'is_admin' => $user->role === 'admin',
+                    'is_pending_approval' => method_exists($user, 'isPendingApproval') ? $user->isPendingApproval() : ($user->status === 'pending'),
                 ] : null,
             ],
             'flash' => [
@@ -56,6 +57,28 @@ class HandleInertiaRequests extends Middleware
                 'info' => fn () => $request->session()->get('info'),
             ],
             'unreadNotificationsCount' => $user ? \App\Models\Notification::where('user_id', $user->id)->where('is_read', false)->count() : 0,
+            'teacherNav' => fn () => $user && $user->role === 'teacher' ? [
+                'courses' => \App\Models\Course::where('teacher_id', $user->id)->select('id', 'title', 'slug', 'status')->latest()->take(10)->get(),
+                'totalCourses' => \App\Models\Course::where('teacher_id', $user->id)->count(),
+                'pendingEnrollmentsCount' => \App\Models\EnrollmentRequest::whereIn('course_id', \App\Models\Course::where('teacher_id', $user->id)->pluck('id'))->where('status', 'pending')->count(),
+            ] : null,
+            'studentNav' => fn () => $user && $user->role === 'student' ? [
+                'courses' => $user->enrollments()
+                    ->where('status', '!=', 'banned')
+                    ->with('course:id,title,slug')
+                    ->latest()
+                    ->take(8)
+                    ->get()
+                    ->map(fn($e) => [
+                        'id' => $e->course?->id,
+                        'title' => $e->course?->title,
+                        'slug' => $e->course?->slug,
+                    ])
+                    ->filter(fn($c) => !empty($c['id']))
+                    ->values(),
+                'totalCourses' => $user->enrollments()->where('status', '!=', 'banned')->count(),
+                'level' => method_exists($user, 'level') ? $user->level() : ['level' => 1, 'title' => 'Beginner', 'progress' => 0],
+            ] : null,
             'appName' => config('app.name', 'Edvora Tech'),
         ];
     }

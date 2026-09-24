@@ -129,6 +129,10 @@
                                     <i class="bi bi-shield-check"></i>
                                     <span>Students & Access</span>
                                 </button>
+                                <button type="button" class="edvora-sidebar-tab-btn" data-tab="referrals" onclick="if(window.switchCourseTab){switchCourseTab('referrals', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-referrals';}">
+                                    <i class="bi bi-link-45deg text-success"></i>
+                                    <span>Invite & Referrals</span>
+                                </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="points" onclick="if(window.switchCourseTab){switchCourseTab('points', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-points';}">
                                     <i class="bi bi-star-fill text-warning"></i>
                                     <span>Student Scoring</span>
@@ -156,6 +160,7 @@
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="chat" onclick="if(window.switchCourseTab){switchCourseTab('chat', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-chat';}">
                                     <i class="bi bi-chat-heart"></i>
                                     <span>Course Chat</span>
+                                    <span class="chat-unread-badge ms-auto" style="display:none;" data-chat-badge-course="{{ $course->id }}"></span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="curriculum" onclick="if(window.switchCourseTab){switchCourseTab('curriculum', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-curriculum';}">
                                     <i class="bi bi-pencil-square"></i>

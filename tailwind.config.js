@@ -15,6 +15,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Vazirmatn', 'Plus Jakarta Sans', ...defaultTheme.fontFamily.sans],
+                vazir: ['Vazirmatn', 'sans-serif'],
                 display: ['Plus Jakarta Sans', 'Vazirmatn', ...defaultTheme.fontFamily.sans],
             },
             colors: {

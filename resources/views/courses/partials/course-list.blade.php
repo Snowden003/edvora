@@ -117,6 +117,12 @@
                                 $dateStatus['badge_text'] = 'Completed';
                                 $dateStatus['countdown_text'] = 'Course completed';
                                 $dateStatus['pulse'] = false;
+                            } elseif ($course->isEnrollmentClosed() && !$course->isCompleted()) {
+                                $dateStatus['type'] = 'finished';
+                                $dateStatus['icon'] = 'bi bi-lock-fill';
+                                $dateStatus['badge_text'] = 'Enrollment Closed';
+                                $dateStatus['countdown_text'] = 'Enrollment Closed';
+                                $dateStatus['pulse'] = false;
                             } elseif ($startDate && $startDate->lessThanOrEqualTo($today)) {
                                 $dateStatus['type'] = 'ongoing';
                                 $dateStatus['icon'] = 'bi bi-play-circle-fill';
@@ -291,6 +297,12 @@
                                 $dateStatus['icon'] = 'bi bi-check2-circle';
                                 $dateStatus['badge_text'] = 'Completed';
                                 $dateStatus['countdown_text'] = 'Course completed';
+                                $dateStatus['pulse'] = false;
+                            } elseif ($course->isEnrollmentClosed() && !$course->isCompleted()) {
+                                $dateStatus['type'] = 'finished';
+                                $dateStatus['icon'] = 'bi bi-lock-fill';
+                                $dateStatus['badge_text'] = 'Enrollment Closed';
+                                $dateStatus['countdown_text'] = 'Enrollment Closed';
                                 $dateStatus['pulse'] = false;
                             } elseif ($startDate && $startDate->lessThanOrEqualTo($today)) {
                                 $dateStatus['type'] = 'ongoing';

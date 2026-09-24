@@ -761,3 +761,282 @@ aside#sidebar.edvora-sidebar.collapsed .edvora-nav-icon {
     color: #0f172a;
 }
 
+/* ==========================================================================
+   USER PROFILE MINI WIDGET (SIDEBAR FOOTER)
+   ========================================================================== */
+.edvora-sidebar-user-card {
+    margin-top: auto;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--sb-radius);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid var(--sb-border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    overflow: hidden;
+}
+
+.edvora-sidebar-user-card:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(31, 143, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.edvora-user-avatar-wrap {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.edvora-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.edvora-user-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #10b981;
+    border: 2px solid #ffffff;
+}
+
+.edvora-user-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: opacity var(--sb-transition);
+}
+
+.edvora-user-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--sb-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.edvora-user-role {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--sb-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.edvora-user-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sb-text-muted);
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.edvora-sidebar-user-card:hover .edvora-user-action-btn {
+    color: var(--sb-primary);
+}
+
+aside#sidebar.edvora-sidebar.collapsed .edvora-sidebar-user-card {
+    justify-content: center;
+    padding: 0.5rem 0.25rem;
+    background: transparent;
+    border-color: transparent;
+    margin-top: auto;
+}
+
+aside#sidebar.edvora-sidebar.collapsed .edvora-user-details,
+aside#sidebar.edvora-sidebar.collapsed .edvora-user-action-btn {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   RTL Layout Styles for Edvora Sidebar (Persian / Dari)
+   ========================================================================== */
+[dir="rtl"] aside#sidebar.edvora-sidebar,
+.rtl-layout aside#sidebar.edvora-sidebar {
+    border-left: 1px solid var(--sb-border);
+    border-right: none;
+    box-shadow: -4px 0 24px rgba(15, 23, 42, 0.03);
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+[dir="rtl"] .edvora-sidebar .sidebar-collapse-toggle,
+.rtl-layout .edvora-sidebar .sidebar-collapse-toggle {
+    left: -13px;
+    right: auto;
+}
+
+[dir="rtl"] aside#sidebar.edvora-sidebar .sidebar-collapse-toggle i,
+.rtl-layout aside#sidebar.edvora-sidebar .sidebar-collapse-toggle i {
+    transform: rotate(180deg);
+}
+
+[dir="rtl"] aside#sidebar.edvora-sidebar.collapsed .sidebar-collapse-toggle i,
+.rtl-layout aside#sidebar.edvora-sidebar.collapsed .sidebar-collapse-toggle i {
+    transform: rotate(0deg);
+}
+
+[dir="rtl"] .edvora-nav-link,
+.rtl-layout .edvora-nav-link {
+    text-align: right;
+    flex-direction: row;
+}
+
+[dir="rtl"] .edvora-nav-icon,
+.rtl-layout .edvora-nav-icon {
+    margin-right: 0;
+    margin-left: 0.65rem;
+}
+
+[dir="rtl"] .edvora-submenu-toggle .edvora-chevron,
+.rtl-layout .edvora-submenu-toggle .edvora-chevron {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+[dir="rtl"] .edvora-submenu,
+.rtl-layout .edvora-submenu {
+    padding-right: 1rem;
+    padding-left: 0;
+}
+
+[dir="rtl"] .edvora-badge,
+.rtl-layout .edvora-badge {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+[dir="rtl"] .edvora-brand-badge i,
+.rtl-layout .edvora-brand-badge i {
+    margin-left: 0.35rem !important;
+    margin-right: 0 !important;
+}
+
+[dir="rtl"] .edvora-user-details,
+.rtl-layout .edvora-user-details {
+    text-align: right;
+}
+
+[dir="rtl"] .edvora-sidebar-user-card .edvora-user-action-btn,
+.rtl-layout .edvora-sidebar-user-card .edvora-user-action-btn {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+[dir="rtl"] .edvora-course-actions,
+.rtl-layout .edvora-course-actions {
+    flex-direction: row;
+}
+
+[dir="rtl"] .edvora-course-tabs-menu,
+.rtl-layout .edvora-course-tabs-menu {
+    border-right: 2px solid #e2e8f0;
+    border-left: none;
+    padding-right: 0.5rem;
+    padding-left: 0;
+}
+
+[dir="rtl"] .edvora-sidebar-tab-btn,
+.rtl-layout .edvora-sidebar-tab-btn {
+    text-align: right;
+    justify-content: flex-start;
+}
+
+@media (max-width: 991.98px) {
+    [dir="rtl"] aside#sidebar.edvora-sidebar,
+    .rtl-layout aside#sidebar.edvora-sidebar {
+        left: auto;
+        right: -300px;
+        box-shadow: -8px 0 35px rgba(0, 0, 0, 0.15);
+        transition: right 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    [dir="rtl"] aside#sidebar.edvora-sidebar.active,
+    .rtl-layout aside#sidebar.edvora-sidebar.active {
+        left: auto;
+        right: 0;
+    }
+
+    [dir="rtl"] .sidebar-mobile-toggle,
+    .rtl-layout .sidebar-mobile-toggle {
+        left: auto;
+        right: 24px;
+    }
+}
+
+/* ===== Dark Mode for Unified Edvora Sidebar ===== */
+.dark aside#sidebar.edvora-sidebar,
+[data-theme="dark"] aside#sidebar.edvora-sidebar {
+    --sb-bg: #091326;
+    --sb-bg-glass: rgba(9, 19, 38, 0.95);
+    --sb-border: #16243f;
+    --sb-border-subtle: #121d33;
+    --sb-text: #94a3b8;
+    --sb-text-muted: #64748b;
+    --sb-text-dark: #f1f5f9;
+    --sb-hover-bg: rgba(30, 48, 80, 0.5);
+    --sb-primary-light: rgba(31, 143, 255, 0.15);
+    background: var(--sb-bg) !important;
+    border-color: var(--sb-border) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+}
+
+.dark aside#sidebar.edvora-sidebar .edvora-sidebar-user-card,
+[data-theme="dark"] aside#sidebar.edvora-sidebar .edvora-sidebar-user-card {
+    background: rgba(14, 27, 54, 0.7);
+    border-color: #1e293b;
+}
+
+.dark aside#sidebar.edvora-sidebar .edvora-user-action-btn,
+[data-theme="dark"] aside#sidebar.edvora-sidebar .edvora-user-action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+.dark aside#sidebar.edvora-sidebar .edvora-user-action-btn:hover,
+[data-theme="dark"] aside#sidebar.edvora-sidebar .edvora-user-action-btn:hover {
+    background: rgba(31, 143, 255, 0.2);
+    color: #38bdf8;
+}
+
+.dark aside#sidebar.edvora-sidebar .sidebar-collapse-toggle,
+[data-theme="dark"] aside#sidebar.edvora-sidebar .sidebar-collapse-toggle {
+    background: #0d1a33;
+    border-color: #1e293b;
+    color: #94a3b8;
+}
+
+.dark aside#sidebar.edvora-sidebar .edvora-level-bar,
+[data-theme="dark"] aside#sidebar.edvora-sidebar .edvora-level-bar {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+
+

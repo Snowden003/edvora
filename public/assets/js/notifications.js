@@ -21,6 +21,38 @@
   var audioContext = null;
   var isAudioUnlocked = false;
 
+  function getStorageKey() {
+    var userId = document.body ? document.body.getAttribute('data-user-id') : null;
+    return userId ? 'edvora_seen_notif_' + userId : 'edvora_seen_notif_global';
+  }
+
+  function loadSeenNotificationIds() {
+    var set = new Set();
+    try {
+      var raw = localStorage.getItem(getStorageKey());
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach(function (id) { set.add(Number(id)); });
+        }
+      }
+    } catch (e) {}
+    return set;
+  }
+
+  function saveSeenNotificationId(id) {
+    if (!id) return;
+    var numId = Number(id);
+    seenNotificationIds.add(numId);
+    try {
+      var arr = Array.from(seenNotificationIds);
+      if (arr.length > 500) {
+        arr = arr.slice(arr.length - 500);
+      }
+      localStorage.setItem(getStorageKey(), JSON.stringify(arr));
+    } catch (e) {}
+  }
+
   // Initialize dismissed sessions from sessionStorage
   try {
     var storedDismissed = sessionStorage.getItem('edvora_dismissed_sessions');
@@ -235,7 +267,7 @@
       return;
     }
 
-    var meetLink = activeClass.meet_link || '#';
+    var meetLink = activeClass.join_url || activeClass.meet_link || '#';
 
     if (!banner) {
       banner = document.createElement('div');
@@ -343,8 +375,8 @@
         var playSoundType = 'general';
 
         data.notifications.forEach(function (notif) {
-          if (seenNotificationIds.has(notif.id)) return;
-          seenNotificationIds.add(notif.id);
+          if (seenNotificationIds.has(Number(notif.id))) return;
+          saveSeenNotificationId(notif.id);
           hasNew = true;
 
           if (notif.type === 'class_started') {
@@ -503,6 +535,8 @@
 
   // --- Initialization ---
   document.addEventListener('DOMContentLoaded', function () {
+    seenNotificationIds = loadSeenNotificationIds();
+
     // Request permission when user clicks notification bell in navbar
     var navBell = document.querySelector('.edvora-nav-notif-link');
     if (navBell) {
@@ -514,7 +548,7 @@
     // Pre-populate seen IDs from existing DOM cards on /notifications page
     document.querySelectorAll('[data-notification-id]').forEach(function (el) {
       var id = parseInt(el.getAttribute('data-notification-id'), 10);
-      if (id) seenNotificationIds.add(id);
+      if (id) saveSeenNotificationId(id);
     });
 
     // Start polling immediately and then every POLL_INTERVAL

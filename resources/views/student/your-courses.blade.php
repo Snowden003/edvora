@@ -51,17 +51,13 @@
                 </div>
 
                 <!-- Quick Stats -->
-                <div class="row g-4 mb-5">
-                    @php
-                        $totalCourses    = $enrollments->total();
-                        $completedCount  = $user->enrollments()->where('status', 'completed')->count();
-                    @endphp
+                <div class="row g-4 mb-4">
                     <div class="col-xl-3 col-md-6">
                         <div class="quick-stat-card">
                             <div class="stat-icon-box bg-primary text-white"><i class="bi bi-journal-text"></i></div>
                             <div>
                                 <small class="text-muted d-block">Total Enrolled</small>
-                                <h4 class="fw-bold mb-0">{{ $totalCourses }}</h4>
+                                <h4 class="fw-bold mb-0">{{ $allCount ?? $enrollments->total() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -70,7 +66,7 @@
                             <div class="stat-icon-box bg-success text-white"><i class="bi bi-check-circle"></i></div>
                             <div>
                                 <small class="text-muted d-block">Completed</small>
-                                <h4 class="fw-bold mb-0">{{ $completedCount }}</h4>
+                                <h4 class="fw-bold mb-0">{{ $completedCount ?? 0 }}</h4>
                             </div>
                         </div>
                     </div>
@@ -88,14 +84,39 @@
                             <div class="stat-icon-box bg-info text-white"><i class="bi bi-mortarboard"></i></div>
                             <div>
                                 <small class="text-muted d-block">In Progress</small>
-                                <h4 class="fw-bold mb-0">{{ $user->enrollments()->where('status', 'active')->count() }}</h4>
+                                <h4 class="fw-bold mb-0">{{ $inProgressCount ?? 0 }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Status Filter Tabs -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+                    <a href="{{ route('student.courses', array_merge(request()->except(['status', 'page']))) }}"
+                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {{ !request('status') ? 'btn-primary' : 'btn-outline-secondary' }}">
+                       <i class="bi bi-grid-fill me-1"></i> All Courses ({{ $allCount ?? $enrollments->total() }})
+                    </a>
+                    <a href="{{ route('student.courses', array_merge(request()->except('page'), ['status' => 'in_progress'])) }}"
+                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {{ request('status') === 'in_progress' ? 'btn-primary' : 'btn-outline-secondary' }}">
+                       <i class="bi bi-play-circle-fill me-1"></i> In Progress ({{ $inProgressCount ?? 0 }})
+                    </a>
+                    <a href="{{ route('student.courses', array_merge(request()->except('page'), ['status' => 'completed'])) }}"
+                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {{ request('status') === 'completed' ? 'btn-success text-white' : 'btn-outline-success' }}">
+                       <i class="bi bi-check-circle-fill me-1"></i> Completed Courses ({{ $completedCount ?? 0 }})
+                    </a>
+                    @if(isset($bannedCount) && $bannedCount > 0)
+                    <a href="{{ route('student.courses', array_merge(request()->except('page'), ['status' => 'banned'])) }}"
+                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {{ request('status') === 'banned' ? 'btn-danger text-white' : 'btn-outline-danger' }}">
+                       <i class="bi bi-slash-circle-fill me-1"></i> Suspended ({{ $bannedCount }})
+                    </a>
+                    @endif
+                </div>
+
                 <!-- Control Bar -->
                 <form method="GET" action="{{ route('student.courses') }}" id="filterForm">
+                @if(request('status'))
+                <input type="hidden" name="status" value="{{ request('status') }}">
+                @endif
                 <div class="glass-control-bar mb-5">
                     <div class="row align-items-center g-3">
                         <div class="col-md-6">
@@ -114,7 +135,15 @@
                             </select>
                         </div>
                         <div class="col-md-3 text-end d-none d-md-block">
-                            <span class="text-muted small">Showing all your enrolled courses</span>
+                            <span class="text-muted small">
+                                @if(request('status') === 'completed')
+                                    Showing completed courses
+                                @elseif(request('status') === 'in_progress')
+                                    Showing in-progress courses
+                                @else
+                                    Showing all your enrolled courses
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -135,9 +164,13 @@
                 @else
                 <div class="row g-4" id="coursesGrid">
                     @foreach($enrollments as $enrollment)
-                    @php $p = $enrollment->actual_progress ?? 0; @endphp
+                    @php 
+                        $p = $enrollment->actual_progress ?? 0; 
+                        $isBanned = $enrollment->status === 'banned';
+                        $isCompleted = !$isBanned && ($enrollment->is_course_completed ?? ($enrollment->status === 'completed' || $p >= 100 || ($enrollment->course && $enrollment->course->isCompleted())));
+                    @endphp
                     <div class="col-xl-4 col-md-6">
-                        <div class="course-card-premium" style="animation-delay: {{ $loop->index * 0.08 }}s">
+                        <div class="course-card-premium {{ $isBanned ? 'border-danger' : ($isCompleted ? 'is-completed-card' : '') }}" style="animation-delay: {{ $loop->index * 0.08 }}s">
 
                             <!-- Card Image -->
                             <div class="card-image-top">
@@ -146,49 +179,75 @@
                                 <div class="category-overlay">
                                     {{ $enrollment->course->category->name ?? 'General' }}
                                 </div>
-                                <div class="status-badge-overlay
-                                    {{ $enrollment->status === 'completed' ? 'bg-success' : 'bg-primary' }}">
-                                    {{ $enrollment->status === 'completed' ? 'Completed' : 'In Progress' }}
+                                @if($isBanned)
+                                <div class="status-badge-overlay bg-danger text-white">
+                                    <i class="bi bi-slash-circle-fill me-1"></i> Suspended
                                 </div>
+                                @elseif($isCompleted)
+                                <div class="status-badge-overlay bg-success">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Completed
+                                </div>
+                                @else
+                                <div class="status-badge-overlay bg-primary">
+                                    <i class="bi bi-play-circle-fill me-1"></i> In Progress
+                                </div>
+                                @endif
                             </div>
 
                             <!-- Card Body -->
                             <div class="card-body-premium">
                                 <h5 class="course-title-premium">{{ $enrollment->course->title }}</h5>
-                                <div class="student-count-mini">
+                                <div class="student-count-mini mb-2">
                                     <i class="bi bi-person-fill text-primary"></i>
                                     <span>{{ $enrollment->course->teacher->name ?? 'Instructor' }}</span>
                                 </div>
+
+                                @if($isBanned)
+                                <div class="alert alert-danger py-2 px-3 rounded-3 small mb-3 border-0 bg-danger bg-opacity-10 text-danger fw-semibold d-flex align-items-center gap-2">
+                                    <i class="bi bi-exclamation-octagon-fill fs-6 flex-shrink-0"></i>
+                                    <span>Access suspended by instructor</span>
+                                </div>
+                                @elseif($enrollment->course->end_date && ($isCompleted || $enrollment->course->end_date->isPast()))
+                                <div class="mb-2">
+                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.75rem;">
+                                        <i class="bi bi-calendar-event me-1"></i>Ended on {{ $enrollment->course->end_date->format('M d, Y') }}
+                                    </span>
+                                </div>
+                                @endif
 
                                 <!-- Progress Bar -->
                                 <div class="progress-section mb-3">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <small class="text-muted fw-semibold">Progress</small>
-                                        <small class="fw-bold
-                                            {{ $p >= 80 ? 'text-success' : ($p >= 40 ? 'text-primary' : 'text-warning') }}">
-                                            {{ $p }}%
+                                        <small class="fw-bold {{ $isBanned ? 'text-danger' : ($isCompleted || $p >= 80 ? 'text-success' : ($p >= 40 ? 'text-primary' : 'text-warning')) }}">
+                                            {{ $isCompleted ? 100 : $p }}%
                                         </small>
                                     </div>
                                     <div class="progress-bar-track">
-                                        <div class="progress-bar-fill
-                                            {{ $p >= 80 ? 'fill-success' : ($p >= 40 ? 'fill-primary' : 'fill-warning') }}"
-                                            style="width: {{ $p }}%">
+                                        <div class="progress-bar-fill {{ $isBanned ? 'bg-danger' : ($isCompleted || $p >= 80 ? 'fill-success' : ($p >= 40 ? 'fill-primary' : 'fill-warning')) }}"
+                                            style="width: {{ $isCompleted ? 100 : $p }}%">
                                         </div>
                                     </div>
                                     <div class="text-end mt-1">
                                         <small class="text-muted">
-                                            {{ $enrollment->completed_lessons_count ?? 0 }} / {{ $enrollment->total_lessons_count ?? 0 }} lessons completed
+                                            {{ $isCompleted ? ($enrollment->total_lessons_count ?? $enrollment->completed_lessons_count) : ($enrollment->completed_lessons_count ?? 0) }} / {{ $enrollment->total_lessons_count ?? 0 }} lessons completed
                                         </small>
                                     </div>
                                 </div>
 
                                 <!-- Card Footer -->
                                 <div class="card-footer-premium">
+                                    @if($isBanned)
+                                    <button type="button" class="btn-continue-course bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25" style="cursor: not-allowed; opacity: 0.9;" disabled title="Access restricted by instructor">
+                                        <i class="bi bi-slash-circle me-1"></i> Access Restricted
+                                    </button>
+                                    @else
                                     <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}"
-                                       class="btn-continue-course">
-                                        <i class="bi bi-{{ $enrollment->status === 'completed' ? 'arrow-repeat' : 'play-fill' }} me-1"></i>
-                                        {{ $enrollment->status === 'completed' ? 'Review' : 'Continue' }}
+                                       class="btn-continue-course {{ $isCompleted ? 'bg-secondary text-white' : '' }}">
+                                        <i class="bi bi-{{ $isCompleted ? 'arrow-repeat' : 'play-fill' }} me-1"></i>
+                                        {{ $isCompleted ? 'Review Course' : 'Continue' }}
                                     </a>
+                                    @endif
                                     <div class="course-meta-mini">
                                         @if($enrollment->course->duration_hours)
                                         <span class="meta-chip">

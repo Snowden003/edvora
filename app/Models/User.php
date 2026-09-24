@@ -171,15 +171,23 @@ class User extends Authenticatable implements FilamentUser
 
     public function leaderboardRank(?int $courseId = null): ?int
     {
-        $rows = Point::selectRaw('user_id, SUM(amount) as total')
+        $myScore = (int) Point::where('user_id', $this->id)
+            ->when($courseId, fn($q) => $q->where('course_id', $courseId))
+            ->sum('amount');
+
+        if ($myScore <= 0) {
+            return null;
+        }
+
+        $higherUsers = \Illuminate\Support\Facades\DB::table('points')
+            ->selectRaw('user_id, SUM(amount) as total')
             ->when($courseId, fn($q) => $q->where('course_id', $courseId))
             ->groupBy('user_id')
-            ->orderByDesc('total')
-            ->get();
+            ->having('total', '>', $myScore)
+            ->get()
+            ->count();
 
-        $position = $rows->search(fn($row) => $row->user_id === $this->id);
-
-        return $position !== false ? $position + 1 : null;
+        return $higherUsers + 1;
     }
 
     /**

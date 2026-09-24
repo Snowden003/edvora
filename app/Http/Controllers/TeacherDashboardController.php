@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\TeacherApplicationSubmitted;
+use App\Mail\StudentCourseBanned;
+use App\Mail\StudentCourseUnbanned;
 use App\Models\ClassNote;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -16,10 +18,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Services\ScoreService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Inertia\Inertia;
 
 class TeacherDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -31,13 +34,167 @@ class TeacherDashboardController extends Controller
         // Step 2: Active or Pending → show dashboard (pending status will show modal popup)
         $teacher = $user->teacher;
         $courses = Course::where('teacher_id', $user->id)->get();
-        $totalStudents = $courses->sum('enrolled_count');
+        $courseIds = $courses->pluck('id');
+        $totalStudents = (int) $courses->sum('enrolled_count');
         $activeCourses = $courses->whereIn('status', ['active', 'published']);
-        $avgRating = $courses->where('rating', '>', 0)->avg('rating') ?? 0;
+        $avgRating = (float) ($courses->where('rating', '>', 0)->avg('rating') ?? 0);
+        $totalReferrals = \App\Models\TeacherReferralRecord::where('teacher_id', $user->id)
+            ->whereIn('status', ['registered', 'enrolled'])
+            ->count();
 
-        return view('teacher.dashboard', compact(
-            'user', 'teacher', 'courses', 'totalStudents', 'activeCourses', 'avgRating'
-        ));
+        // Specific Enrolled & XP Statistics
+        $enrolledTotalCount = \App\Models\Enrollment::whereIn('course_id', $courseIds)->count();
+        $activeEnrolledCount = \App\Models\Enrollment::whereIn('course_id', $courseIds)->where('status', 'active')->count();
+        $completedCount = \App\Models\Enrollment::whereIn('course_id', $courseIds)->where('status', 'completed')->count();
+        $totalPointsAwarded = (int) \App\Models\Point::whereIn('course_id', $courseIds)->where('amount', '>', 0)->sum('amount');
+
+        // Course status chart counts
+        $statusCounts = [
+            'active' => $activeCourses->count(),
+            'draft' => $courses->where('status', 'draft')->count(),
+            'completed' => $courses->where('status', 'completed')->count(),
+            'archived' => $courses->where('status', 'archived')->count(),
+        ];
+
+        // Format courses list
+        $coursesList = $courses->map(function ($c) {
+            return [
+                'id' => $c->id,
+                'title' => $c->title,
+                'slug' => $c->slug,
+                'status' => $c->status,
+                'enrolled_count' => (int) ($c->enrolled_count ?? 0),
+                'rating' => round((float) ($c->rating ?? 0), 1),
+                'thumbnail' => $c->thumbnail ? (str_starts_with($c->thumbnail, 'http') ? $c->thumbnail : asset('storage/' . $c->thumbnail)) : null,
+                'duration_hours' => $c->duration_hours,
+                'level' => $c->level,
+            ];
+        });
+
+        // Today's scheduled sessions if any
+        $todaySessions = \App\Models\ClassSession::whereIn('course_id', $courseIds)
+            ->whereDate('started_at', \Carbon\Carbon::today())
+            ->with('course:id,title')
+            ->orderBy('started_at')
+            ->get()
+            ->map(fn($s) => [
+                'id' => $s->id,
+                'title' => $s->title ?? 'Live Class Session',
+                'course_title' => $s->course?->title ?? 'Course',
+                'started_at' => $s->started_at?->format('H:i') ?? '',
+                'duration' => $s->duration_minutes ?? 60,
+                'status' => $s->status,
+            ]);
+
+        // Recent activity: recent enrollments for this teacher's courses
+        $recentEnrollments = \DB::table('enrollments')
+            ->join('users', 'users.id', '=', 'enrollments.user_id')
+            ->join('courses', 'courses.id', '=', 'enrollments.course_id')
+            ->whereIn('courses.id', $courseIds)
+            ->select(
+                'enrollments.id',
+                'users.name as student_name',
+                'users.avatar as student_avatar',
+                'courses.title as course_title',
+                'enrollments.created_at'
+            )
+            ->orderByDesc('enrollments.created_at')
+            ->limit(5)
+            ->get()
+            ->map(fn($e) => [
+                'id' => $e->id,
+                'student_name' => $e->student_name,
+                'student_avatar' => $e->student_avatar ? (str_starts_with($e->student_avatar, 'http') ? $e->student_avatar : asset('storage/' . $e->student_avatar)) : null,
+                'course_title' => $e->course_title,
+                'time_ago' => \Carbon\Carbon::parse($e->created_at)->diffForHumans(),
+            ]);
+
+        // Enrolled Students Query with Search & Filtering
+        $enrollQuery = \App\Models\Enrollment::with(['user.studentProfile', 'course'])
+            ->whereIn('course_id', $courseIds);
+
+        if ($courseFilter = $request->get('course_id')) {
+            $enrollQuery->where('course_id', $courseFilter);
+        }
+
+        if ($statusFilter = $request->get('status')) {
+            $enrollQuery->where('status', $statusFilter);
+        }
+
+        if ($search = $request->get('search')) {
+            $enrollQuery->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $enrollmentsPaginated = $enrollQuery->latest()->paginate(12)->withQueryString();
+
+        $enrolledStudents = $enrollmentsPaginated->through(function ($en) {
+            $studentUser = $en->user;
+            $studentScore = $studentUser ? $studentUser->totalScore() : 0;
+            return [
+                'id' => $en->id,
+                'user_id' => $en->user_id,
+                'course_id' => $en->course_id,
+                'status' => $en->status ?? 'active',
+                'progress_percentage' => (int) ($en->progress_percentage ?? 0),
+                'created_at' => $en->created_at ? $en->created_at->toISOString() : null,
+                'enrolled_date_formatted' => $en->created_at ? $en->created_at->format('Y/m/d') : 'N/A',
+                'course' => $en->course ? [
+                    'id' => $en->course->id,
+                    'title' => $en->course->title,
+                    'slug' => $en->course->slug,
+                ] : null,
+                'user' => $studentUser ? [
+                    'id' => $studentUser->id,
+                    'name' => $studentUser->name,
+                    'email' => $studentUser->email,
+                    'avatar_url' => $studentUser->avatar
+                        ? (str_starts_with($studentUser->avatar, 'http') ? $studentUser->avatar : asset('storage/' . $studentUser->avatar))
+                        : null,
+                    'total_score' => $studentScore,
+                    'student_profile' => $studentUser->studentProfile ? [
+                        'education_level' => $studentUser->studentProfile->last_education_level,
+                        'province' => $studentUser->studentProfile->province,
+                        'district' => $studentUser->studentProfile->district,
+                        'skills' => $studentUser->studentProfile->skills,
+                        'bio' => $studentUser->studentProfile->about_me,
+                        'phone' => $studentUser->studentProfile->whatsapp_number,
+                    ] : null,
+                ] : null,
+            ];
+        });
+
+        return Inertia::render('Teacher/Dashboard', [
+            'stats' => [
+                'enrolledTotalCount' => $enrolledTotalCount,
+                'activeEnrolledCount' => $activeEnrolledCount,
+                'completedCount' => $completedCount,
+                'totalPointsAwarded' => $totalPointsAwarded,
+                'totalStudents' => $totalStudents,
+                'totalCourses' => $courses->count(),
+                'activeCourses' => $activeCourses->count(),
+                'avgRating' => round($avgRating, 1),
+                'totalReferrals' => $totalReferrals,
+            ],
+            'enrolledStudents' => $enrolledStudents,
+            'filters' => [
+                'search' => $request->get('search', ''),
+                'course_id' => $request->get('course_id', ''),
+                'status' => $request->get('status', ''),
+            ],
+            'chartData' => [
+                'statusCounts' => $statusCounts,
+                'labels' => $courses->pluck('title')->map(fn($t) => strlen($t) > 22 ? mb_substr($t, 0, 22).'...' : $t)->values(),
+                'students' => $courses->pluck('enrolled_count')->map(fn($v) => (int)($v ?? 0))->values(),
+                'ratings' => $courses->pluck('rating')->map(fn($v) => round((float)($v ?? 0), 1))->values(),
+            ],
+            'courses' => $coursesList,
+            'todaySessions' => $todaySessions,
+            'recentEnrollments' => $recentEnrollments,
+            'isPending' => $user->isPendingApproval() || session('onboarding_submitted'),
+        ]);
     }
 
     public function yourCourses(Request $request)
@@ -59,17 +216,35 @@ class TeacherDashboardController extends Controller
         }
 
         $courses    = $query->with('category')->latest()->paginate(9)->withQueryString();
-        $categories = \App\Models\Category::all();
+        $categories = \App\Models\Category::select('id', 'name', 'slug')->get();
 
-        $totalStudents  = Course::where('teacher_id', $user->id)->sum('enrolled_count');
+        $totalStudents  = (int) Course::where('teacher_id', $user->id)->sum('enrolled_count');
         $totalCourses   = Course::where('teacher_id', $user->id)->count();
-        $avgRating      = Course::where('teacher_id', $user->id)->where('rating', '>', 0)->avg('rating') ?? 0;
+        $avgRating      = (float) (Course::where('teacher_id', $user->id)->where('rating', '>', 0)->avg('rating') ?? 0);
         $activeCourses  = Course::where('teacher_id', $user->id)->where('status', 'active')->count();
 
-        return view('teacher.your-courses', compact(
-            'courses', 'categories', 'user',
-            'totalStudents', 'totalCourses', 'avgRating', 'activeCourses'
-        ));
+        // Transform collection to format thumbnails
+        $courses->getCollection()->transform(function ($course) {
+            $course->thumbnail_url = $course->thumbnail 
+                ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail))
+                : null;
+            return $course;
+        });
+
+        return Inertia::render('Teacher/YourCourses', [
+            'courses' => $courses,
+            'categories' => $categories,
+            'filters' => [
+                'search' => $request->get('search', ''),
+                'category' => $request->get('category', ''),
+            ],
+            'stats' => [
+                'totalStudents' => $totalStudents,
+                'totalCourses' => $totalCourses,
+                'avgRating' => round($avgRating, 1),
+                'activeCourses' => $activeCourses,
+            ],
+        ]);
     }
 
     public function onboarding()
@@ -114,6 +289,9 @@ class TeacherDashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        // Auto-close any active sessions older than 3 minutes with 0 attendees
+        \App\Models\ClassSession::checkAndCloseExpiredSessions($id);
+
         $activeSession = \App\Models\ClassSession::where('course_id', $id)
             ->where('status', 'active')
             ->latest()
@@ -124,13 +302,17 @@ class TeacherDashboardController extends Controller
             ? \App\Models\SessionAttendance::where('session_id', $activeSession->id)->count()
             : 0;
 
-        $pastSessions = \App\Models\ClassSession::with('attendances.user')
+        $pastSessions = \App\Models\ClassSession::with(['attendances.user', 'lesson'])
             ->where('course_id', $id)
             ->where('status', 'ended')
             ->orderByDesc('started_at')
             ->get();
 
-        $sessionIds = $pastSessions->pluck('id');
+        // Only count conducted sessions (attended, not cancelled) in attendance summary
+        $conductedSessions = $pastSessions->where('is_cancelled', false)->filter(function ($s) {
+            return ($s->attendances && $s->attendances->count() > 0) || ($s->attendees_count > 0);
+        });
+        $sessionIds = $conductedSessions->pluck('id');
 
         $attendanceSummary = $enrollments->map(function ($en) use ($sessionIds) {
             $total   = $sessionIds->count();
@@ -188,11 +370,17 @@ class TeacherDashboardController extends Controller
             ->take(50)
             ->get();
 
+        $referral = \App\Models\TeacherReferral::firstOrCreate(
+            ['teacher_id' => $user->id, 'course_id' => $course->id],
+            ['code' => \App\Models\TeacherReferral::generateCode($user->id, $course->id)]
+        );
+        $referralRecords = $referral->records()->with('user.studentProfile')->latest()->get();
+
         return view('teacher.courses-detail', compact(
             'course', 'user', 'enrollments', 'reviews', 'documents',
             'activeSession', 'activeSessionParticipants', 'pastSessions', 'attendanceSummary', 'classNotes', 'lessons',
             'completedLessonIds', 'completedLessonsCount', 'totalLessons', 'progressPercent',
-            'scoringRules', 'coursePoints'
+            'scoringRules', 'coursePoints', 'referral', 'referralRecords'
         ));
     }
 
@@ -353,7 +541,7 @@ class TeacherDashboardController extends Controller
             ->orderBy('started_at')
             ->get();
 
-        $sessionIds = $pastSessions->pluck('id');
+        $sessionIds = $pastSessions->where('is_cancelled', false)->pluck('id');
 
         // Per-student attendance summary
         $attendanceSummary = $enrollments->map(function ($en) use ($sessionIds, $pastSessions) {
@@ -484,12 +672,27 @@ class TeacherDashboardController extends Controller
             ->first();
 
         if ($session) {
+            $platformAttendanceCount = \App\Models\SessionAttendance::where('session_id', $session->id)->count();
+            $effectiveAttendees = max($attendeesCount, $platformAttendanceCount);
+            $hasNoStudents = ($effectiveAttendees === 0);
+
+            $note = $request->input('note');
+            if ($hasNoStudents && empty($note)) {
+                $note = 'Class session ended with no student attendance.';
+            }
+
             $session->update([
                 'status'          => 'ended',
                 'ended_at'        => now(),
-                'attendees_count' => $attendeesCount,
-                'note'            => $request->input('note'),
+                'attendees_count' => $effectiveAttendees,
+                'is_cancelled'    => $hasNoStudents,
+                'note'            => $note,
             ]);
+
+            // If no students attended, DO NOT mark lesson as completed and DO NOT announce completion
+            if ($hasNoStudents) {
+                return back()->with('session_warning', 'Class session ended. No students attended, so the lesson was not marked as completed.');
+            }
 
             // Notify enrolled students that class has concluded
             $enrolledStudentIds = $course->enrollments()->where('status', 'active')->pluck('user_id');
@@ -563,33 +766,62 @@ class TeacherDashboardController extends Controller
     }
 
     /**
-     * Auto-close inactive sessions (no participants for 5+ minutes)
+     * Auto-close inactive sessions (no participants for 3+ minutes)
      */
     public function autoCloseInactiveSessions()
     {
-        $inactiveThreshold = now()->subMinutes(5);
-
-        // Find sessions that have been active for more than 5 minutes
-        // and either have no participants or haven't been updated
-        $inactiveSessions = \App\Models\ClassSession::where('status', 'active')
-            ->where('started_at', '<', $inactiveThreshold)
-            ->where(function ($q) use ($inactiveThreshold) {
-                $q->whereNull('last_participant_at')
-                  ->orWhere('last_participant_at', '<', $inactiveThreshold);
-            })
-            ->get();
-
-        foreach ($inactiveSessions as $session) {
-            $session->update([
-                'status'   => 'ended',
-                'ended_at' => now(),
-                'note'     => 'Auto-closed due to inactivity (no participants for 5+ minutes)',
-            ]);
-        }
+        $closedCount = \App\Models\ClassSession::checkAndCloseExpiredSessions();
 
         return response()->json([
-            'closed_count' => $inactiveSessions->count(),
-            'message'      => $inactiveSessions->count() > 0 ? 'Inactive sessions closed.' : 'No inactive sessions found.',
+            'closed_count' => $closedCount,
+            'message'      => $closedCount > 0 ? "{$closedCount} inactive session(s) closed." : 'No inactive sessions found.',
+        ]);
+    }
+
+    /**
+     * Toggle manual enrollment open/close status for a course
+     */
+    public function toggleEnrollment(Request $request, $id)
+    {
+        $teacher = Auth::user();
+        $course = Course::where('id', $id)
+            ->where('teacher_id', $teacher->id)
+            ->firstOrFail();
+
+        $course->is_enrollment_closed = !$course->is_enrollment_closed;
+        $course->save();
+
+        return response()->json([
+            'success' => true,
+            'is_enrollment_closed' => (bool) $course->is_enrollment_closed,
+            'message' => $course->is_enrollment_closed
+                ? 'Enrollment has been closed for this course.'
+                : 'Enrollment has been re-opened for this course.',
+        ]);
+    }
+
+    /**
+     * Regenerate referral code for a teacher's course
+     */
+    public function regenerateReferralCode(Request $request, $id)
+    {
+        $teacher = Auth::user();
+        $course = Course::where('id', $id)
+            ->where('teacher_id', $teacher->id)
+            ->firstOrFail();
+
+        $newCode = \App\Models\TeacherReferral::generateCode($teacher->id, $course->id);
+
+        $referral = \App\Models\TeacherReferral::updateOrCreate(
+            ['teacher_id' => $teacher->id, 'course_id' => $course->id],
+            ['code' => $newCode]
+        );
+
+        return response()->json([
+            'success' => true,
+            'code'    => $referral->code,
+            'url'     => route('referral.join', $referral->code),
+            'message' => 'New invitation link generated successfully!',
         ]);
     }
 
@@ -862,28 +1094,72 @@ class TeacherDashboardController extends Controller
 
     public function banStudent(Request $request, $id, $userId)
     {
-        $user   = Auth::user();
-        $course = Course::where('teacher_id', $user->id)->findOrFail($id);
+        $teacher = Auth::user();
+        $course  = Course::where('teacher_id', $teacher->id)->findOrFail($id);
+        $student = User::findOrFail($userId);
 
-        \App\Models\Enrollment::where('course_id', $course->id)
-            ->where('user_id', $userId)
-            ->firstOrFail()
-            ->update(['status' => 'banned']);
+        $enrollment = \App\Models\Enrollment::where('course_id', $course->id)
+            ->where('user_id', $student->id)
+            ->firstOrFail();
 
-        return back()->with('student_action', 'Student has been banned from this course.');
+        $enrollment->update(['status' => 'banned']);
+
+        // Set student account status to banned
+        $student->update(['status' => 'banned']);
+
+        $reason = $request->input('reason', 'Access suspended by instructor for policy or academic reasons.');
+
+        // 1. Send in-app notification to the student account
+        try {
+            NotificationController::notifyStudentBanned($student->id, $course->title, $teacher->name, $reason);
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send ban notification: ' . $e->getMessage());
+        }
+
+        // 2. Send email to student
+        if (!empty($student->email)) {
+            try {
+                Mail::to($student->email)->send(new StudentCourseBanned($student, $course, $teacher, $reason));
+            } catch (\Throwable $e) {
+                \Log::error('Failed to send ban email: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('student_action', "Student {$student->name} has been banned. An email and notification have been sent.");
     }
 
     public function unbanStudent(Request $request, $id, $userId)
     {
-        $user   = Auth::user();
-        $course = Course::where('teacher_id', $user->id)->findOrFail($id);
+        $teacher = Auth::user();
+        $course  = Course::where('teacher_id', $teacher->id)->findOrFail($id);
+        $student = User::findOrFail($userId);
 
-        \App\Models\Enrollment::where('course_id', $course->id)
-            ->where('user_id', $userId)
-            ->firstOrFail()
-            ->update(['status' => 'active']);
+        $enrollment = \App\Models\Enrollment::where('course_id', $course->id)
+            ->where('user_id', $student->id)
+            ->firstOrFail();
 
-        return back()->with('student_action', 'Student has been reinstated to this course.');
+        $enrollment->update(['status' => 'active']);
+
+        // Restore student user status
+        $student->update(['status' => 'active']);
+
+        // 1. Send in-app notification
+        try {
+            NotificationController::notifyStudentUnbanned($student->id, $course->title, $teacher->name);
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send unban notification: ' . $e->getMessage());
+        }
+
+        // 2. Send reinstatement email
+        if (!empty($student->email)) {
+            try {
+                Mail::to($student->email)->send(new StudentCourseUnbanned($student, $course, $teacher));
+            } catch (\Throwable $e) {
+                \Log::error('Failed to send unban email: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('student_action', "Student {$student->name} has been reinstated to this course.");
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Models\Activity;
 use App\Services\ScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class QuizController extends Controller
 {
@@ -26,46 +27,150 @@ class QuizController extends Controller
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();
-        } else {
-            // For students, show only published quizzes from courses they're enrolled in
-            $quizzes = Quiz::with(['course', 'attempts'])
-                ->where('is_published', true)
-                ->whereHas('course', function($query) use ($user) {
-                    $query->whereHas('enrollments', function($subQuery) use ($user) {
-                        $subQuery->where('user_id', $user->id);
-                    });
-                })
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
 
-        // Calculate statistics
-        $totalQuizzes = $quizzes->count();
-        $upcomingQuizzes = $quizzes->filter(function($quiz) {
-            return $quiz->status === 'upcoming';
-        })->count();
-        
-        $avgCompletion = 0;
-        if ($totalQuizzes > 0) {
-            $completedQuizzes = $quizzes->filter(function($quiz) {
-                return $quiz->status === 'completed';
-            });
+            // Calculate statistics
+            $totalQuizzes = $quizzes->count();
+            $upcomingQuizzes = $quizzes->filter(function($quiz) {
+                return $quiz->status === 'upcoming';
+            })->count();
             
-            if ($completedQuizzes->count() > 0) {
-                $totalCompletionRate = $completedQuizzes->sum(function($quiz) {
-                    $totalStudents = $quiz->course->enrollments()->count();
-                    $completedStudents = $quiz->total_participants;
-                    return $totalStudents > 0 ? ($completedStudents / $totalStudents) * 100 : 0;
+            $avgCompletion = 0;
+            if ($totalQuizzes > 0) {
+                $completedQuizzes = $quizzes->filter(function($quiz) {
+                    return $quiz->status === 'completed';
                 });
-                $avgCompletion = $totalCompletionRate / $completedQuizzes->count();
+                
+                if ($completedQuizzes->count() > 0) {
+                    $totalCompletionRate = $completedQuizzes->sum(function($quiz) {
+                        $totalStudents = $quiz->course->enrollments()->count();
+                        $completedStudents = $quiz->total_participants;
+                        return $totalStudents > 0 ? ($completedStudents / $totalStudents) * 100 : 0;
+                    });
+                    $avgCompletion = $totalCompletionRate / $completedQuizzes->count();
+                }
             }
+
+            return view('exams.index', compact('quizzes', 'totalQuizzes', 'avgCompletion'));
         }
 
-        return view('exams.index', compact('quizzes', 'totalQuizzes', 'avgCompletion'));
+        // --- STUDENT AREA (Inertia 3D Minimal Modern) ---
+        // Fetch active enrolled courses
+        $enrolledCourses = $user->enrollments()
+            ->where('status', '!=', 'banned')
+            ->with('course:id,title,slug')
+            ->get()
+            ->pluck('course')
+            ->filter()
+            ->values();
+
+        $enrolledCourseIds = $enrolledCourses->pluck('id');
+
+        $quizzes = Quiz::with([
+                'course:id,title,slug',
+                'lesson:id,title',
+                'questions:id,quiz_id'
+            ])
+            ->where('is_published', true)
+            ->whereIn('course_id', $enrolledCourseIds)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $quizIds = $quizzes->pluck('id');
+        $allAttempts = QuizAttempt::where('user_id', $user->id)
+            ->whereIn('quiz_id', $quizIds)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('quiz_id');
+
+        $quizzesData = $quizzes->map(function ($quiz) use ($allAttempts) {
+            $userAttempts = $allAttempts->get($quiz->id, collect());
+            $attemptsCount = $userAttempts->count();
+            $maxAttempts = (int) ($quiz->max_attempts ?? 1);
+            $attemptsLeft = max(0, $maxAttempts - $attemptsCount);
+
+            $bestAttempt = $userAttempts->sortByDesc('score')->first();
+            $latestAttempt = $userAttempts->first();
+
+            $hasPassed = $userAttempts->where('passed', true)->isNotEmpty();
+            $isExhausted = $attemptsCount >= $maxAttempts;
+
+            $status = 'available';
+            if ($hasPassed) {
+                $status = 'passed';
+            } elseif ($isExhausted) {
+                $status = 'exhausted';
+            } elseif ($attemptsCount > 0) {
+                $status = 'in_progress';
+            }
+
+            $bestScore = $bestAttempt ? (int) $bestAttempt->score : null;
+            $totalPoints = $bestAttempt ? (int) $bestAttempt->total_points : ($latestAttempt ? (int) $latestAttempt->total_points : max(1, $quiz->questions->count() * 10));
+            $scorePercentage = ($bestScore !== null && $totalPoints > 0) ? round(($bestScore / $totalPoints) * 100) : null;
+
+            return [
+                'id' => $quiz->id,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'duration_minutes' => (int) ($quiz->duration_minutes ?? 30),
+                'xp_reward' => (int) ($quiz->xp_reward ?? 50),
+                'max_attempts' => $maxAttempts,
+                'questions_count' => $quiz->questions->count(),
+                'course' => [
+                    'id' => $quiz->course?->id,
+                    'title' => $quiz->course?->title ?? 'کورس ادوُرا',
+                    'slug' => $quiz->course?->slug,
+                ],
+                'lesson' => $quiz->lesson ? [
+                    'id' => $quiz->lesson->id,
+                    'title' => $quiz->lesson->title,
+                ] : null,
+                'user_stats' => [
+                    'attempts_count' => $attemptsCount,
+                    'attempts_left' => $attemptsLeft,
+                    'has_passed' => $hasPassed,
+                    'is_exhausted' => $isExhausted && !$hasPassed,
+                    'status' => $status,
+                    'best_score' => $bestScore,
+                    'total_points' => $totalPoints,
+                    'score_percentage' => $scorePercentage,
+                    'earned_xp' => (int) $userAttempts->sum('earned_xp'),
+                    'last_attempt_at' => $latestAttempt?->completed_at?->diffForHumans() ?? $latestAttempt?->created_at?->diffForHumans(),
+                ],
+            ];
+        });
+
+        $totalQuizzes = $quizzesData->count();
+        $passedCount = $quizzesData->where('user_stats.status', 'passed')->count();
+        $inProgressCount = $quizzesData->where('user_stats.status', 'in_progress')->count();
+        $availableCount = $quizzesData->where('user_stats.status', 'available')->count();
+        $totalXpEarned = $quizzesData->sum('user_stats.earned_xp');
+
+        $validPercentages = $quizzesData->pluck('user_stats.score_percentage')->filter(fn($p) => !is_null($p));
+        $avgScore = $validPercentages->count() > 0 ? round($validPercentages->average()) : 0;
+
+        return Inertia::render('Student/Quizzes', [
+            'quizzes' => $quizzesData->values(),
+            'courses' => $enrolledCourses->map(fn($c) => ['id' => $c->id, 'title' => $c->title])->values(),
+            'stats' => [
+                'total' => $totalQuizzes,
+                'passed' => $passedCount,
+                'in_progress' => $inProgressCount,
+                'available' => $availableCount,
+                'total_xp' => $totalXpEarned,
+                'avg_score' => $avgScore,
+            ],
+        ]);
     }
 
     public function show(Quiz $quiz)
     {
+        if (Auth::user()?->role === 'student') {
+            $enrollment = $quiz->course->enrollments()->where('user_id', Auth::id())->first();
+            if ($enrollment && $enrollment->status === 'banned') {
+                abort(403, 'Your access to this course and its exams has been suspended by the instructor.');
+            }
+        }
+
         $quiz->load(['questions', 'course', 'attempts' => function($query) {
             $query->where('user_id', Auth::id());
         }]);
@@ -75,13 +180,15 @@ class QuizController extends Controller
 
     public function take(Quiz $quiz)
     {
-        // Check if user is enrolled in the course
-        $isEnrolled = $quiz->course->enrollments()
+        // Check if user is enrolled in the course and not banned
+        $enrollment = $quiz->course->enrollments()
             ->where('user_id', Auth::id())
-            ->exists();
+            ->first();
 
-        if (!$isEnrolled) {
-            abort(403, 'You are not enrolled in this course');
+        if (!$enrollment || $enrollment->status === 'banned') {
+            abort(403, $enrollment && $enrollment->status === 'banned' 
+                ? 'Your access to this course and its exams has been suspended by the instructor.' 
+                : 'You are not enrolled in this course');
         }
 
         $quiz->load('questions');
@@ -254,6 +361,14 @@ class QuizController extends Controller
 
     public function submit(Request $request, Quiz $quiz)
     {
+        $enrollment = $quiz->course->enrollments()
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$enrollment || $enrollment->status === 'banned') {
+            abort(403, 'Your access to this course and its exams has been suspended.');
+        }
+
         $request->validate([
             'answers' => 'required|array',
         ]);

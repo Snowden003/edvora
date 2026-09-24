@@ -9,7 +9,7 @@ class ClassSession extends Model
 {
     protected $fillable = [
         'course_id', 'lesson_id', 'started_by', 'meet_link', 'room_name', 'status',
-        'started_at', 'ended_at', 'attendees_count', 'note',
+        'is_cancelled', 'started_at', 'ended_at', 'attendees_count', 'note',
         'last_participant_at', 'participants_count'
     ];
 
@@ -35,7 +35,41 @@ class ClassSession extends Model
         'ended_at' => 'datetime',
         'last_participant_at' => 'datetime',
         'participants_count' => 'integer',
+        'is_cancelled' => 'boolean',
     ];
+
+    /**
+     * Auto-cancel any active sessions where no students joined within 3 minutes.
+     */
+    public static function checkAndCloseExpiredSessions($courseId = null): int
+    {
+        $cutoff = now()->subMinutes(3);
+        $query = static::where('status', 'active')
+            ->where('started_at', '<=', $cutoff);
+
+        if ($courseId) {
+            $query->where('course_id', $courseId);
+        }
+
+        $sessions = $query->get();
+        $closedCount = 0;
+
+        foreach ($sessions as $session) {
+            $hasAttendance = SessionAttendance::where('session_id', $session->id)->exists();
+            if (!$hasAttendance && ($session->participants_count ?? 0) === 0) {
+                $session->update([
+                    'status'          => 'ended',
+                    'ended_at'        => now(),
+                    'attendees_count' => 0,
+                    'is_cancelled'    => true,
+                    'note'            => $session->note ?: 'Cancelled automatically: No students joined within 3 minutes.',
+                ]);
+                $closedCount++;
+            }
+        }
+
+        return $closedCount;
+    }
 
     public function course()
     {

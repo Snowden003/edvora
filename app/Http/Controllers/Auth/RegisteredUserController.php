@@ -46,6 +46,31 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Check for teacher referral
+        $refCode = session('teacher_referral_code') ?? $request->cookie('edvora_ref');
+        if ($refCode) {
+            $referral = \App\Models\TeacherReferral::with('course')->where('code', $refCode)->first();
+            if ($referral) {
+                \App\Models\TeacherReferralRecord::firstOrCreate([
+                    'course_id' => $referral->course_id,
+                    'user_id'   => $user->id,
+                ], [
+                    'teacher_referral_id' => $referral->id,
+                    'teacher_id'          => $referral->teacher_id,
+                    'status'              => 'registered',
+                    'registered_at'       => now(),
+                    'ip_address'          => $request->ip(),
+                ]);
+
+                \App\Http\Controllers\NotificationController::createStudentMessage(
+                    $referral->teacher_id,
+                    $user->name,
+                    "{$user->name} joined Edvora using your invitation link for course '{$referral->course->title}'! 🎉",
+                    $referral->course_id
+                );
+            }
+        }
+
         EmailOtpController::sendOtp($user);
         return redirect()->route('otp.show');
     }

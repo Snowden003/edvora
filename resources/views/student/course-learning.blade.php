@@ -4,7 +4,7 @@
 
 @section('hide_footer')
 @endsection
-@section('title', $course->title . ' - Learning - Edvora Tech')
+@section('title', $course->title . ' - مرکز آموزش و دروس - ادوُرا تِک')
 
 @push('styles')
 <link href="{{ asset('assets/css/student-dashboard.css') }}" rel="stylesheet" />
@@ -40,14 +40,47 @@
     <main class="main-content">
       <div class="container-fluid py-4 px-xl-4">
 
+        {{-- Day names & levels helper --}}
+        @php
+          $dayNamesFa = [
+            'saturday' => 'شنبه',
+            'sunday' => 'یکشنبه',
+            'monday' => 'دوشنبه',
+            'tuesday' => 'سه‌شنبه',
+            'wednesday' => 'چهارشنبه',
+            'thursday' => 'پنج‌شنبه',
+            'friday' => 'جمعه',
+          ];
+          $translatedDays = [];
+          if (!empty($course->primary_class_days)) {
+              foreach ($course->primary_class_days as $day) {
+                  $translatedDays[] = $dayNamesFa[strtolower($day)] ?? $day;
+              }
+          }
+          $levelNamesFa = [
+            'beginner' => 'مبتدی',
+            'intermediate' => 'متوسط',
+            'advanced' => 'پیشرفته',
+          ];
+          $courseLevelFa = $levelNamesFa[strtolower($course->level ?? '')] ?? ucfirst($course->level);
+
+          $catNamesFa = [
+            'programming' => 'برنامه‌نویسی',
+            'design' => 'طراحی و گرافیک',
+            'business' => 'تجارت و مدیریت',
+            'languages' => 'زبان‌های خارجی',
+          ];
+          $courseCatFa = $catNamesFa[strtolower($course->category->name ?? '')] ?? $course->category?->name;
+        @endphp
+
         {{-- Hero Header --}}
         <div class="learning-hero">
           <div class="learning-hero-content">
             <div class="breadcrumb-light">
-              <a href="{{ route('student.dashboard') }}">Dashboard</a>
-              <i class="bi bi-chevron-right"></i>
-              <a href="{{ route('student.courses') }}">My Courses</a>
-              <i class="bi bi-chevron-right"></i>
+              <a href="{{ route('student.dashboard') }}">داشبورد</a>
+              <i class="bi bi-chevron-left"></i>
+              <a href="{{ route('student.courses') }}">کورس‌های من</a>
+              <i class="bi bi-chevron-left"></i>
               <span>{{ Str::limit($course->title, 40) }}</span>
             </div>
 
@@ -57,59 +90,63 @@
               @if($course->teacher)
               <a href="{{ route('teachers.show', $course->teacher_id) }}" class="teacher-badge text-decoration-none">
                 <i class="bi bi-person-fill"></i>
-                {{ $course->teacher->name }}
+                استاد: {{ $course->teacher->name }}
               </a>
               @else
               <span class="teacher-badge">
                 <i class="bi bi-person-fill"></i>
-                Instructor
+                استاد دوره
               </span>
               @endif
+
               @if($course->category)
               <span class="teacher-badge">
                 <i class="bi bi-tag-fill"></i>
-                {{ $course->category->name }}
+                {{ $courseCatFa }}
               </span>
               @endif
+
               @if($course->level)
               <span class="teacher-badge">
                 <i class="bi bi-bar-chart-steps"></i>
-                {{ ucfirst($course->level) }}
+                سطح {{ $courseLevelFa }}
               </span>
               @endif
+
               {{-- Class Schedule --}}
               @if($course->primary_class_start && $course->primary_class_end)
-              <span class="teacher-badge" title="Class Time">
+              <span class="teacher-badge" title="ساعت برگزاری صنف">
                 <i class="bi bi-clock"></i>
-                {{ \Carbon\Carbon::parse($course->primary_class_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($course->primary_class_end)->format('h:i A') }}
-                @if($course->primary_class_days)
-                  ({{ implode(', ', $course->primary_class_days) }})
+                ساعت {{ \Carbon\Carbon::parse($course->primary_class_start)->format('h:i A') }} الی {{ \Carbon\Carbon::parse($course->primary_class_end)->format('h:i A') }}
+                @if(!empty($translatedDays))
+                  ({{ implode('، ', $translatedDays) }})
                 @endif
               </span>
               @endif
+
               {{-- Course Duration --}}
               @if($course->start_date || $course->end_date)
-              <span class="teacher-badge" title="Course Duration">
+              <span class="teacher-badge" title="مدت زمان کورس">
                 <i class="bi bi-calendar-range"></i>
                 @if($course->start_date && $course->end_date)
-                  {{ $course->start_date->format('M d, Y') }} - {{ $course->end_date->format('M d, Y') }}
+                  از {{ $course->start_date->format('Y/m/d') }} الی {{ $course->end_date->format('Y/m/d') }}
                 @elseif($course->start_date)
-                  From {{ $course->start_date->format('M d, Y') }}
+                  آغاز از {{ $course->start_date->format('Y/m/d') }}
                 @else
-                  Until {{ $course->end_date->format('M d, Y') }}
+                  تا تاریخ {{ $course->end_date->format('Y/m/d') }}
                 @endif
               </span>
               @endif
             </div>
 
             {{-- Progress Badge --}}
-            <div class="mt-2 mb-2">
+            <div class="mt-2 mb-2 d-flex flex-wrap gap-2">
               <span class="badge bg-success" style="font-size:0.85rem;">
                 <i class="bi bi-check-circle-fill me-1"></i>
-                {{ $completedLessonsCount ?? 0 }}/{{ $totalLessons ?? count($lessons) }} Lessons
+                {{ $completedLessonsCount ?? 0 }}/{{ $totalLessons ?? count($lessons) }} درس
               </span>
               <span class="badge bg-info text-dark" style="font-size:0.85rem;">
-                <i class="bi bi-graph-up me-1"></i>{{ $progressPercent ?? 0 }}% Complete
+                <i class="bi bi-graph-up me-1"></i>{{ $progressPercent ?? 0 }}٪ تکمیل شده
               </span>
             </div>
 
@@ -118,26 +155,26 @@
                 <div class="progress-track">
                   <div class="progress-fill" style="width: {{ $stats['progress'] }}%"></div>
                 </div>
-                <div class="progress-text">{{ $stats['progress'] }}% Complete &mdash; {{ $stats['completed_lessons'] }} of {{ $stats['total_lessons'] }} lessons done</div>
+                <div class="progress-text">{{ $stats['progress'] }}٪ تکمیل شده &mdash; {{ $stats['completed_lessons'] }} از مجموع {{ $stats['total_lessons'] }} درس تمام شد</div>
               </div>
               <div class="d-flex flex-wrap gap-2">
                 <span class="progress-stat-pill">
-                  <i class="bi bi-journal-text"></i> {{ $stats['total_lessons'] }} Lessons
+                  <i class="bi bi-journal-text"></i> {{ $stats['total_lessons'] }} درس
                 </span>
                 <span class="progress-stat-pill">
-                  <i class="bi bi-file-earmark-arrow-down"></i> {{ $stats['total_documents'] }} Files
+                  <i class="bi bi-file-earmark-arrow-down"></i> {{ $stats['total_documents'] }} فایل
                 </span>
                 <span class="progress-stat-pill">
-                  <i class="bi bi-sticky"></i> {{ $stats['total_notes'] }} Notes
+                  <i class="bi bi-sticky"></i> {{ $stats['total_notes'] }} نوت
                 </span>
                 <span class="progress-stat-pill" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
                   <i class="bi bi-clock"></i>
                   @if(($stats['total_learning_hours'] ?? 0) > 0)
-                    {{ $stats['total_learning_hours'] }}h {{ $stats['total_learning_minutes'] }}m
+                    {{ $stats['total_learning_hours'] }} ساعت و {{ $stats['total_learning_minutes'] }} دقیقه
                   @else
-                    {{ $stats['total_learning_minutes'] ?? 0 }}m
+                    {{ $stats['total_learning_minutes'] ?? 0 }} دقیقه
                   @endif
-                  Learning Time
+                  مدت آموزش
                 </span>
               </div>
             </div>
@@ -153,31 +190,31 @@
               </div>
               <div>
                 <div style="font-weight:700;font-size:1.1rem;">
-                  <i class="bi bi-broadcast me-1"></i>Live Class in Progress
+                  <i class="bi bi-broadcast me-1"></i>صنف آنلاین هم‌اکنون در جریان است
                 </div>
                 <div style="font-size:.85rem;opacity:.9;" id="live-class-info">
                   @if($activeSession && $activeSession->lesson)
-                    <span class="badge bg-warning text-dark me-2"><i class="bi bi-book me-1"></i>Lesson {{ $activeSession->lesson->order }}</span>
+                    <span class="badge bg-warning text-dark me-2"><i class="bi bi-book me-1"></i>درس {{ $activeSession->lesson->order }}</span>
                     {{ $activeSession->lesson->title }}
                   @else
                     Google Meet
                   @endif
                   @if($activeSession && $activeSession->room_name)
-                    • Room: <span id="live-room-name">{{ $activeSession->room_name }}</span>
+                    • اتاق: <span id="live-room-name">{{ $activeSession->room_name }}</span>
                   @endif
                 </div>
               </div>
             </div>
             <div>
               <button id="join-class-btn" class="btn fw-bold px-4 py-2" onclick="joinClass('{{ $activeSession->id ?? '' }}')" style="background:#fff;color:#1F8FFF;border:none;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);">
-                <i class="bi bi-box-arrow-up-right me-2"></i>Join Class
+                <i class="bi bi-box-arrow-up-right me-2"></i>پیوستن به صنف
               </button>
             </div>
           </div>
           <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.2);">
             <div class="d-flex flex-wrap align-items-center gap-2" style="font-size:.8rem;opacity:.9;">
               <i class="bi bi-info-circle"></i>
-              <span>You can join the class but your camera and microphone will be muted. Use the chat to ask questions.</span>
+              <span>شما می‌توانید به صنف وصل شوید؛ کمره و مایکروفون شما در ابتدا خاموش می‌باشد. برای طرح سوال از بخش چت استفاده کنید.</span>
             </div>
           </div>
         </div>
@@ -187,38 +224,38 @@
           <div class="learning-stat-card">
             <div class="learning-stat-icon blue"><i class="bi bi-journal-text"></i></div>
             <div class="learning-stat-value">{{ $stats['total_lessons'] }}</div>
-            <div class="learning-stat-label">Lessons</div>
+            <div class="learning-stat-label">درس‌ها</div>
           </div>
           <div class="learning-stat-card">
             <div class="learning-stat-icon green"><i class="bi bi-check-circle"></i></div>
             <div class="learning-stat-value">{{ $stats['completed_lessons'] }}</div>
-            <div class="learning-stat-label">Completed</div>
+            <div class="learning-stat-label">تکمیل‌شده</div>
           </div>
           <div class="learning-stat-card">
             <div class="learning-stat-icon orange"><i class="bi bi-file-earmark-arrow-down"></i></div>
             <div class="learning-stat-value">{{ $stats['total_documents'] }}</div>
-            <div class="learning-stat-label">Files</div>
+            <div class="learning-stat-label">فایل‌ها</div>
           </div>
           <div class="learning-stat-card">
             <div class="learning-stat-icon purple"><i class="bi bi-pencil-square"></i></div>
             <div class="learning-stat-value">{{ $stats['total_quizzes'] }}</div>
-            <div class="learning-stat-label">Quizzes</div>
+            <div class="learning-stat-label">امتحانات</div>
           </div>
           <div class="learning-stat-card">
             <div class="learning-stat-icon cyan"><i class="bi bi-camera-video"></i></div>
             <div class="learning-stat-value">{{ $stats['total_sessions'] }}</div>
-            <div class="learning-stat-label">Sessions</div>
+            <div class="learning-stat-label">جلسات</div>
           </div>
           <div class="learning-stat-card">
             <div class="learning-stat-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;"><i class="bi bi-clock"></i></div>
             <div class="learning-stat-value">
               @if(($stats['total_learning_hours'] ?? 0) > 0)
-                {{ $stats['total_learning_hours'] }}h {{ $stats['total_learning_minutes'] }}m
+                {{ $stats['total_learning_hours'] }}س {{ $stats['total_learning_minutes'] }}د
               @else
-                {{ $stats['total_learning_minutes'] ?? 0 }}m
+                {{ $stats['total_learning_minutes'] ?? 0 }}د
               @endif
             </div>
-            <div class="learning-stat-label">Learning Time</div>
+            <div class="learning-stat-label">مدت آموزش</div>
           </div>
         </div>
 
@@ -228,21 +265,21 @@
           @if($lessons->isEmpty())
             <div class="learning-empty">
               <i class="bi bi-journal-x"></i>
-              <div class="learning-empty-title">No Lessons Yet</div>
-              <p>The instructor hasn't added any lessons to this course yet.</p>
+              <div class="learning-empty-title">هنوز درسی اضافه نشده است</div>
+              <p>استاد محترم تاکنون درسی برای این کورس ثبت نکرده است.</p>
             </div>
           @else
             {{-- Progress Bar --}}
             <div class="mb-4 p-3 rounded-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-bold text-dark"><i class="bi bi-check-circle-fill text-success me-2"></i>Your Progress</span>
-                <span class="badge bg-success">{{ $completedLessonsCount ?? 0 }} / {{ $totalLessons ?? count($lessons) }} Lessons</span>
+                <span class="fw-bold text-dark"><i class="bi bi-check-circle-fill text-success me-2"></i>پیشرفت درسی شما</span>
+                <span class="badge bg-success">{{ $completedLessonsCount ?? 0 }} / {{ $totalLessons ?? count($lessons) }} درس</span>
               </div>
               <div class="progress" style="height:10px;">
                 <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progressPercent ?? 0 }}%"></div>
               </div>
               <div class="text-end mt-1">
-                <small class="text-muted">{{ $progressPercent ?? 0 }}% Complete</small>
+                <small class="text-muted">{{ $progressPercent ?? 0 }}٪ تکمیل شد</small>
               </div>
             </div>
 
@@ -251,7 +288,7 @@
               @php
                 $isCompleted = ($lessonCompletion[$lesson->id] ?? false) || (isset($completedLessonIds) && in_array($lesson->id, $completedLessonIds));
               @endphp
-              <div class="lesson-item {{ $isCompleted ? 'completed' : '' }}" style="{{ $isCompleted ? 'background:#f0fdf4;border-left:4px solid #22c55e;' : '' }}">
+              <div class="lesson-item {{ $isCompleted ? 'completed' : '' }}" style="{{ $isCompleted ? 'background:#f0fdf4;border-right:4px solid #22c55e;' : '' }}">
                 <div class="lesson-number" style="{{ $isCompleted ? 'background:#22c55e;color:#fff;' : '' }}">
                   @if($isCompleted)
                     <i class="bi bi-check-lg"></i>
@@ -263,16 +300,16 @@
                   <div class="lesson-title lesson-expand-toggle" data-lesson="{{ $lesson->id }}">
                     {{ $lesson->title }}
                     @if($isCompleted)
-                      <span class="badge bg-success ms-2" style="font-size:0.65rem;">COMPLETED</span>
+                      <span class="badge bg-success ms-2" style="font-size:0.65rem;">تکمیل شد</span>
                     @endif
-                    <i class="bi bi-chevron-down expand-icon" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
+                    <i class="bi bi-chevron-down expand-icon" style="font-size: 0.75rem; margin-right: 0.25rem;"></i>
                   </div>
                   <div class="lesson-meta">
                     @if($lesson->duration_minutes)
-                    <span><i class="bi bi-clock me-1"></i>{{ $lesson->duration_minutes }} min</span>
+                    <span><i class="bi bi-clock me-1"></i>{{ $lesson->duration_minutes }} دقیقه</span>
                     @endif
                     @if($lesson->is_free)
-                    <span><i class="bi bi-unlock me-1"></i>Free</span>
+                    <span><i class="bi bi-unlock me-1"></i>رایگان</span>
                     @endif
                   </div>
 
@@ -285,13 +322,12 @@
                       <div>{!! nl2br(e(Str::limit($lesson->content, 500))) !!}</div>
                     @endif
 
-
                     {{-- Documents attached to this lesson --}}
                     @php $lessonDocs = $documents->where('lesson_id', $lesson->id); @endphp
                     @if($lessonDocs->count() > 0)
                     <div class="mt-3">
                       <strong class="d-block mb-2" style="font-size: 0.8125rem; color: #6b7280;">
-                        <i class="bi bi-paperclip me-1"></i>Attached Files ({{ $lessonDocs->count() }})
+                        <i class="bi bi-paperclip me-1"></i>فایل‌های ضمیمه ({{ $lessonDocs->count() }})
                       </strong>
                       @foreach($lessonDocs as $doc)
                       <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="document-download me-2 mb-1">
@@ -304,7 +340,7 @@
                 </div>
 
                 <span class="lesson-status-badge {{ $isCompleted ? 'done' : 'pending' }}">
-                  {{ $isCompleted ? 'Completed' : 'Pending' }}
+                  {{ $isCompleted ? 'تکمیل گردید' : 'در انتظار تکمیل' }}
                 </span>
               </div>
               @endforeach
@@ -317,8 +353,8 @@
           @if($documents->isEmpty())
             <div class="learning-empty">
               <i class="bi bi-folder-x"></i>
-              <div class="learning-empty-title">No Files Yet</div>
-              <p>No documents or files have been uploaded for this course.</p>
+              <div class="learning-empty-title">هنوز فایلی ثبت نشده است</div>
+              <p>هیچ اسناد یا فایل درسی برای این کورس آپلود نشده است.</p>
             </div>
           @else
             <div class="document-grid">
@@ -358,7 +394,7 @@
                       {{ $doc->file_size_formatted }}
                     @endif
                     @if($doc->lesson)
-                      &middot; Lesson: {{ Str::limit($doc->lesson->title, 20) }}
+                      &middot; درس: {{ Str::limit($doc->lesson->title, 20) }}
                     @endif
                     &middot; {{ $doc->created_at->diffForHumans() }}
                   </div>
@@ -366,7 +402,7 @@
                     <div class="document-meta">{{ Str::limit($doc->description, 80) }}</div>
                   @endif
                   <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="document-download">
-                    <i class="bi bi-download"></i> Download
+                    <i class="bi bi-download"></i> دانلود فایل
                   </a>
                 </div>
               </div>
@@ -381,8 +417,8 @@
           @if($classNotes->isEmpty())
             <div class="learning-empty" id="notes-empty-state">
               <i class="bi bi-sticky"></i>
-              <div class="learning-empty-title">No Notes Yet</div>
-              <p>The instructor hasn't posted any class notes yet.</p>
+              <div class="learning-empty-title">هنوز نوتی ثبت نشده است</div>
+              <p>استاد محترم تاکنون نوتی برای این صنف ارسال نکرده است.</p>
             </div>
             <div class="notes-list d-none" id="notes-list-container">
             </div>
@@ -394,17 +430,17 @@
                   <div class="note-title">{{ $note->title }}</div>
                   <div class="note-date">
                     <i class="bi bi-calendar3 me-1"></i>
-                    {{ $note->class_date ? $note->class_date->format('M d, Y') : $note->created_at->format('M d, Y') }}
+                    {{ $note->class_date ? $note->class_date->format('Y/m/d') : $note->created_at->format('Y/m/d') }}
                   </div>
                 </div>
                 <div class="note-author">
                   <i class="bi bi-person-fill"></i>
-                  {{ $note->teacher->name ?? 'Instructor' }}
+                  {{ $note->teacher->name ?? 'استاد' }}
                 </div>
                 @if($note->content)
                 <div class="note-content truncated" id="note-content-{{ $note->id }}">{{ $note->content }}</div>
                 <button class="note-toggle" data-note="{{ $note->id }}">
-                  <i class="bi bi-chevron-down me-1"></i>Read More
+                  <i class="bi bi-chevron-down me-1"></i>مشاهده کامل
                 </button>
                 @endif
               </div>
@@ -419,8 +455,8 @@
           @if($sessions->isEmpty())
             <div class="learning-empty">
               <i class="bi bi-camera-video-off"></i>
-              <div class="learning-empty-title">No Sessions Yet</div>
-              <p>No class sessions have been recorded for this course.</p>
+              <div class="learning-empty-title">هنوز جلسه‌ای برگزار نشده است</div>
+              <p>هیچ جلسه آنلاین ثبت‌شده‌ای برای این کورس وجود ندارد.</p>
             </div>
           @else
             <div class="sessions-list">
@@ -432,31 +468,31 @@
                 <div class="session-info">
                   <div class="session-title">
                     <span class="badge me-1" style="background:#1F8FFF;color:#fff;font-size:.65rem;">Google Meet</span>
-                    Session {{ $loop->remaining + 1 }}
+                    جلسه شماره {{ $loop->remaining + 1 }}
                     @if($session->note)
                       <span class="text-muted">&mdash; {{ Str::limit($session->note, 40) }}</span>
                     @endif
                   </div>
                   <div class="session-meta">
                     @if($session->started_at)
-                    <span><i class="bi bi-calendar3 me-1"></i>{{ $session->started_at->format('M d, Y') }}</span>
+                    <span><i class="bi bi-calendar3 me-1"></i>{{ $session->started_at->format('Y/m/d') }}</span>
                     <span><i class="bi bi-clock me-1"></i>{{ $session->started_at->format('h:i A') }}</span>
                     @endif
                     <span><i class="bi bi-hourglass me-1"></i>{{ $session->duration }}</span>
                     @if($session->attendees_count)
-                    <span><i class="bi bi-people me-1"></i>{{ $session->attendees_count }} attendees</span>
+                    <span><i class="bi bi-people me-1"></i>{{ $session->attendees_count }} محصل حاضر</span>
                     @endif
                   </div>
                 </div>
                 <div class="d-flex flex-column align-items-end gap-2">
                   <span class="session-status {{ $session->status === 'active' ? 'live' : 'ended' }}">
-                    {{ $session->status === 'active' ? 'Live Now' : 'Ended' }}
+                    {{ $session->status === 'active' ? 'پخش زنده هم‌اکنون' : 'پایان یافته' }}
                   </span>
                   @if($session->status === 'active')
                     <a href="{{ $session->meet_link }}" target="_blank"
                        class="btn btn-sm fw-bold px-3"
                        style="background:#1F8FFF;color:#fff;border:none;border-radius:8px;font-size:.75rem;">
-                      <i class="bi bi-box-arrow-up-right me-1"></i>Join
+                      <i class="bi bi-box-arrow-up-right me-1"></i>پیوستن
                     </a>
                   @endif
                 </div>
@@ -471,8 +507,8 @@
           @if($quizzes->isEmpty())
             <div class="learning-empty">
               <i class="bi bi-pencil-square"></i>
-              <div class="learning-empty-title">No Quizzes Yet</div>
-              <p>No quizzes or exams are available for this course.</p>
+              <div class="learning-empty-title">امتحانی موجود نیست</div>
+              <p>هیچ کویز یا امتحانی برای این کورس در دسترس نمی‌باشد.</p>
             </div>
           @else
             <div class="quiz-grid">
@@ -487,24 +523,24 @@
                 </div>
 
                 <div class="quiz-meta">
-                  <span><i class="bi bi-question-circle me-1"></i>{{ $quiz->questions_count }} Questions</span>
+                  <span><i class="bi bi-question-circle me-1"></i>{{ $quiz->questions_count }} سوال</span>
                   @if($quiz->duration_minutes)
-                  <span><i class="bi bi-clock me-1"></i>{{ $quiz->duration_minutes }} min</span>
+                  <span><i class="bi bi-clock me-1"></i>{{ $quiz->duration_minutes }} دقیقه</span>
                   @endif
                   @if($quiz->passing_score)
-                  <span><i class="bi bi-bullseye me-1"></i>Pass: {{ $quiz->passing_score }}%</span>
+                  <span><i class="bi bi-bullseye me-1"></i>نمره قبولی: {{ $quiz->passing_score }}٪</span>
                   @endif
                 </div>
 
                 @if($attempt)
                   <div class="quiz-result {{ $attempt->passed ? 'passed' : 'failed' }}">
                     <div class="quiz-result-label">
-                      {{ $attempt->passed ? 'Passed' : 'Failed' }}
+                      {{ $attempt->passed ? 'مؤفقانه سپری شد' : 'ناکام / نیاز به تکرار' }}
                     </div>
                     <div class="quiz-result-score">
                       {{ $attempt->score }}/{{ $attempt->total_points }}
                       @if($attempt->total_points > 0)
-                        ({{ round(($attempt->score / $attempt->total_points) * 100) }}%)
+                        ({{ round(($attempt->score / $attempt->total_points) * 100) }}٪)
                       @endif
                     </div>
                   </div>
@@ -514,12 +550,12 @@
                   @if(!$attempt || ($quiz->max_attempts && $attempt))
                     <a href="{{ route('student.exams.take', $quiz->id) }}" class="quiz-action">
                       <i class="bi bi-play-fill me-1"></i>
-                      {{ $attempt ? 'Retake Quiz' : 'Start Quiz' }}
+                      {{ $attempt ? 'امتحان مجدد' : 'شروع امتحان' }}
                     </a>
                   @endif
                 @else
                   <div class="quiz-action" style="opacity: 0.5; pointer-events: none;">
-                    <i class="bi bi-lock me-1"></i> Not Available Yet
+                    <i class="bi bi-lock me-1"></i> فعلاً در دسترس نیست
                   </div>
                 @endif
               </div>
@@ -531,7 +567,7 @@
         <div class="tab-panel" id="panel-chat">
           <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('courses.chat.show', $course) }}" class="btn btn-sm fw-semibold" style="background:linear-gradient(135deg,#1F8FFF,#6366f1);color:#fff;border:none;border-radius:10px;">
-              <i class="bi bi-box-arrow-up-right me-1"></i> Open full chat
+              <i class="bi bi-box-arrow-up-right me-1"></i> باز کردن صفحه کامل گفتگو
             </a>
           </div>
           <x-course-chat :course="$course" :user="$user" />
@@ -543,12 +579,12 @@
           {{-- Write / Edit Review Form --}}
           <div class="review-form-card mb-4">
             <h5 class="fw-bold mb-3" style="color:#1F8FFF;">
-              <i class="bi bi-pencil-square me-2"></i>{{ $userReview ? 'Edit Your Review' : 'Write a Review' }}
+              <i class="bi bi-pencil-square me-2"></i>{{ $userReview ? 'ویرایش نظر شما' : 'ثبت نظر و ارزیابی' }}
             </h5>
             <form id="reviewForm" action="{{ route('student.courses.reviews.store', $course->slug) }}" method="POST">
               @csrf
               <div class="mb-3">
-                <label class="form-label fw-semibold" style="font-size:.85rem;color:#475569;">Your Rating</label>
+                <label class="form-label fw-semibold" style="font-size:.85rem;color:#475569;">امتیاز شما به کورس</label>
                 <div class="star-rating-input" id="starRatingInput">
                   @for($i = 1; $i <= 5; $i++)
                     <i class="bi {{ $userReview && $i <= $userReview->rating ? 'bi-star-fill' : 'bi-star' }} star-input"
@@ -559,12 +595,12 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold" style="font-size:.85rem;color:#475569;">Your Comment</label>
-                <textarea name="comment" rows="3" class="form-control" placeholder="Share your experience with this course..."
+                <label class="form-label fw-semibold" style="font-size:.85rem;color:#475569;">دیدگاه و نظر شما</label>
+                <textarea name="comment" rows="3" class="form-control" placeholder="تجربه و نظر خود را در مورد این کورس بنویسید..."
                           style="border-radius:10px;border:1px solid #e2e8f0;font-size:.9rem;" required>{{ $userReview->comment ?? '' }}</textarea>
               </div>
               <button type="submit" class="btn fw-bold px-4 py-2" style="background:linear-gradient(135deg,#1F8FFF,#6366f1);color:#fff;border:none;border-radius:10px;">
-                <i class="bi bi-send me-2"></i>{{ $userReview ? 'Update Review' : 'Submit Review' }}
+                <i class="bi bi-send me-2"></i>{{ $userReview ? 'بروزرسانی نظر' : 'ثبت نظر' }}
               </button>
             </form>
             @if(session('review_success'))
@@ -577,7 +613,7 @@
           {{-- Reviews List --}}
           <div class="review-list-header d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0" style="color:#1e293b;">
-              <i class="bi bi-chat-left-text me-2" style="color:#1F8FFF;"></i>Student Reviews
+              <i class="bi bi-chat-left-text me-2" style="color:#1F8FFF;"></i>نظرات شاگردان
               <span class="badge rounded-pill ms-2" style="background:#1F8FFF;font-size:.75rem;">{{ $reviews->count() }}</span>
             </h5>
             @if($reviews->count() > 0)
@@ -596,8 +632,8 @@
           @if($reviews->isEmpty())
             <div class="learning-empty">
               <i class="bi bi-chat-left-dots"></i>
-              <div class="learning-empty-title">No Reviews Yet</div>
-              <p>Be the first to review this course!</p>
+              <div class="learning-empty-title">هنوز نظری ثبت نشده است</div>
+              <p>اولین نفری باشید که برای این کورس نظر ثبت می‌کنید!</p>
             </div>
           @else
             <div class="reviews-list">
@@ -622,10 +658,10 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <div>
                         <span class="fw-semibold" style="color:#1e293b;font-size:.9rem;">
-                          {{ $isOwn ? 'You' : 'Student' }}
+                          {{ $isOwn ? 'شما' : 'شاگرد' }}
                         </span>
                         @if($isOwn)
-                          <span class="badge ms-2" style="background:#dcfce7;color:#15803d;font-size:.65rem;">Your Review</span>
+                          <span class="badge ms-2" style="background:#dcfce7;color:#15803d;font-size:.65rem;">نظر شما</span>
                         @endif
                       </div>
                       <small class="text-muted">{{ $rev->created_at->diffForHumans() }}</small>
@@ -747,13 +783,13 @@
 
         div.innerHTML = `
             <div class="note-header">
-                <div class="note-title" style="font-weight: 600; color: #1f2937;">${note.title || 'Class Note'}</div>
+                <div class="note-title" style="font-weight: 600; color: #1f2937;">${note.title || 'نوت درسی'}</div>
                 <div class="note-date" style="font-size: 12px; color: #6b7280;">
                     <i class="bi bi-calendar3 me-1"></i>${note.class_date || note.created_at}
                 </div>
             </div>
             <div class="note-author" style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">
-                <i class="bi bi-person-circle me-1"></i>By ${note.teacher_name}
+                <i class="bi bi-person-circle me-1"></i>ارسال‌شده توسط: ${note.teacher_name}
             </div>
             <div class="note-content" style="font-size: 14px; color: #4b5563; line-height: 1.6;">
                 ${note.content}
@@ -921,7 +957,7 @@
             isInClass = true;
             startClassCheck();
         } else {
-            alert('Please allow popups for this site to join the class.');
+            alert('لطفاً باز شدن پنجره‌های پاپ‌آپ (Pop-ups) را در مرورگر خود مجاز سازید تا بتوانید وارد صنف شوید.');
         }
 
         return false;
@@ -983,10 +1019,10 @@
 
         const overlay = document.createElement('div');
         overlay.id = 'class-ended-overlay';
-        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; direction: rtl;';
 
         overlay.innerHTML = `
-            <div style="background: white; border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="background: white; border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); font-family: 'Vazirmatn', sans-serif;">
                 <div style="background: #fee2e2; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -994,11 +1030,11 @@
                         <line x1="9" y1="9" x2="15" y2="15"></line>
                     </svg>
                 </div>
-                <h3 style="color: #1f2937; margin-bottom: 10px; font-size: 22px;">Class Ended</h3>
-                <p style="color: #6b7280; margin-bottom: 24px; font-size: 15px;">The teacher has ended the class session.</p>
+                <h3 style="color: #1f2937; margin-bottom: 10px; font-size: 22px; font-weight: 700;">صنف به پایان رسید</h3>
+                <p style="color: #6b7280; margin-bottom: 24px; font-size: 15px;">استاد محترم جلسه درسی را به پایان رساند.</p>
                 <button onclick="document.getElementById('class-ended-overlay').remove(); window.location.reload();"
-                        style="background: #3b82f6; color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 500;">
-                    OK, Refresh Page
+                        style="background: #1f8fff; color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 600;">
+                    تأیید و تازه‌سازی صفحه
                 </button>
             </div>
         `;
@@ -1048,7 +1084,7 @@
         if (!toastContainer) {
             toastContainer = document.createElement('div');
             toastContainer.id = 'toast-container';
-            toastContainer.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;';
+            toastContainer.style.cssText = 'position:fixed;top:20px;left:20px;z-index:9999;direction:rtl;';
             document.body.appendChild(toastContainer);
         }
 
@@ -1066,6 +1102,9 @@
             max-width: 400px;
             animation: slideInRight 0.3s ease;
             cursor: pointer;
+            direction: rtl;
+            text-align: right;
+            font-family: 'Vazirmatn', sans-serif;
         `;
         toast.onclick = function() {
             document.querySelector('.tab-btn[data-tab="notes"]')?.click();
@@ -1076,17 +1115,17 @@
                 <i class="bi bi-journal-text"></i>
             </div>
             <div style="flex: 1;">
-                <div style="font-weight: 600; margin-bottom: 4px;">
-                    <i class="bi bi-bell-fill me-1"></i>New Class Note!
+                <div style="font-weight: 700; margin-bottom: 4px;">
+                    <i class="bi bi-bell-fill ms-1"></i>نوت درسی جدید!
                 </div>
                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px;">
-                    ${note.title || 'A new note has been added'}
+                    ${note.title || 'یک نوت جدید برای این صنف اضافه شد'}
                 </div>
                 <div style="font-size: 12px; opacity: 0.8; line-height: 1.4;">
                     ${note.content ? note.content.substring(0, 80) + (note.content.length > 80 ? '...' : '') : ''}
                 </div>
                 <div style="font-size: 11px; margin-top: 8px; opacity: 0.7;">
-                    <i class="bi bi-hand-index-thumb me-1"></i>Click to view
+                    <i class="bi bi-hand-index-thumb ms-1"></i>جهت مشاهده کلیک نمایید
                 </div>
             </div>
             <button onclick="event.stopPropagation();this.parentElement.remove()" style="background:none;border:none;color:white;font-size:18px;cursor:pointer;padding:0;">
@@ -1151,7 +1190,7 @@
 
             // Update room name if exists
             if (data.room_name && data.room_name !== 'Google Meet') {
-                info.innerHTML = `Google Meet • Room: ${data.room_name}`;
+                info.innerHTML = `Google Meet • اتاق: ${data.room_name}`;
               } else {
                 info.innerHTML = `Google Meet`;
               }
@@ -1181,22 +1220,22 @@
         if (!toastContainer) {
             toastContainer = document.createElement('div');
             toastContainer.id = 'toast-container';
-            toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 350px;';
+            toastContainer.style.cssText = 'position: fixed; top: 20px; left: 20px; z-index: 9999; max-width: 350px; direction: rtl;';
             document.body.appendChild(toastContainer);
         }
 
         const toast = document.createElement('div');
-        toast.style.cssText = 'background: #fff; border-left: 4px solid #22c55e; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); animation: slideIn 0.3s ease;';
+        toast.style.cssText = 'background: #fff; border-right: 4px solid #22c55e; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; direction: rtl; text-align: right; font-family: Vazirmatn, sans-serif;';
         toast.innerHTML = `
             <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <div style="background: #22c55e; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                     <i class="bi bi-camera-video-fill"></i>
                 </div>
                 <div style="flex: 1;">
-                    <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">${data.course_title}</div>
-                    <p style="font-size: 13px; color: #6b7280; margin: 0 0 8px 0;">Class has started!</p>
-                    <button onclick="document.getElementById('join-class-btn').click();" style="display: inline-block; background: #3b82f6; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; border: none; cursor: pointer;">
-                        Join Now <i class="bi bi-box-arrow-up-right" style="margin-left: 4px;"></i>
+                    <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">${data.course_title}</div>
+                    <p style="font-size: 13px; color: #6b7280; margin: 0 0 8px 0;">صنف زنده آغاز شد!</p>
+                    <button onclick="document.getElementById('join-class-btn').click();" style="display: inline-block; background: #1f8fff; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; border: none; cursor: pointer; font-weight: 600;">
+                        پیوستن به صنف <i class="bi bi-box-arrow-up-right" style="margin-right: 4px;"></i>
                     </button>
                 </div>
                 <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 0;">
@@ -1242,7 +1281,7 @@
         const btn = document.getElementById('join-class-btn');
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Joining...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm ms-2"></span>در حال اتصال...';
         }
 
         fetch('{{ route('student.courses.sessions.join', $course->slug) }}', {
@@ -1263,12 +1302,12 @@
         })
         .catch(err => {
             console.error('Join class error:', err);
-            alert('Something went wrong. Please try again.');
+            alert('مشکلی رخ داد، لطفاً دوباره تلاش نمایید.');
         })
         .finally(() => {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-box-arrow-up-right me-2"></i>Join Class';
+                btn.innerHTML = '<i class="bi bi-box-arrow-up-right ms-2"></i>پیوستن به صنف';
             }
         });
     };

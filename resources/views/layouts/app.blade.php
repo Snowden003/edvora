@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key') }}">
     <meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster') ?? 'mt1' }}">
+
     @php
         $metaTitle = trim($__env->yieldContent('meta_title', $__env->yieldContent('title', 'Edvora Tech - Free Online Education for Afghan Women')));
         $metaDescription = trim($__env->yieldContent('meta_description', 'Edvora provides free online courses and practical digital skills education for Afghan women and girls.'));
@@ -35,6 +36,43 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-font-face.css" />
+
+    <style>
+        [dir="rtl"], .rtl-layout {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            letter-spacing: 0 !important;
+        }
+        [dir="rtl"] body, .rtl-layout body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-weight: 500;
+        }
+        /* Bootstrap 5 Carousel RTL support */
+        [dir="rtl"] .carousel-item,
+        .rtl-layout .carousel-item {
+            float: right;
+            margin-right: 0 !important;
+            margin-left: -100% !important;
+        }
+        [dir="rtl"] .carousel-item.active:not(.carousel-item-start):not(.carousel-item-end),
+        .rtl-layout .carousel-item.active:not(.carousel-item-start):not(.carousel-item-end) {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+            float: none;
+        }
+        [dir="rtl"] .carousel-item-next:not(.carousel-item-start),
+        [dir="rtl"] .active.carousel-item-end,
+        .rtl-layout .carousel-item-next:not(.carousel-item-start),
+        .rtl-layout .active.carousel-item-end {
+            transform: translateX(-100%) !important;
+        }
+        [dir="rtl"] .carousel-item-prev:not(.carousel-item-end),
+        [dir="rtl"] .active.carousel-item-start,
+        .rtl-layout .carousel-item-prev:not(.carousel-item-end),
+        .rtl-layout .active.carousel-item-start {
+            transform: translateX(100%) !important;
+        }
+    </style>
 
     <link href="{{ asset('assets/css/variables.css') }}?v={{ file_exists(public_path('assets/css/variables.css')) ? filemtime(public_path('assets/css/variables.css')) : time() }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/global.css') }}?v={{ file_exists(public_path('assets/css/global.css')) ? filemtime(public_path('assets/css/global.css')) : time() }}" rel="stylesheet" />
@@ -63,7 +101,7 @@
     @endif
 </head>
 
-<body class="edvora-theme {{ $isHomePage ? 'page-home' : '' }} @yield('body-class')" data-user-role="{{ Auth::check() ? Auth::user()->role : 'guest' }}">
+<body class="edvora-theme {{ $isHomePage ? 'page-home' : '' }} @yield('body-class')" data-user-role="{{ Auth::check() ? Auth::user()->role : 'guest' }}" data-user-id="{{ Auth::check() ? Auth::id() : '' }}">
     @if (!View::hasSection('hide_header'))
         @include('layouts.partials.header')
     @endif
@@ -79,6 +117,7 @@
     <script src="{{ asset('assets/js/modern-footer.js') }}" defer></script>
     @auth
     <script src="{{ asset('assets/js/notifications.js') }}" defer></script>
+    @include('components.banned-account-modal')
     @endauth
 
     @include('components.ai-chatbot')

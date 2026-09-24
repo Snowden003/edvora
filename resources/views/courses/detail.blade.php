@@ -216,13 +216,45 @@
                         @endif
                     </div>
 
+                    @php
+                        $refWelcome = session('referral_welcome');
+                        $refCode = request('ref') ?? session('teacher_referral_code') ?? request()->cookie('edvora_ref');
+                        if (!$refWelcome && $refCode) {
+                            $foundRef = \App\Models\TeacherReferral::with('teacher')->where('code', $refCode)->where('course_id', $course->id)->first();
+                            if ($foundRef) {
+                                $refWelcome = ['teacher_name' => $foundRef->teacher->name, 'code' => $foundRef->code];
+                            }
+                        }
+                    @endphp
+
+                    @if($refWelcome)
+                        <div class="alert alert-info d-flex align-items-center gap-3 mb-4 rounded-4 border-0 text-white shadow-sm"
+                             style="background: linear-gradient(135deg, rgba(31,143,255,0.25), rgba(99,102,241,0.25)); backdrop-filter: blur(12px); border-left: 4px solid #1F8FFF !important;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-25" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                <i class="bi bi-person-check-fill fs-5 text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold" style="font-size: 0.95rem;">You were invited by Instructor {{ $refWelcome['teacher_name'] }}!</div>
+                                <div class="small opacity-90">Enroll now to join {{ $course->teacher->name ?? 'the instructor' }}'s class and start learning with your classmates.</div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Call to Action -->
-                    @if($course->isCompleted())
+                    @if($course->isEnrollmentClosed())
                         <div class="alert alert-secondary d-flex align-items-center gap-2 mb-4 rounded-3 border-0 bg-secondary bg-opacity-25 text-white" role="alert" style="backdrop-filter: blur(10px);">
                             <i class="bi bi-info-circle-fill fs-5 text-warning"></i>
                             <div>
-                                <strong class="text-warning">Course Ended:</strong>
-                                This course concluded on {{ $course->end_date ? $course->end_date->format('M d, Y') : 'the scheduled date' }} and is no longer accepting new enrollments.
+                                <strong class="text-warning">Enrollment Closed:</strong>
+                                @if($course->is_enrollment_closed)
+                                    Enrollments for this course have been closed by the instructor.
+                                @elseif($course->isCompleted())
+                                    This course concluded on {{ $course->end_date ? $course->end_date->format('M d, Y') : 'the scheduled date' }} and is no longer accepting new enrollments.
+                                @elseif($course->isFull())
+                                    This course has reached its maximum student capacity.
+                                @else
+                                    Enrollment for this course closed 5 days after the start date.
+                                @endif
                             </div>
                         </div>
                     @else
@@ -248,13 +280,9 @@
                                 <a href="{{ route('student.courses.learn', $course->slug) }}" class="btn btn-enroll-primary">
                                     <i class="bi bi-play-circle-fill"></i> Go to Course (Enrolled)
                                 </a>
-                            @elseif($course->isCompleted())
-                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Course has ended. Enrollment is closed.">
+                            @elseif($course->isEnrollmentClosed())
+                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Enrollment is closed for this course.">
                                     <i class="bi bi-calendar-x-fill me-1"></i> Enrollment Closed
-                                </button>
-                            @elseif($course->isFull())
-                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;">
-                                    <i class="bi bi-people-fill me-1"></i> Course Full
                                 </button>
                             @else
                                 <button class="btn btn-enroll-primary enroll-btn"
@@ -272,8 +300,8 @@
                                 <span class="wishlist-text">{{ $isWishlisted ? 'In Wishlist' : 'Add to Wishlist' }}</span>
                             </button>
                         @else
-                            @if($course->isCompleted())
-                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Course has ended. Enrollment is closed.">
+                            @if($course->isEnrollmentClosed())
+                                <button class="btn btn-secondary opacity-75" disabled style="cursor: not-allowed;" title="Enrollment is closed for this course.">
                                     <i class="bi bi-calendar-x-fill me-1"></i> Enrollment Closed
                                 </button>
                             @else

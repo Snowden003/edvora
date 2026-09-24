@@ -7,6 +7,34 @@
 <link href="{{ asset('assets/css/teacher-courses-detail.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/beta-notice.css') }}" rel="stylesheet" />
+<style>
+.cd-regenerate-btn {
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+    font-size: 0.82rem;
+    transition: all 0.2s ease-in-out;
+}
+.cd-regenerate-btn i {
+    color: #64748b;
+    transition: color 0.2s ease-in-out;
+}
+.cd-regenerate-btn:hover {
+    background-color: #1F8FFF !important;
+    color: #ffffff !important;
+    border-color: #1F8FFF !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 143, 255, 0.28) !important;
+}
+.cd-regenerate-btn:hover i,
+.cd-regenerate-btn:hover span {
+    color: #ffffff !important;
+}
+.cd-regenerate-btn:active {
+    background-color: #1773cc !important;
+    transform: translateY(0);
+}
+</style>
 @endpush
 
 @section('hide_header', true)
@@ -154,7 +182,22 @@
                         @endif
                     </div>
 
-                    <div class="col-lg-4 text-lg-end">
+                    <div class="col-lg-4 text-lg-end d-flex align-items-center justify-content-lg-end gap-2 flex-wrap">
+                        <button type="button"
+                                class="btn btn-outline-light rounded-pill px-3 py-2 fw-bold shadow-sm"
+                                onclick="if(window.switchCourseTab){switchCourseTab('referrals');}document.getElementById('tab-referrals')?.scrollIntoView({behavior:'smooth'});"
+                                title="Invite Students via Referral Link">
+                            <i class="bi bi-person-plus-fill me-1 text-success"></i>
+                            <span>Invite Students</span>
+                        </button>
+                        <button type="button"
+                                id="toggleEnrollmentBtn"
+                                class="btn {{ $course->is_enrollment_closed ? 'btn-outline-warning' : 'btn-outline-light' }} rounded-pill px-3 py-2 fw-bold shadow-sm"
+                                data-url="{{ route('teacher.courses.toggle-enrollment', $course->id) }}"
+                                onclick="toggleCourseEnrollment(this)">
+                            <i class="bi {{ $course->is_enrollment_closed ? 'bi-lock-fill me-1 text-warning' : 'bi-unlock-fill me-1' }}"></i>
+                            <span id="enrollmentStatusText">{{ $course->is_enrollment_closed ? 'Enrollment Closed (Click to Open)' : 'Close Enrollment' }}</span>
+                        </button>
                         @if($activeSession)
                         <a href="#live-class-panel" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm"
                            style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;">
@@ -228,6 +271,10 @@
                     <i class="bi bi-shield-check"></i> Students & Access
                     <span class="badge rounded-pill ms-1" style="background:#dcfce7;color:#15803d;font-size:.7rem;">{{ $totalStudents }}</span>
                 </button>
+                <button class="cd-tab-btn" onclick="switchTab('referrals',this)">
+                    <i class="bi bi-link-45deg"></i> Referrals & Invite
+                    <span class="badge rounded-pill ms-1" style="background:#dcfce7;color:#15803d;font-size:.7rem;">{{ $referralRecords->count() }}</span>
+                </button>
                 <button class="cd-tab-btn" onclick="switchTab('reviews',this)">
                     <i class="bi bi-star"></i> Reviews
                     <span class="badge rounded-pill ms-1" style="background:#fef9c3;color:#a16207;font-size:.7rem;">{{ $reviews->count() }}</span>
@@ -249,6 +296,7 @@
                 </button>
                 <button class="cd-tab-btn" onclick="switchTab('chat',this)">
                     <i class="bi bi-chat-heart"></i> Course Chat
+                    <span class="chat-unread-badge ms-1" style="display:none;" data-chat-badge-course="{{ $course->id }}"></span>
                 </button>
                 <button class="cd-tab-btn" onclick="switchTab('curriculum',this)">
                     <i class="bi bi-pencil-square"></i> Curriculum
@@ -263,6 +311,12 @@
                 @if(session('session_success'))
                 <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4">
                     <i class="bi bi-check-circle-fill me-2"></i>{{ session('session_success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                @endif
+                @if(session('session_warning'))
+                <div class="alert alert-warning alert-dismissible fade show rounded-3 mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('session_warning') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 @endif
@@ -355,12 +409,30 @@
                                     </small>
                                 </div>
 
-                                {{-- Auto-close Warning --}}
-                                <div id="autoCloseWarning" style="display: none; background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                                    <small style="color: #854d0e;">
-                                        <i class="bi bi-exclamation-triangle" style="margin-right: 6px;"></i>
-                                        <span id="autoCloseMessage"></span>
+                                {{-- 3-Minute Auto-Cancellation Status Box --}}
+                                <div id="autoCloseWarning" style="display: {{ $activeSessionParticipants == 0 ? 'block' : 'none' }}; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <span style="color: #92400e; font-weight: 700; font-size: 0.82rem;">
+                                            <i class="bi bi-hourglass-split me-1 text-warning"></i> Waiting for Students
+                                        </span>
+                                        <span id="autoCloseCountdownBadge" class="badge bg-warning text-dark font-monospace" style="font-size: 0.85rem; padding: 3px 8px;">
+                                            03:00
+                                        </span>
+                                    </div>
+                                    <small id="autoCloseMessage" style="color: #854d0e; display: block; font-size: 0.76rem; line-height: 1.4;">
+                                        If no student joins within 3 minutes, this class will be automatically cancelled without marking the lesson as completed.
                                     </small>
+                                    <div class="progress mt-2" style="height: 4px; background: #fef3c7; border-radius: 4px;">
+                                        <div id="autoCloseProgressBar" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" style="width: 100%; transition: width 1s linear;"></div>
+                                    </div>
+                                </div>
+
+                                {{-- Student Joined Success Box --}}
+                                <div id="studentJoinedBox" style="display: {{ $activeSessionParticipants > 0 ? 'block' : 'none' }}; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                                    <div class="d-flex align-items-center" style="color: #166534; font-size: 0.82rem; font-weight: 600;">
+                                        <i class="bi bi-check-circle-fill me-2 text-success" style="font-size: 1.1rem;"></i>
+                                        <span>Student joined! Class is officially active.</span>
+                                    </div>
                                 </div>
 
                                 <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
@@ -1071,11 +1143,12 @@
                             $sessionAttendees = $s->attendances->sortByDesc(function($a) {
                                 return $a->status === 'present' ? 2 : ($a->status === 'late' ? 1 : 0);
                             });
+                            $isNoAttendance = $s->is_cancelled || ($sessionAttendees->count() === 0 && ($s->attendees_count === 0 || $s->attendees_count === null));
                         @endphp
-                        <div class="shistory-card">
-                            <div class="shistory-index">#{{ $loop->iteration }}</div>
+                        <div class="shistory-card {{ $isNoAttendance ? 'border-danger-subtle' : '' }}" style="{{ $isNoAttendance ? 'background: #fffafa; border-left: 4px solid #ef4444 !important;' : '' }}">
+                            <div class="shistory-index" style="{{ $isNoAttendance ? 'background: #fee2e2; color: #dc2626;' : '' }}">#{{ $loop->iteration }}</div>
                             <div class="flex-grow-1">
-                                <div class="d-flex align-items-center flex-wrap gap-3 mb-2">
+                                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                     <span class="shistory-date">
                                         <i class="bi bi-calendar3 me-1"></i>
                                         {{ $s->started_at->format('D, M d Y') }}
@@ -1083,19 +1156,37 @@
                                     <span class="shistory-badge-dur">
                                         <i class="bi bi-hourglass-split me-1"></i>{{ $s->duration }}
                                     </span>
+                                    @if($isNoAttendance)
+                                    <span class="badge rounded-pill px-3 py-1 bg-danger-subtle text-danger border border-danger-subtle fw-bold">
+                                        <i class="bi bi-person-x-fill me-1"></i>No Students Attended (Cancelled)
+                                    </span>
+                                    @else
+                                    <span class="badge rounded-pill px-3 py-1 bg-success-subtle text-success border border-success-subtle fw-bold">
+                                        <i class="bi bi-check2-circle me-1"></i>Class Completed
+                                    </span>
+                                    @endif
                                 </div>
-                                {{-- Start and End Times --}}
+                                {{-- Start and End Times & Lesson Info --}}
                                 <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                     <span class="badge bg-success rounded-pill px-3">
                                         <i class="bi bi-play-fill me-1"></i>Start: {{ $s->started_at->format('H:i') }}
                                     </span>
                                     @if($s->ended_at)
-                                    <span class="badge bg-danger rounded-pill px-3">
+                                    <span class="badge bg-secondary rounded-pill px-3">
                                         <i class="bi bi-stop-fill me-1"></i>End: {{ $s->ended_at->format('H:i') }}
                                     </span>
                                     @else
                                     <span class="badge bg-warning text-dark rounded-pill px-3">
                                         <i class="bi bi-broadcast me-1"></i>In Progress
+                                    </span>
+                                    @endif
+
+                                    @if($s->lesson)
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                        <i class="bi bi-book me-1 text-primary"></i>Lesson {{ $s->lesson->order }}: {{ $s->lesson->title }}
+                                        @if($isNoAttendance)
+                                            <span class="text-danger ms-1 fw-bold">(Not Completed)</span>
+                                        @endif
                                     </span>
                                     @endif
                                 </div>
@@ -1111,10 +1202,16 @@
                                     {{-- Attendees --}}
                                     <div class="shistory-meta-item">
                                         <span class="shistory-meta-label">Joined via Platform</span>
-                                        <span class="shistory-val">
-                                            <i class="bi bi-people-fill me-1 text-success"></i>
-                                            {{ $sessionAttendees->count() }} student{{ $sessionAttendees->count() !== 1 ? 's' : '' }}
-                                        </span>
+                                        @if($isNoAttendance)
+                                            <span class="shistory-val text-danger fw-bold">
+                                                <i class="bi bi-x-circle-fill me-1"></i>0 Students (No attendance)
+                                            </span>
+                                        @else
+                                            <span class="shistory-val">
+                                                <i class="bi bi-people-fill me-1 text-success"></i>
+                                                {{ $sessionAttendees->count() }} student{{ $sessionAttendees->count() !== 1 ? 's' : '' }}
+                                            </span>
+                                        @endif
                                     </div>
                                     {{-- Documents --}}
                                     <div class="shistory-meta-item">
@@ -1130,8 +1227,12 @@
                                 </div>
 
                                 @if($s->note)
-                                <div class="shistory-note mt-2">
-                                    <i class="bi bi-chat-left-text me-1" style="color:#8b5cf6;"></i>{{ $s->note }}
+                                <div class="shistory-note mt-2" style="{{ $isNoAttendance ? 'background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b;' : '' }}">
+                                    <i class="bi {{ $isNoAttendance ? 'bi-exclamation-circle-fill text-danger' : 'bi-chat-left-text text-primary' }} me-1"></i>{{ $s->note }}
+                                </div>
+                                @elseif($isNoAttendance)
+                                <div class="shistory-note mt-2" style="background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b;">
+                                    <i class="bi bi-exclamation-circle-fill text-danger me-1"></i>Class was cancelled automatically because no students joined within 3 minutes.
                                 </div>
                                 @endif
 
@@ -1758,6 +1859,254 @@
                 </div>
             </div>
 
+            {{-- REFERRALS & INVITE --}}
+            <div class="cd-tab-pane" id="tab-referrals">
+                {{-- Invite Link & Sharing Card --}}
+                <div class="cd-card mb-4" style="background: linear-gradient(135deg, rgba(31, 143, 255, 0.05) 0%, rgba(16, 185, 129, 0.04) 100%); border: 1px solid rgba(31, 143, 255, 0.18);">
+                    <div class="cd-card-body p-4">
+                        <!-- Header row -->
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3 pb-3" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <div class="d-flex align-items-center gap-3">
+                                <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;box-shadow:0 6px 14px rgba(16,185,129,0.25);flex-shrink:0;">
+                                    <i class="bi bi-link-45deg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1 text-dark">Course Invitation & Referral Link</h5>
+                                    <p class="text-muted small mb-0">Share your dedicated invite link with students. Referrals are tracked for 30 days via cookies & session.</p>
+                                </div>
+                            </div>
+
+                            <!-- Code Badge & Regenerate Button -->
+                            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+                                <div class="d-flex align-items-center px-3 py-1.5 rounded-pill bg-white border shadow-sm" style="gap: 8px;">
+                                    <span class="text-muted small fw-semibold">Referral Code:</span>
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary fw-bold font-monospace px-2 py-1" id="referralCodeDisplay" style="font-size: 0.95rem; letter-spacing: 1px;">{{ $referral->code }}</span>
+                                    <button type="button" class="btn btn-link btn-sm p-0 text-muted ms-1" onclick="copyReferralCodeOnly()" title="Copy Code Only">
+                                        <i class="bi bi-clipboard" id="copyCodeOnlyIcon"></i>
+                                    </button>
+                                </div>
+                                <button type="button"
+                                        class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 shadow-sm cd-regenerate-btn"
+                                        id="regenerateReferralBtn"
+                                        onclick="regenerateReferralCode()"
+                                        title="Generate a new referral code and link">
+                                    <i class="bi bi-arrow-repeat" id="regenerateIcon"></i>
+                                    <span>Generate New Code</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Link and Share Row -->
+                        <div class="row g-3 align-items-center">
+                            <div class="col-lg-8">
+                                <label class="form-label text-muted small fw-bold mb-1">
+                                    <i class="bi bi-link-45deg me-1 text-primary"></i>Invite URL
+                                </label>
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden border">
+                                    <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                        <i class="bi bi-globe2 text-primary"></i>
+                                    </span>
+                                    <input type="text"
+                                           class="form-control border-0 bg-white fw-semibold"
+                                           id="referralInviteUrl"
+                                           value="{{ $referral->invite_url }}"
+                                           readonly
+                                           style="font-family: monospace; font-size: 0.92rem; color: #0f172a;">
+                                    <button class="btn btn-primary px-4 fw-bold d-flex align-items-center gap-2"
+                                            type="button"
+                                            id="copyReferralBtn"
+                                            onclick="copyReferralLink()">
+                                        <i class="bi bi-clipboard" id="copyReferralIcon"></i>
+                                        <span id="copyReferralText">Copy Link</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <label class="form-label text-muted small fw-bold mb-1">
+                                    <i class="bi bi-share-fill me-1 text-success"></i>Direct Share
+                                </label>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <a href="https://t.me/share/url?url={{ urlencode($referral->invite_url) }}&text={{ urlencode('Join my course ' . $course->title . ' on Edvora!') }}"
+                                       target="_blank"
+                                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold text-white shadow-sm flex-grow-1 text-center"
+                                       style="background: #229ED9; border: none; font-size: 0.82rem;">
+                                        <i class="bi bi-telegram me-1"></i> Telegram
+                                    </a>
+                                    <a href="https://api.whatsapp.com/send?text={{ urlencode('Check out my course ' . $course->title . ' on Edvora: ' . $referral->invite_url) }}"
+                                       target="_blank"
+                                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold text-white shadow-sm flex-grow-1 text-center"
+                                       style="background: #25D366; border: none; font-size: 0.82rem;">
+                                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                                    </a>
+                                    <a href="mailto:?subject={{ urlencode('Invitation to join ' . $course->title) }}&body={{ urlencode("Hi,\n\nI invite you to enroll in my course \"" . $course->title . "\" on Edvora.\n\nJoin here: " . $referral->invite_url) }}"
+                                       class="btn btn-sm rounded-pill px-3 py-2 fw-semibold btn-light border shadow-sm flex-grow-1 text-center bg-white"
+                                       style="font-size: 0.82rem;">
+                                        <i class="bi bi-envelope-fill me-1 text-primary"></i> Email
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Stats Cards --}}
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="cd-stat-card">
+                            <div class="cd-stat-icon" style="background:#eff6ff;">
+                                <i class="bi bi-mouse2-fill" style="color:#1F8FFF;"></i>
+                            </div>
+                            <div>
+                                <div class="cd-stat-num" id="statClicksCount">{{ $referral->clicks_count }}</div>
+                                <div class="cd-stat-lbl">Link Clicks</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="cd-stat-card">
+                            <div class="cd-stat-icon" style="background:#e0f2fe;">
+                                <i class="bi bi-person-plus-fill" style="color:#0284c7;"></i>
+                            </div>
+                            <div>
+                                <div class="cd-stat-num">{{ $referralRecords->where('status', 'registered')->count() }}</div>
+                                <div class="cd-stat-lbl">Registered Students</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="cd-stat-card">
+                            <div class="cd-stat-icon" style="background:#f0fdf4;">
+                                <i class="bi bi-check-circle-fill" style="color:#10b981;"></i>
+                            </div>
+                            <div>
+                                <div class="cd-stat-num">{{ $referralRecords->where('status', 'enrolled')->count() }}</div>
+                                <div class="cd-stat-lbl">Enrolled Students</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="cd-stat-card">
+                            <div class="cd-stat-icon" style="background:#fef3c7;">
+                                <i class="bi bi-percent" style="color:#d97706;"></i>
+                            </div>
+                            <div>
+                                <div class="cd-stat-num">
+                                    {{ $referral->clicks_count > 0 ? round(($referralRecords->where('status', 'enrolled')->count() / $referral->clicks_count) * 100, 1) : 0 }}%
+                                </div>
+                                <div class="cd-stat-lbl">Conversion Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Referred Students List Card --}}
+                <div class="cd-card">
+                    <div class="cd-card-header d-flex align-items-center justify-content-between">
+                        <h6 class="cd-card-title mb-0">
+                            <i class="bi bi-people-fill me-2 text-success"></i>Referred Students
+                        </h6>
+                        <span class="badge rounded-pill px-3" style="background:#dcfce7;color:#15803d;font-size:.8rem;">
+                            {{ $referralRecords->count() }} Student{{ $referralRecords->count() !== 1 ? 's' : '' }}
+                        </span>
+                    </div>
+                    <div class="cd-card-body p-0">
+                        @if($referralRecords->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size:0.9rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Student</th>
+                                        <th>Status</th>
+                                        <th>Registered At</th>
+                                        <th>Enrolled At</th>
+                                        <th class="pe-4 text-end">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($referralRecords as $rec)
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="{{ $avatarUrl($rec->user?->avatar, $rec->user?->name ?? 'Student') }}"
+                                                     alt="{{ $rec->user?->name ?? 'Student' }}"
+                                                     class="rounded-circle shadow-sm"
+                                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                                <div>
+                                                    <div class="fw-bold text-dark">{{ $rec->user?->name ?? 'User #' . $rec->user_id }}</div>
+                                                    <div class="text-muted small">{{ $rec->user?->email ?? '-' }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if($rec->status === 'enrolled')
+                                                <span class="badge rounded-pill" style="background:#dcfce7;color:#15803d;padding:6px 12px;font-size:0.75rem;">
+                                                    <i class="bi bi-check2-circle me-1"></i> Enrolled
+                                                </span>
+                                            @elseif($rec->status === 'requested')
+                                                <span class="badge rounded-pill" style="background:#fef3c7;color:#92400e;padding:6px 12px;font-size:0.75rem;">
+                                                    <i class="bi bi-clock me-1"></i> Requested Enrollment
+                                                </span>
+                                            @elseif($rec->status === 'registered')
+                                                <span class="badge rounded-pill" style="background:#e0f2fe;color:#0369a1;padding:6px 12px;font-size:0.75rem;">
+                                                    <i class="bi bi-person-check me-1"></i> Registered
+                                                </span>
+                                            @else
+                                                <span class="badge rounded-pill bg-light text-muted border" style="padding:6px 12px;font-size:0.75rem;">
+                                                    {{ ucfirst($rec->status) }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-muted small">
+                                            @if($rec->registered_at)
+                                                {{ $rec->registered_at->format('M d, Y H:i') }}
+                                            @elseif($rec->created_at)
+                                                {{ $rec->created_at->format('M d, Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td class="text-muted small">
+                                            @if($rec->enrolled_at)
+                                                <span class="text-success fw-semibold">
+                                                    <i class="bi bi-check me-1"></i>{{ $rec->enrolled_at->format('M d, Y H:i') }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted opacity-75">Not enrolled yet</span>
+                                            @endif
+                                        </td>
+                                        <td class="pe-4 text-end">
+                                            @if($rec->user)
+                                            <a href="{{ route('teacher.students.profile', $rec->user->id) }}"
+                                               class="btn btn-sm btn-light border rounded-pill px-3 text-secondary"
+                                               style="font-size:0.8rem;">
+                                                <i class="bi bi-person me-1"></i> Profile
+                                            </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <div class="text-center py-5">
+                            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 2rem;">
+                                <i class="bi bi-link-45deg"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">No referrals yet</h6>
+                            <p class="text-muted small mb-3" style="max-width: 420px; margin-left: auto; margin-right: auto;">
+                                Share your invite link with potential students or in your social groups. Every student who joins using your link will appear here.
+                            </p>
+                            <button type="button" class="btn btn-sm btn-primary rounded-pill px-4 fw-bold" onclick="copyReferralLink()">
+                                <i class="bi bi-clipboard me-1"></i> Copy Referral Link
+                            </button>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 </div>
@@ -1858,6 +2207,12 @@ window.switchCourseTab = function(id, btn) {
     } else {
         const sidebarBtn = document.querySelector(`.edvora-sidebar-tab-btn[data-tab="${id}"]`);
         if (sidebarBtn) sidebarBtn.classList.add('active');
+    }
+
+    if (id === 'chat') {
+        if (window.clearCourseChatBadge) {
+            window.clearCourseChatBadge({{ $course->id }});
+        }
     }
 };
 
@@ -2052,17 +2407,27 @@ document.addEventListener('DOMContentLoaded', function() {
 // Live Class Session Duration and Auto-close Check
 @if(isset($activeSession) && $activeSession)
 document.addEventListener('DOMContentLoaded', function() {
-    const sessionStartedAt = new Date('{{ $activeSession->started_at }}');
+    const sessionStartedAt = new Date('{{ $activeSession->started_at->toISOString() }}');
     const durationEl = document.getElementById('sessionDuration');
     const autoCloseWarning = document.getElementById('autoCloseWarning');
+    const autoCloseCountdownBadge = document.getElementById('autoCloseCountdownBadge');
     const autoCloseMessage = document.getElementById('autoCloseMessage');
+    const autoCloseProgressBar = document.getElementById('autoCloseProgressBar');
+    const studentJoinedBox = document.getElementById('studentJoinedBox');
     const participantCountEl = document.getElementById('liveParticipantCount');
     const courseId = {{ $course->id }};
     const sessionId = {{ $activeSession->id }};
     let liveParticipantCount = {{ $activeSessionParticipants }};
+    let isAutoClosing = false;
 
-    // ── Real-time HH:MM:SS timer ──────────────────────────────
-    function updateDuration() {
+    function formatCountdown(totalSecs) {
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+        return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    }
+
+    // ── Real-time HH:MM:SS timer and 3-Minute Auto-Cancel ────
+    function updateSessionState() {
         const now = new Date();
         const diffMs = Math.max(0, now - sessionStartedAt);
         const totalSecs = Math.floor(diffMs / 1000);
@@ -2070,27 +2435,65 @@ document.addEventListener('DOMContentLoaded', function() {
         const mins  = Math.floor((totalSecs % 3600) / 60);
         const secs  = totalSecs % 60;
 
-        durationEl.textContent =
-            String(hours).padStart(2, '0') + ':' +
-            String(mins).padStart(2, '0')  + ':' +
-            String(secs).padStart(2, '0');
+        if (durationEl) {
+            durationEl.textContent =
+                String(hours).padStart(2, '0') + ':' +
+                String(mins).padStart(2, '0')  + ':' +
+                String(secs).padStart(2, '0');
+        }
 
-        // Warn when 5+ min with 0 participants
-        const diffMins = Math.floor(diffMs / 60000);
-        if (diffMins >= 5 && liveParticipantCount === 0) {
-            autoCloseWarning.style.display = 'block';
-            autoCloseMessage.textContent = 'No participants detected. Session may auto-close.';
-        } else if (liveParticipantCount > 0) {
-            autoCloseWarning.style.display = 'none';
+        const timeoutLimit = 180; // 3 minutes = 180s
+        const remainingSecs = Math.max(0, timeoutLimit - totalSecs);
+
+        if (liveParticipantCount === 0) {
+            if (autoCloseWarning) autoCloseWarning.style.display = 'block';
+            if (studentJoinedBox) studentJoinedBox.style.display = 'none';
+
+            if (autoCloseCountdownBadge) {
+                autoCloseCountdownBadge.textContent = formatCountdown(remainingSecs);
+            }
+            if (autoCloseProgressBar) {
+                const pct = Math.max(0, Math.min(100, (remainingSecs / timeoutLimit) * 100));
+                autoCloseProgressBar.style.width = pct + '%';
+            }
+
+            // If 3 minutes pass and no student joined, auto-cancel immediately
+            if (remainingSecs <= 0 && !isAutoClosing) {
+                isAutoClosing = true;
+                if (autoCloseCountdownBadge) autoCloseCountdownBadge.textContent = '00:00';
+                if (autoCloseMessage) autoCloseMessage.textContent = '3 minutes elapsed with no attendees. Cancelling class session...';
+
+                fetch('{{ route("teacher.courses.auto-close") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log('Auto-close check error:', error);
+                    window.location.reload();
+                });
+            }
+        } else {
+            if (autoCloseWarning) autoCloseWarning.style.display = 'none';
+            if (studentJoinedBox) studentJoinedBox.style.display = 'block';
         }
     }
 
     // Initial update + tick every second
-    updateDuration();
-    setInterval(updateDuration, 1000);
+    updateSessionState();
+    setInterval(updateSessionState, 1000);
 
-    // ── AJAX: poll participant count every 30 s ────────────────
+    // ── AJAX: poll participant count every 5 s ────────────────
     function pollParticipants() {
+        if (isAutoClosing) return;
+
         fetch('{{ route("teacher.courses.sessions.participants", [$course->id, $activeSession->id]) }}', {
             headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
         })
@@ -2098,35 +2501,165 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             liveParticipantCount = data.count;
             if (participantCountEl) participantCountEl.textContent = data.count;
+            updateSessionState();
         })
         .catch(err => console.log('Participant poll error:', err));
     }
 
-    // Poll immediately then every 30 s
+    // Poll immediately then every 5 s
     pollParticipants();
-    setInterval(pollParticipants, 30000);
-
-    // ── Auto-close check every 60 s ───────────────────────────
-    setInterval(function() {
-        if (liveParticipantCount === 0) {
-            fetch('{{ route("teacher.courses.auto-close") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.closed_count > 0) {
-                    window.location.reload();
-                }
-            })
-            .catch(error => console.log('Auto-close check error:', error));
-        }
-    }, 60000);
+    setInterval(pollParticipants, 5000);
 });
 @endif
+
+function toggleCourseEnrollment(btn) {
+    const url = btn.getAttribute('data-url');
+    btn.disabled = true;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        if (data.success) {
+            const textSpan = document.getElementById('enrollmentStatusText');
+            const icon = btn.querySelector('i');
+            if (data.is_enrollment_closed) {
+                btn.className = 'btn btn-outline-warning rounded-pill px-3 py-2 fw-bold shadow-sm';
+                icon.className = 'bi bi-lock-fill me-1 text-warning';
+                if (textSpan) textSpan.textContent = 'Enrollment Closed (Click to Open)';
+            } else {
+                btn.className = 'btn btn-outline-light rounded-pill px-3 py-2 fw-bold shadow-sm';
+                icon.className = 'bi bi-unlock-fill me-1';
+                if (textSpan) textSpan.textContent = 'Close Enrollment';
+            }
+            if (typeof showNotificationToast === 'function') {
+                showNotificationToast(data.message, 'success');
+            } else {
+                alert(data.message);
+            }
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        console.error(err);
+    });
+}
+
+function copyReferralLink() {
+    const input = document.getElementById('referralInviteUrl');
+    if (!input) return;
+
+    const copyText = input.value;
+    const btnText = document.getElementById('copyReferralText');
+    const icon = document.getElementById('copyReferralIcon');
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(copyText).then(() => {
+            onCopySuccess();
+        }).catch(() => {
+            fallbackCopy(input);
+        });
+    } else {
+        fallbackCopy(input);
+    }
+
+    function fallbackCopy(inp) {
+        inp.select();
+        inp.setSelectionRange(0, 99999);
+        try {
+            document.execCommand('copy');
+            onCopySuccess();
+        } catch (e) {
+            alert('Please copy manually: ' + copyText);
+        }
+    }
+
+    function onCopySuccess() {
+        if (btnText) btnText.textContent = 'Copied!';
+        if (icon) icon.className = 'bi bi-check2';
+        if (typeof showNotificationToast === 'function') {
+            showNotificationToast('Referral invitation link copied to clipboard!', 'success');
+        }
+        setTimeout(() => {
+            if (btnText) btnText.textContent = 'Copy Link';
+            if (icon) icon.className = 'bi bi-clipboard';
+        }, 2500);
+    }
+}
+
+function copyReferralCodeOnly() {
+    const codeEl = document.getElementById('referralCodeDisplay');
+    if (!codeEl) return;
+    const code = codeEl.textContent.trim();
+    const icon = document.getElementById('copyCodeOnlyIcon');
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(() => {
+            if (icon) {
+                icon.className = 'bi bi-check2 text-success';
+                setTimeout(() => { icon.className = 'bi bi-clipboard'; }, 2000);
+            }
+            if (typeof showNotificationToast === 'function') {
+                showNotificationToast('Referral code copied: ' + code, 'success');
+            }
+        }).catch(() => {
+            prompt('Copy code:', code);
+        });
+    } else {
+        prompt('Copy code:', code);
+    }
+}
+
+function regenerateReferralCode() {
+    if (!confirm('Are you sure you want to generate a new referral code? The previous link will no longer track new visits.')) {
+        return;
+    }
+
+    const btn = document.getElementById('regenerateReferralBtn');
+    const icon = document.getElementById('regenerateIcon');
+    if (btn) btn.disabled = true;
+    if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+
+    fetch('{{ route("teacher.courses.referral.regenerate", $course->id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (btn) btn.disabled = false;
+        if (icon) icon.style.animation = '';
+
+        if (data.success) {
+            const input = document.getElementById('referralInviteUrl');
+            const display = document.getElementById('referralCodeDisplay');
+            if (input) input.value = data.url;
+            if (display) display.textContent = data.code;
+
+            if (typeof showNotificationToast === 'function') {
+                showNotificationToast(data.message || 'New referral code generated successfully!', 'success');
+            } else {
+                alert(data.message || 'New referral code generated successfully!');
+            }
+        } else {
+            alert(data.message || 'Could not regenerate referral code.');
+        }
+    })
+    .catch(err => {
+        if (btn) btn.disabled = false;
+        if (icon) icon.style.animation = '';
+        console.error('Referral regenerate error:', err);
+        alert('An error occurred while generating a new referral code.');
+    });
+}
 </script>
 @endpush

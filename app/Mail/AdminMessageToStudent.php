@@ -14,17 +14,25 @@ class AdminMessageToStudent extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public User $student;
+    public string $messageSubject;
+    public string $messageBody;
+
     public function __construct(
-        public User $student,
-        public string $subject,
-        public string $body
-    ) {}
+        User $student,
+        string $subject,
+        string $body
+    ) {
+        $this->student = $student;
+        $this->messageSubject = $subject;
+        $this->messageBody = $body;
+    }
 
     public function envelope(): Envelope
     {
         return new Envelope(
             from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: $this->subject,
+            subject: $this->messageSubject,
         );
     }
 
@@ -34,8 +42,8 @@ class AdminMessageToStudent extends Mailable
             view: 'emails.admin.message-to-student',
             with: [
                 'student' => $this->student,
-                'subject' => $this->subject,
-                'body'    => $this->body,
+                'subject' => $this->messageSubject,
+                'body'    => $this->messageBody,
             ],
         );
     }

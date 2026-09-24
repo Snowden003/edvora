@@ -93,9 +93,9 @@ function initNoteToggle() {
       if (content) {
         content.classList.toggle('truncated');
         if (content.classList.contains('truncated')) {
-          this.innerHTML = '<i class="bi bi-chevron-down me-1"></i>Read More';
+          this.innerHTML = '<i class="bi bi-chevron-down me-1"></i>مشاهده کامل';
         } else {
-          this.innerHTML = '<i class="bi bi-chevron-up me-1"></i>Read Less';
+          this.innerHTML = '<i class="bi bi-chevron-up me-1"></i>بستن نوت';
         }
       }
     });

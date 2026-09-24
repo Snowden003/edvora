@@ -6,6 +6,8 @@ use App\Models\StudentProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Inertia\Inertia;
+
 class StudentProfileController extends Controller
 {
     public function show()
@@ -13,7 +15,32 @@ class StudentProfileController extends Controller
         $user = Auth::user();
         $profile = $user->studentProfile;
 
-        return view('student.profile-details', compact('user', 'profile'));
+        return Inertia::render('Student/ProfileDetails', [
+            'profile' => $profile ? [
+                'first_name' => $profile->first_name,
+                'last_name' => $profile->last_name,
+                'father_name' => $profile->father_name,
+                'gender' => $profile->gender ?? 'female',
+                'date_of_birth' => $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : '',
+                'national_id' => $profile->national_id ?? '',
+                'passport_number' => $profile->passport_number ?? '',
+                'phone_number' => $profile->phone_number ?? '',
+                'whatsapp_number' => $profile->whatsapp_number ?? '',
+                'province' => $profile->province ?? '',
+                'district' => $profile->district ?? '',
+                'postal_code' => $profile->postal_code ?? '',
+                'last_education_level' => $profile->last_education_level ?? '',
+                'last_school_name' => $profile->last_school_name ?? '',
+                'emergency_contact_name' => $profile->emergency_contact_name ?? '',
+                'emergency_contact_phone' => $profile->emergency_contact_phone ?? '',
+                'emergency_contact_relation' => $profile->emergency_contact_relation ?? '',
+                'skills' => $profile->skills ?? '',
+                'languages' => $profile->languages ?? '',
+                'about_me' => $profile->about_me ?? '',
+                'profile_photo_url' => $profile->profile_photo ? asset('storage/' . $profile->profile_photo) : null,
+                'is_complete' => (bool) $profile->is_complete,
+            ] : null,
+        ]);
     }
 
     public function store(Request $request)

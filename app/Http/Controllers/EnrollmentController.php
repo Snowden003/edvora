@@ -23,11 +23,11 @@ class EnrollmentController extends Controller
             ], 403);
         }
 
-        // Check if course has ended or is completed
-        if ($course->isCompleted()) {
+        // Check if enrollment is closed
+        if ($course->isEnrollmentClosed()) {
             return response()->json([
-                'status'  => 'course_completed',
-                'message' => 'This course has ended. Enrollment is closed.',
+                'status'  => 'enrollment_closed',
+                'message' => 'Enrollment for this course is closed.',
             ], 422);
         }
 
@@ -67,6 +67,33 @@ class EnrollmentController extends Controller
                 $course->title,
                 $course->id
             );
+        }
+
+        // Track teacher referral for this course enrollment
+        $refCode = session('teacher_referral_code') ?? request()->cookie('edvora_ref');
+        $referral = null;
+        if ($refCode) {
+            $referral = \App\Models\TeacherReferral::where('code', $refCode)->first();
+        }
+        if (!$referral) {
+            $existingRecord = \App\Models\TeacherReferralRecord::where('course_id', $course->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if ($existingRecord) {
+                $referral = $existingRecord->referral;
+            }
+        }
+        if ($referral && (int) $referral->course_id === (int) $course->id) {
+            \App\Models\TeacherReferralRecord::updateOrCreate([
+                'course_id' => $course->id,
+                'user_id'   => $user->id,
+            ], [
+                'teacher_referral_id' => $referral->id,
+                'teacher_id'          => $referral->teacher_id,
+                'status'              => 'enrolled',
+                'enrolled_at'         => now(),
+                'ip_address'          => request()->ip(),
+            ]);
         }
 
         // Check if course should auto-start

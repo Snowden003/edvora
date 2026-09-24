@@ -18,6 +18,33 @@
     <main class="main-content" id="mainContent">
         <div class="container-fluid py-4 py-lg-5 px-3 px-md-4">
             
+            <!-- Banned Courses Alert Banner (If Any) -->
+            @if(isset($bannedEnrollments) && $bannedEnrollments->isNotEmpty())
+            <div class="row mb-4">
+                <div class="col-12 col-xl-11 mx-auto">
+                    @foreach($bannedEnrollments as $banned)
+                    <div class="alert alert-danger border-0 shadow-sm rounded-4 p-3 p-md-4 mb-3 d-flex align-items-center gap-3">
+                        <div style="width: 48px; height: 48px; background: #fee2e2; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #dc2626; font-size: 1.4rem; flex-shrink: 0;">
+                            <i class="bi bi-slash-circle-fill"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-1">
+                                <h6 class="fw-bold text-danger mb-0">Course Access Suspended by Instructor</h6>
+                                <span class="badge bg-danger text-white rounded-pill px-3 py-1">Restricted</span>
+                            </div>
+                            <p class="mb-0 text-muted small">
+                                Your enrollment in <strong>{{ $banned->course->title }}</strong> was suspended by Instructor <strong>{{ $banned->course->teacher->name ?? 'Instructor' }}</strong>. You can no longer access this course's learning dashboard or live sessions.
+                            </p>
+                        </div>
+                        <a href="{{ route('student.courses', ['status' => 'banned']) }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold flex-shrink-0">
+                            View Status
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <!-- 1. Hero / Welcome Banner -->
             @php $level = $user->level(); @endphp
             <div class="row mb-4 mb-lg-5">

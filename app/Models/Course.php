@@ -27,6 +27,7 @@ class Course extends Model
         'min_students',
         'max_students',
         'auto_start_enabled',
+        'is_enrollment_closed',
     ];
 
     protected $casts = [
@@ -48,6 +49,7 @@ class Course extends Model
         'end_date' => 'date',
         'started_at' => 'datetime',
         'auto_start_enabled' => 'boolean',
+        'is_enrollment_closed' => 'boolean',
         'min_students' => 'integer',
         'max_students' => 'integer',
     ];
@@ -154,6 +156,42 @@ class Course extends Model
     }
 
     /**
+     * Check if enrollment for this course is closed.
+     * Closed if:
+     * 1. Teacher manually closed enrollment (is_enrollment_closed = true)
+     * 2. Course completed or archived (isCompleted)
+     * 3. Max students reached (isFull)
+     * 4. 5 days passed since start_date or started_at
+     */
+    public function isEnrollmentClosed(): bool
+    {
+        if ($this->is_enrollment_closed) {
+            return true;
+        }
+
+        if ($this->isCompleted()) {
+            return true;
+        }
+
+        if ($this->isFull()) {
+            return true;
+        }
+
+        $startDate = $this->started_at ?? $this->start_date;
+        if ($startDate) {
+            $startDateCarbon = $startDate instanceof \Carbon\CarbonInterface
+                ? $startDate
+                : \Carbon\Carbon::parse($startDate);
+
+            if ($startDateCarbon->copy()->addDays(5)->startOfDay()->isPast()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Start the course
      */
     public function startCourse(): void
@@ -162,5 +200,51 @@ class Course extends Model
             'started_at' => now(),
             'status' => 'started',
         ]);
+    }
+
+    /**
+     * Close expired courses and transition them and their enrollments to completed
+     */
+    public static function closeExpiredCourses(): int
+    {
+        $closedCount = 0;
+
+        // 1. Find all courses whose end_date has passed
+        $expiredCourses = self::whereNotNull('end_date')
+            ->where('end_date', '<', now()->startOfDay())
+            ->whereNotIn('status', ['completed', 'archived'])
+            ->get();
+
+        foreach ($expiredCourses as $course) {
+            $course->update([
+                'status' => 'completed',
+                'is_enrollment_closed' => true,
+            ]);
+
+            // Complete any active enrollments for this course
+            $course->enrollments()
+                ->where('status', 'active')
+                ->update([
+                    'status' => 'completed',
+                    'completed_at' => now(),
+                ]);
+
+            $closedCount++;
+        }
+
+        // 2. Also ensure any active enrollments in completed/archived or expired courses are set to completed
+        Enrollment::where('status', 'active')
+            ->whereHas('course', function ($q) {
+                $q->whereIn('status', ['completed', 'archived'])
+                  ->orWhere(function ($sub) {
+                      $sub->whereNotNull('end_date')->where('end_date', '<', now()->startOfDay());
+                  });
+            })
+            ->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+        return $closedCount;
     }
 }

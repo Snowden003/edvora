@@ -144,8 +144,8 @@
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="row g-5 mb-5 mt-2">
-                    <div class="col-lg-4 col-md-6">
+                <div class="row g-4 mb-5 mt-2">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card border-0 shadow-lg glass-card h-100 stat-hover-premium">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
@@ -164,7 +164,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card border-0 shadow-lg glass-card h-100 stat-hover-premium">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
@@ -183,7 +183,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card border-0 shadow-lg glass-card h-100 stat-hover-premium">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
@@ -198,6 +198,25 @@
                                 <div class="stat-badge warning">
                                     <i class="bi bi-star-fill me-1"></i> Avg
                                     <span class="ms-1 text-muted opacity-50 small">rating</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 shadow-lg glass-card h-100 stat-hover-premium">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="stat-icon-premium" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <p class="text-muted fw-medium mb-0 small">Invited / Referrals</p>
+                                        <h2 class="fw-bold text-premium mb-0">{{ $totalReferrals ?? 0 }}</h2>
+                                    </div>
+                                </div>
+                                <div class="stat-badge success">
+                                    <i class="bi bi-person-check-fill me-1"></i> Via invite link
+                                    <span class="ms-1 text-muted opacity-50 small">registered</span>
                                 </div>
                             </div>
                         </div>

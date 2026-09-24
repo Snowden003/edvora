@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
@@ -19,6 +19,60 @@ class NotificationController extends Controller
         $unreadCount = Notification::where('user_id', $user->id)
             ->unread()
             ->count();
+
+        // If request is from Inertia or user is student, render Inertia view
+        if ($request->header('X-Inertia') || $user->role === 'student') {
+            $formattedNotifications = [
+                'data' => collect($notifications->items())->map(function ($n) use ($user) {
+                    $data = is_array($n->data) ? $n->data : json_decode($n->data ?? '[]', true);
+                    $actionUrl = null;
+                    $actionText = 'View';
+
+                    if ($n->type === Notification::TYPE_CLASS_STARTED) {
+                        $actionUrl = !empty($data['course_slug'])
+                            ? route('student.courses.sessions.join', $data['course_slug'])
+                            : ($data['meet_link'] ?? $data['room_url'] ?? null);
+                        $actionText = 'Join Google Meet';
+                    } elseif ($n->type === Notification::TYPE_ENROLLMENT_REQUEST) {
+                        $actionUrl = route('teacher.enrollment-requests') . '?tab=requests';
+                        $actionText = 'Review Request';
+                    } elseif ($n->type === Notification::TYPE_STUDENT_ENROLLED) {
+                        $actionUrl = route('teacher.enrollment-requests') . '?tab=enrolled';
+                        $actionText = 'View Students';
+                    } elseif ($n->type === Notification::TYPE_ENROLLMENT_APPROVED && !empty($data['course_slug'])) {
+                        $actionUrl = route('student.courses.learn', $data['course_slug']);
+                        $actionText = 'Go to Classroom';
+                    } elseif ($n->type === Notification::TYPE_EXAM_PUBLISHED) {
+                        $actionUrl = route('student.exams.index');
+                        $actionText = 'Take Quiz';
+                    } elseif (!empty($data['course_slug'])) {
+                        $actionUrl = route('student.courses.learn', $data['course_slug']);
+                        $actionText = 'Open Course';
+                    }
+
+                    return [
+                        'id'          => $n->id,
+                        'type'        => $n->type,
+                        'title'       => $n->title,
+                        'message'     => $n->message,
+                        'icon'        => $n->icon,
+                        'type_label'  => $n->type_label,
+                        'data'        => $data,
+                        'action_url'  => $actionUrl,
+                        'action_text' => $actionText,
+                        'is_read'     => (bool) $n->is_read,
+                        'created_at'  => $n->created_at ? $n->created_at->toISOString() : now()->toISOString(),
+                        'time_ago'    => $n->created_at ? $n->created_at->diffForHumans() : 'Just now',
+                    ];
+                }),
+                'links' => $notifications->linkCollection()->toArray(),
+            ];
+
+            return \Inertia\Inertia::render('Student/Notifications', [
+                'notifications' => $formattedNotifications,
+                'unreadCount'   => $unreadCount,
+            ]);
+        }
 
         return view('notifications.index', compact('notifications', 'unreadCount'));
     }
@@ -95,7 +149,9 @@ class NotificationController extends Controller
             $actionText = 'View';
 
             if ($n->type === Notification::TYPE_CLASS_STARTED) {
-                $actionUrl = $data['meet_link'] ?? $data['room_url'] ?? null;
+                $actionUrl = !empty($data['course_slug'])
+                    ? route('student.courses.sessions.join', $data['course_slug'])
+                    : ($data['meet_link'] ?? $data['room_url'] ?? null);
                 $actionText = 'Join Google Meet';
             } elseif ($n->type === Notification::TYPE_ENROLLMENT_REQUEST) {
                 $actionUrl = route('teacher.enrollment-requests') . '?tab=requests';
@@ -133,6 +189,9 @@ class NotificationController extends Controller
         // Check if user is a student with an active class session currently running
         $activeClass = null;
         if ($user->role === 'student') {
+            // Clean up any abandoned sessions older than 3 minutes without attendees
+            \App\Models\ClassSession::checkAndCloseExpiredSessions();
+
             $enrolledCourseIds = $user->enrollments()
                 ->where('status', 'active')
                 ->pluck('course_id');
@@ -150,6 +209,7 @@ class NotificationController extends Controller
                     'course_title' => $activeSession->course->title,
                     'course_slug'  => $activeSession->course->slug,
                     'meet_link'    => $activeSession->meet_link,
+                    'join_url'     => route('student.courses.sessions.join', $activeSession->course->slug),
                     'started_at'   => $activeSession->started_at ? $activeSession->started_at->toISOString() : null,
                 ];
             }
@@ -339,6 +399,40 @@ class NotificationController extends Controller
             'data'    => [
                 'course_title' => $courseTitle,
                 'reason'       => $reason,
+            ],
+        ]);
+    }
+
+    public static function notifyStudentBanned($studentId, $courseTitle, $teacherName, $reason = null)
+    {
+        $message = "You have been suspended from '{$courseTitle}' by Instructor {$teacherName}.";
+        if ($reason) {
+            $message .= " Reason: {$reason}";
+        }
+
+        return Notification::create([
+            'user_id' => $studentId,
+            'type'    => Notification::TYPE_STUDENT_BANNED,
+            'title'   => 'Course Access Suspended 🚫',
+            'message' => $message,
+            'data'    => [
+                'course_title' => $courseTitle,
+                'teacher_name' => $teacherName,
+                'reason'       => $reason,
+            ],
+        ]);
+    }
+
+    public static function notifyStudentUnbanned($studentId, $courseTitle, $teacherName)
+    {
+        return Notification::create([
+            'user_id' => $studentId,
+            'type'    => Notification::TYPE_STUDENT_UNBANNED,
+            'title'   => 'Course Access Reinstated ✅',
+            'message' => "Your access to '{$courseTitle}' has been reinstated by Instructor {$teacherName}. You can resume learning!",
+            'data'    => [
+                'course_title' => $courseTitle,
+                'teacher_name' => $teacherName,
             ],
         ]);
     }

@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProfileController extends Controller
 {
     /**
      * Display the user's profile page.
      */
-    public function show(Request $request): View|RedirectResponse
+    public function show(Request $request): View|RedirectResponse|Response
     {
         $user = $request->user();
 
@@ -28,10 +30,62 @@ class ProfileController extends Controller
                 return redirect()->route('teacher.dashboard')
                     ->with('error', 'Your account is pending admin approval.');
             }
+
+            $user->load(['teacher', 'studentProfile']);
+            return view('profile', compact('user'));
         }
 
-        $user->load(['teacher', 'studentProfile']);
-        return view('profile', compact('user'));
+        // Student Profile (Inertia 3D Minimal Modern)
+        $user->load(['studentProfile']);
+
+        $coverUrl = null;
+        if ($user->cover_image) {
+            if (str_starts_with($user->cover_image, 'http')) {
+                $coverUrl = $user->cover_image;
+            } elseif (str_starts_with($user->cover_image, 'storage/') || str_starts_with($user->cover_image, '/storage/')) {
+                $coverUrl = asset(ltrim($user->cover_image, '/'));
+            } else {
+                $coverUrl = asset('storage/' . $user->cover_image);
+            }
+        }
+
+        $avatarUrl = method_exists($user, 'publicAvatarUrl') ? $user->publicAvatarUrl() : null;
+        $level = method_exists($user, 'level') ? $user->level() : ['level' => 1, 'title' => 'Scholar', 'progress' => 0];
+        $enrolledCount = method_exists($user, 'enrollments') ? $user->enrollments()->where('status', '!=', 'banned')->count() : 0;
+        $completedCount = method_exists($user, 'enrollments') ? $user->enrollments()->where('status', 'completed')->count() : 0;
+        $totalXp = method_exists($user, 'totalScore') ? $user->totalScore() : ($user->xp ?? 0);
+
+        return Inertia::render('Student/Profile', [
+            'profileUser' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'bio' => $user->bio,
+                'department' => $user->department,
+                'avatar' => $avatarUrl,
+                'cover_image' => $coverUrl,
+                'linkedin' => $user->linkedin ?? null,
+                'github' => $user->github ?? null,
+                'website' => $user->website ?? null,
+                'member_since' => $user->created_at?->format('M Y'),
+            ],
+            'stats' => [
+                'enrolled_courses' => $enrolledCount,
+                'completed_courses' => $completedCount,
+                'level' => $level['level'] ?? 1,
+                'level_title' => $level['title'] ?? 'Scholar',
+                'progress' => $level['progress'] ?? 0,
+                'total_xp' => $totalXp,
+            ],
+            'studentProfile' => $user->studentProfile ? [
+                'is_complete' => (bool) $user->studentProfile->is_complete,
+                'first_name' => $user->studentProfile->first_name,
+                'last_name' => $user->studentProfile->last_name,
+                'national_id' => $user->studentProfile->national_id,
+                'province' => $user->studentProfile->province,
+            ] : null,
+        ]);
     }
 
     /**
@@ -102,6 +156,6 @@ class ProfileController extends Controller
             );
         }
 
-        return Redirect::route('profile')->with('success', 'Profile updated successfully.');
+        return Redirect::back()->with('success', 'Profile updated successfully.');
     }
 }

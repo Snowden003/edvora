@@ -40,6 +40,31 @@ class GoogleController extends Controller
                 // Mark email as verified since it's from Google
                 $user->email_verified_at = now();
                 $user->save();
+
+                // Track teacher referral if present
+                $refCode = session('teacher_referral_code') ?? request()->cookie('edvora_ref');
+                if ($refCode) {
+                    $referral = \App\Models\TeacherReferral::with('course')->where('code', $refCode)->first();
+                    if ($referral) {
+                        \App\Models\TeacherReferralRecord::firstOrCreate([
+                            'course_id' => $referral->course_id,
+                            'user_id'   => $user->id,
+                        ], [
+                            'teacher_referral_id' => $referral->id,
+                            'teacher_id'          => $referral->teacher_id,
+                            'status'              => 'registered',
+                            'registered_at'       => now(),
+                            'ip_address'          => request()->ip(),
+                        ]);
+
+                        NotificationController::createStudentMessage(
+                            $referral->teacher_id,
+                            $user->name,
+                            "{$user->name} joined Edvora using your referral link for '{$referral->course->title}'! 🎉",
+                            $referral->course_id
+                        );
+                    }
+                }
             }
 
             Auth::login($user);

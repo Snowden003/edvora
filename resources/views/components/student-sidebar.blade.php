@@ -1,5 +1,5 @@
 <!-- Mobile Sidebar Toggle Button -->
-<button class="sidebar-mobile-toggle d-flex d-lg-none" id="sidebarMobileToggle" aria-label="Open sidebar">
+<button class="sidebar-mobile-toggle d-flex d-lg-none" id="sidebarMobileToggle" aria-label="باز کردن منو" type="button">
     <i class="bi bi-list"></i>
 </button>
 
@@ -7,47 +7,59 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <aside class="edvora-sidebar" id="sidebar">
-    <div class="sidebar-collapse-toggle d-none d-lg-flex" id="sidebarCollapse">
+    <div class="sidebar-collapse-toggle d-none d-lg-flex" id="sidebarCollapse" title="تغییر اندازه سایدبار">
         <i class="bi bi-chevron-left"></i>
     </div>
 
-    <button type="button" class="sidebar-mobile-close d-flex d-lg-none" id="sidebarMobileClose" aria-label="Close sidebar">
+    <button type="button" class="sidebar-mobile-close d-flex d-lg-none" id="sidebarMobileClose" aria-label="بستن سایدبار">
         <i class="bi bi-x-lg"></i>
     </button>
 
+    <!-- Brand Header -->
     <a href="{{ route('home') }}" class="edvora-brand">
-        <img src="{{ asset('assets/images/logo1.jpg') }}" alt="Edvora Tech">
-        <span>Edvora Tech</span>
+        <div class="edvora-brand-logo-wrap">
+            <img src="{{ asset('assets/images/logo1.jpg') }}" alt="Edvora Tech">
+        </div>
+        <div class="edvora-brand-info">
+            <span class="edvora-brand-title">ادوُرا تِک</span>
+            <span class="edvora-brand-badge"><i class="bi bi-mortarboard-fill me-1"></i>پورتال شاگردان</span>
+        </div>
     </a>
 
     <ul class="edvora-nav">
+        <!-- 1. MAIN MENU -->
+        <li class="edvora-nav-section-title">منوی اصلی</li>
+
         <li class="edvora-nav-item">
             <a href="{{ route('home') }}"
-               class="edvora-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                <i class="bi bi-house-fill"></i>
-                <span>Home</span>
+               class="edvora-nav-link {{ request()->routeIs('home') ? 'active' : '' }}" title="صفحه اصلی">
+                <span class="edvora-nav-icon"><i class="bi bi-house-door-fill"></i></span>
+                <span class="edvora-nav-text">صفحه اصلی</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ auth()->user()->dashboardRoute() }}"
-               class="edvora-nav-link {{ request()->routeIs('student.dashboard', 'teacher.dashboard', 'admin.dashboard') ? 'active' : '' }}">
-                <i class="bi bi-grid-1x2-fill"></i>
-                <span>Dashboard</span>
+               class="edvora-nav-link {{ request()->routeIs('student.dashboard', 'teacher.dashboard', 'admin.dashboard') ? 'active' : '' }}" title="داشبورد">
+                <span class="edvora-nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                <span class="edvora-nav-text">داشبورد</span>
             </a>
         </li>
 
+        <!-- 2. ACADEMICS -->
+        <li class="edvora-nav-section-title">بخش درسی و تعلیمی</li>
+
         <li class="edvora-nav-item {{ request()->is('student/courses*') || request()->routeIs('student.courses', 'courses.chat.show') ? 'open' : '' }}">
             <button type="button" class="edvora-submenu-toggle {{ request()->routeIs('student.courses', 'student.courses.*', 'courses.chat.show') ? 'active' : '' }}"
-                    onclick="this.closest('.edvora-nav-item').classList.toggle('open')">
-                <i class="bi bi-journal-bookmark"></i>
-                <span>My Courses</span>
+                    onclick="this.closest('.edvora-nav-item').classList.toggle('open')" title="کورس‌های من">
+                <span class="edvora-nav-icon"><i class="bi bi-journal-bookmark-fill"></i></span>
+                <span class="edvora-nav-text">کورس‌های من</span>
                 <i class="bi bi-chevron-down edvora-chevron"></i>
             </button>
             <ul class="edvora-submenu">
                 <div class="edvora-submenu-inner">
                     <a href="{{ route('student.courses') }}" class="edvora-sublink-all {{ request()->routeIs('student.courses') ? 'active' : '' }}">
-                        <span><i class="bi bi-grid"></i> All Courses</span>
+                        <span><i class="bi bi-grid"></i> تمام کورس‌ها</span>
                     </a>
 
                     @php
@@ -70,13 +82,13 @@
                                 </div>
                                 <div class="edvora-course-actions">
                                     <a href="{{ route('student.courses.learn', $enrollment->course->slug) }}" class="edvora-action-btn action-view {{ request()->is('student/courses/'.$enrollment->course->slug.'/learn') && !request()->has('tab') ? 'active' : '' }}">
-                                        <i class="bi bi-play-circle"></i> Learn
+                                        <i class="bi bi-play-circle"></i> درس
                                     </a>
                                     <a href="{{ route('courses.chat.show', $enrollment->course) }}" 
                                        class="edvora-action-btn action-chat {{ request()->routeIs('courses.chat.show') && optional(request()->route('course'))->id === $enrollment->course->id ? 'active' : '' }}"
                                        data-bg-chat-course="{{ $enrollment->course->id }}"
                                        data-bg-chat-user="{{ auth()->id() }}">
-                                        <i class="bi bi-chat-dots"></i> Chat
+                                        <i class="bi bi-chat-dots"></i> گفتگو
                                     </a>
                                 </div>
                                 
@@ -84,43 +96,43 @@
                                 <div class="edvora-course-tabs-menu">
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab active" data-tab="curriculum">
                                         <i class="bi bi-list-check"></i>
-                                        <span>Curriculum</span>
+                                        <span>مفردات و مباحث</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="documents">
                                         <i class="bi bi-folder"></i>
-                                        <span>Files & Documents</span>
+                                        <span>اسناد و مواد درسی</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="notes">
                                         <i class="bi bi-sticky"></i>
-                                        <span>Class Notes</span>
+                                        <span>نوت‌های درسی</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="sessions">
                                         <i class="bi bi-camera-video"></i>
-                                        <span>Sessions</span>
+                                        <span>جلسات آنلاین</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="quizzes">
                                         <i class="bi bi-pencil-square"></i>
-                                        <span>Quizzes</span>
+                                        <span>امتحانات و آزمون‌ها</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="reviews">
                                         <i class="bi bi-star"></i>
-                                        <span>Reviews</span>
+                                        <span>نظرات و ارزیابی</span>
                                     </button>
                                     <button type="button" class="edvora-sidebar-tab-btn learning-tab" data-tab="chat">
                                         <i class="bi bi-chat-heart"></i>
-                                        <span>Course Chat</span>
+                                        <span>چت کورس</span>
                                     </button>
                                 </div>
                                 @endif
                             </div>
                         @endif
                     @empty
-                        <div class="edvora-submenu-empty">No enrolled courses</div>
+                        <div class="edvora-submenu-empty">هیچ کورسی ثبت‌نام نشده</div>
                     @endforelse
 
                     @if(auth()->user()->enrollments()->where('status', '!=', 'banned')->count() > 6)
                         <a href="{{ route('student.courses') }}" class="edvora-view-all-link">
-                            View All Courses <i class="bi bi-arrow-right-circle"></i>
+                            مشاهده تمام کورس‌ها <i class="bi bi-arrow-left-circle"></i>
                         </a>
                     @endif
                 </div>
@@ -129,87 +141,113 @@
 
         <li class="edvora-nav-item">
             <a href="{{ route('student.exams.index') }}"
-               class="edvora-nav-link {{ request()->routeIs('student.exams.*') ? 'active' : '' }}">
-                <i class="bi bi-clipboard-check"></i>
-                <span>Quizzes</span>
+               class="edvora-nav-link {{ request()->routeIs('student.exams.*') ? 'active' : '' }}" title="امتحانات و آزمون‌ها">
+                <span class="edvora-nav-icon"><i class="bi bi-clipboard-check-fill"></i></span>
+                <span class="edvora-nav-text">امتحانات و آزمون‌ها</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('student.certificates') }}"
-               class="edvora-nav-link {{ request()->routeIs('student.certificates') ? 'active' : '' }}">
-                <i class="bi bi-award"></i>
-                <span>Certificates</span>
+               class="edvora-nav-link {{ request()->routeIs('student.certificates') ? 'active' : '' }}" title="تصدیق‌نامه‌ها">
+                <span class="edvora-nav-icon"><i class="bi bi-award-fill"></i></span>
+                <span class="edvora-nav-text">تصدیق‌نامه‌ها</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('courses.index') }}"
-               class="edvora-nav-link {{ request()->routeIs('courses.index') ? 'active' : '' }}">
-                <i class="bi bi-mortarboard"></i>
-                <span>Explore Courses</span>
+               class="edvora-nav-link {{ request()->routeIs('courses.index') ? 'active' : '' }}" title="جستجوی کورس‌ها">
+                <span class="edvora-nav-icon"><i class="bi bi-compass-fill"></i></span>
+                <span class="edvora-nav-text">جستجوی کورس‌ها</span>
             </a>
         </li>
 
+        <!-- 3. COMMUNITY -->
+        <li class="edvora-nav-section-title">بخش جامعه و محصلین</li>
+
         <li class="edvora-nav-item">
             <a href="{{ route('leaderboard') }}"
-               class="edvora-nav-link {{ request()->routeIs('leaderboard') ? 'active' : '' }}">
-                <i class="bi bi-bar-chart"></i>
-                <span>Leaderboard</span>
+               class="edvora-nav-link {{ request()->routeIs('leaderboard') ? 'active' : '' }}" title="جدول پیشتازان">
+                <span class="edvora-nav-icon"><i class="bi bi-trophy-fill"></i></span>
+                <span class="edvora-nav-text">جدول پیشتازان</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('scoring.help') }}"
-               class="edvora-nav-link {{ request()->routeIs('scoring.help') ? 'active' : '' }}">
-                <i class="bi bi-question-circle"></i>
-                <span>How Scoring Works</span>
+               class="edvora-nav-link {{ request()->routeIs('scoring.help') ? 'active' : '' }}" title="نحوه محاسبه نمرات">
+                <span class="edvora-nav-icon"><i class="bi bi-question-circle-fill"></i></span>
+                <span class="edvora-nav-text">نحوه محاسبه نمرات</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('student.notifications.index') }}"
-               class="edvora-nav-link {{ request()->routeIs('student.notifications.*') ? 'active' : '' }}">
-                <i class="bi bi-bell"></i>
-                <span>Notifications</span>
+               class="edvora-nav-link {{ request()->routeIs('student.notifications.*') ? 'active' : '' }}" title="آگاهی‌ها">
+                <span class="edvora-nav-icon"><i class="bi bi-bell-fill"></i></span>
+                <span class="edvora-nav-text">آگاهی‌ها</span>
                 @php $sidebarUnread = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count(); @endphp
                 @if($sidebarUnread > 0)
-                    <span class="edvora-badge">{{ $sidebarUnread }}</span>
+                    <span class="edvora-badge edvora-badge-danger me-auto">{{ $sidebarUnread }}</span>
                 @endif
             </a>
         </li>
 
-        <li><hr class="edvora-divider"></li>
+        <!-- 4. ACCOUNT -->
+        <li class="edvora-nav-section-title">حساب کاربری</li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('student.profile') }}"
-               class="edvora-nav-link {{ request()->routeIs('student.profile', 'profile') ? 'active' : '' }}">
-                <i class="bi bi-person-circle"></i>
-                <span>Profile</span>
+               class="edvora-nav-link {{ request()->routeIs('student.profile', 'profile') ? 'active' : '' }}" title="پروفایل من">
+                <span class="edvora-nav-icon"><i class="bi bi-person-circle"></i></span>
+                <span class="edvora-nav-text">پروفایل من</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('student.profile-details') }}"
-               class="edvora-nav-link {{ request()->routeIs('student.profile-details') ? 'active' : '' }}">
-                <i class="bi bi-person-vcard"></i>
-                <span>My Details</span>
+               class="edvora-nav-link {{ request()->routeIs('student.profile-details') ? 'active' : '' }}" title="مشخصات فردی">
+                <span class="edvora-nav-icon"><i class="bi bi-person-vcard-fill"></i></span>
+                <span class="edvora-nav-text">مشخصات فردی</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
-            <a href="{{ route('logout') }}" class="edvora-nav-link danger"
+            <a href="{{ route('logout') }}" class="edvora-nav-link danger" title="خروج از حساب"
                onclick="event.preventDefault(); document.getElementById('student-logout-form').submit();">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Logout</span>
+                <span class="edvora-nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+                <span class="edvora-nav-text">خروج از حساب</span>
             </a>
             <form id="student-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
         </li>
     </ul>
+
+    <!-- Bottom Student Mini Profile Card -->
+    @auth
+    @php
+        $authUser = auth()->user();
+        $authLevel = method_exists($authUser, 'level') ? $authUser->level() : ['level' => 1, 'title' => 'شاگرد'];
+        $authAvatar = method_exists($authUser, 'publicAvatarUrl') ? $authUser->publicAvatarUrl() : 'https://ui-avatars.com/api/?name='.urlencode($authUser->name).'&background=1f8fff&color=fff';
+    @endphp
+    <a href="{{ route('student.profile') }}" class="edvora-sidebar-user-card" title="مشاهده پروفایل">
+        <div class="edvora-user-avatar-wrap">
+            <img src="{{ $authAvatar }}" alt="{{ $authUser->name }}" class="edvora-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($authUser->name) }}&size=80&background=1f8fff&color=fff'">
+            <span class="edvora-user-status-dot" title="فعال"></span>
+        </div>
+        <div class="edvora-user-details">
+            <span class="edvora-user-name">{{ $authUser->name }}</span>
+            <span class="edvora-user-role">سطح {{ $authLevel['level'] ?? 1 }} · شاگرد</span>
+        </div>
+        <div class="edvora-user-action-btn">
+            <i class="bi bi-gear-fill"></i>
+        </div>
+    </a>
+    @endauth
 </aside>
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/sidebar-v2.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/sidebar-v2.css') }}?v={{ file_exists(public_path('assets/css/sidebar-v2.css')) ? filemtime(public_path('assets/css/sidebar-v2.css')) : time() }}">
 @endpush
 
 <script>
@@ -265,7 +303,7 @@
         }
 
         if (collapseBtn) {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            const isCollapsed = localStorage.getItem('studentSidebarCollapsed') === 'true';
             if (isCollapsed) {
                 sidebar.classList.add('collapsed');
                 if (mainContent) mainContent.classList.add('sidebar-collapsed');
@@ -275,13 +313,13 @@
                 e.stopPropagation();
                 sidebar.classList.toggle('collapsed');
                 if (mainContent) mainContent.classList.toggle('sidebar-collapsed');
-                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                localStorage.setItem('studentSidebarCollapsed', sidebar.classList.contains('collapsed'));
             });
         }
 
-        // Close on nav link click on mobile
-        sidebar.querySelectorAll('.edvora-nav-link, .edvora-sublink, .edvora-sublink-all').forEach(function(link) {
-            link.addEventListener('click', function() {
+        // Close when clicking nav items or tabs on mobile
+        sidebar.querySelectorAll('.edvora-nav-link, .edvora-sublink, .edvora-sublink-all, .edvora-course-title, .edvora-action-btn, .edvora-view-all-link, .edvora-sidebar-tab-btn').forEach(function(el) {
+            el.addEventListener('click', function() {
                 if (window.innerWidth < 992) {
                     closeSidebar();
                 }
@@ -302,4 +340,3 @@
     }
 })();
 </script>
-

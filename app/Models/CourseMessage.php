@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CourseMessage extends Model
 {
-    protected $fillable = ['course_id', 'user_id', 'body'];
+    protected $fillable = ['course_id', 'user_id', 'body', 'is_pinned', 'is_edited'];
+
+    protected $casts = [
+        'is_pinned' => 'boolean',
+        'is_edited' => 'boolean',
+    ];
 
     public function course(): BelongsTo
     {
