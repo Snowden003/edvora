@@ -57,20 +57,49 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Send 404 Not Found errors to Telegram
         $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+            try {
+                \Illuminate\Support\Facades\Log::channel('telegram')->warning('صفحه مورد نظر یافت نشد (404 Not Found)', [
+                    'status_code' => 404,
+                    'exception' => $e,
+                ]);
+            } catch (\Throwable $t) {}
+
             if ($request->is('api/*') || $request->is('broadcasting/*') || $request->expectsJson()) {
                 return response()->json(['message' => 'Not found.'], 404);
             }
             return response()->view('errors.404', [], 404);
         });
 
+        // Send 403 Forbidden errors to Telegram
         $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
             if ($e->getStatusCode() === 403) {
+                try {
+                    \Illuminate\Support\Facades\Log::channel('telegram')->warning('دسترسی غیرمجاز (403 Forbidden)', [
+                        'status_code' => 403,
+                        'exception' => $e,
+                    ]);
+                } catch (\Throwable $t) {}
+
                 if ($request->is('api/*') || $request->is('broadcasting/*') || $request->expectsJson()) {
                     return response()->json(['message' => 'Access denied.'], 403);
                 }
                 return response()->view('errors.403', [], 403);
             }
+        });
+
+        // Stop ignoring HTTP exceptions so all exceptions trigger reporting
+        $exceptions->stopIgnoring(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+        $exceptions->stopIgnoring(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+
+        // Catch and report any unhandled exception (including database/server errors) to Telegram
+        $exceptions->report(function (\Throwable $e) {
+            try {
+                \Illuminate\Support\Facades\Log::channel('telegram')->error($e->getMessage() ?: get_class($e), [
+                    'exception' => $e,
+                ]);
+            } catch (\Throwable $t) {}
         });
     })->create();
 

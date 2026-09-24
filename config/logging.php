@@ -60,10 +60,10 @@ return [
 
         'telegram' => [
             'driver' => 'custom',
-            'via' => \Logger\TelegramLogger::class,
+            'via' => \App\Logging\TelegramLogger::class,
             'token' => env('TELEGRAM_LOGGER_BOT_TOKEN', env('TELEGRAM_BOT_TOKEN')),
             'chat_id' => env('TELEGRAM_LOGGER_CHAT_ID', env('TELEGRAM_CHAT_ID')),
-            'level' => env('LOG_TELEGRAM_LEVEL', 'error'),
+            'level' => env('LOG_TELEGRAM_LEVEL', 'debug'),
         ],
 
         'single' => [
