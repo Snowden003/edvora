@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('page_contents', function (Blueprint $table) {
-            $table->id();
-            $table->string('key')->unique();
-            $table->string('title');
-            $table->json('content')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('page_contents')) {
+            Schema::create('page_contents', function (Blueprint $table) {
+                $table->id();
+                $table->string('key')->unique();
+                $table->string('title');
+                $table->json('content')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

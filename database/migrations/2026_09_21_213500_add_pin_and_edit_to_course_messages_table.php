@@ -9,8 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('course_messages', function (Blueprint $table) {
-            $table->boolean('is_pinned')->default(false)->after('body');
-            $table->boolean('is_edited')->default(false)->after('is_pinned');
+            if (!Schema::hasColumn('course_messages', 'is_pinned')) {
+                $table->boolean('is_pinned')->default(false)->after('body');
+            }
+            if (!Schema::hasColumn('course_messages', 'is_edited')) {
+                $table->boolean('is_edited')->default(false)->after('is_pinned');
+            }
         });
     }
 
