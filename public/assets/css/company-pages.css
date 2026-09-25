@@ -1,0 +1,865 @@
+/* ==========================================================================
+   EDVORA TECH - COMPANY & LEGAL PAGES — LIGHT GLASSMORPHISM DESIGN SYSTEM
+   White-Theme, GPU-Accelerated Animations, Modern Glass Effects
+   ========================================================================== */
+
+:root {
+    --cp-bg: #ffffff;
+    --cp-bg-section: #f8fafc;
+    --cp-bg-section-alt: #f1f5f9;
+    --cp-glass-bg: rgba(255, 255, 255, 0.6);
+    --cp-glass-bg-hover: rgba(255, 255, 255, 0.8);
+    --cp-glass-border: rgba(0, 0, 0, 0.06);
+    --cp-glass-border-hover: rgba(31, 143, 255, 0.35);
+    --cp-primary: #1F8FFF;
+    --cp-cyan: #00D2FF;
+    --cp-purple: #8B5CF6;
+    --cp-gold: #F59E0B;
+    --cp-text-heading: #0f172a;
+    --cp-text-body: #334155;
+    --cp-text-muted: #64748b;
+    --cp-shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.04);
+    --cp-shadow-md: 0 10px 40px rgba(0, 0, 0, 0.06);
+    --cp-shadow-lg: 0 20px 60px rgba(31, 143, 255, 0.08);
+    --cp-shadow-glow: 0 0 30px rgba(31, 143, 255, 0.12);
+}
+
+/* ==========================================================================
+   1. PRELOADER (Light Theme)
+   ========================================================================== */
+.cp-preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f0f4ff 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s ease;
+    pointer-events: all;
+}
+
+.cp-preloader.cp-loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.cp-spinner-box {
+    position: relative;
+    width: 72px;
+    height: 72px;
+}
+
+.cp-spinner-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--cp-primary);
+    border-right-color: rgba(31, 143, 255, 0.2);
+    animation: cpSpin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+    box-shadow: 0 0 20px rgba(31, 143, 255, 0.2);
+}
+
+.cp-spinner-ring-inner {
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-bottom-color: var(--cp-cyan);
+    border-left-color: rgba(0, 210, 255, 0.2);
+    animation: cpSpinReverse 0.8s linear infinite;
+}
+
+.cp-spinner-core {
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cp-primary), var(--cp-cyan));
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.45);
+    animation: cpPulse 1.5s ease-in-out infinite alternate;
+}
+
+.cp-preloader-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cp-text-muted);
+}
+
+.cp-preloader-text span {
+    color: var(--cp-primary);
+    font-weight: 800;
+}
+
+@keyframes cpSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes cpSpinReverse { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+@keyframes cpPulse { 0% { transform: scale(0.85); opacity: 0.7; } 100% { transform: scale(1.15); opacity: 1; } }
+
+/* ==========================================================================
+   2. PAGE BODY & 3D CANVAS
+   ========================================================================== */
+.cp-page-body {
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--cp-bg);
+}
+
+.cp-3d-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Ensure hero sits on top of canvas */
+.cp-page-body .page-hero-wrapper {
+    position: relative;
+    z-index: 2;
+}
+
+/* ==========================================================================
+   3. SECTIONS
+   ========================================================================== */
+.cp-section {
+    position: relative;
+    z-index: 1;
+    padding: 80px 0;
+}
+
+.cp-section-sm {
+    padding: 50px 0;
+}
+
+/* Subtle section divider */
+.cp-section-divider {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   4. GLASSMORPHIC CARDS & PANELS (Light Theme)
+   ========================================================================== */
+.cp-glass-card {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 22px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.35s ease,
+                box-shadow 0.35s ease,
+                background 0.35s ease;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+/* Top highlight line */
+.cp-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.cp-glass-card:hover {
+    transform: translateY(-6px);
+    background: var(--cp-glass-bg-hover);
+    border-color: var(--cp-glass-border-hover);
+    box-shadow: var(--cp-shadow-lg), var(--cp-shadow-glow);
+}
+
+/* Color glow variants on hover */
+.cp-glass-card-glow-blue:hover {
+    border-color: rgba(31, 143, 255, 0.4);
+    box-shadow: 0 20px 50px rgba(31, 143, 255, 0.1), 0 0 25px rgba(31, 143, 255, 0.08);
+}
+
+.cp-glass-card-glow-cyan:hover {
+    border-color: rgba(0, 210, 255, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 210, 255, 0.1), 0 0 25px rgba(0, 210, 255, 0.08);
+}
+
+.cp-glass-card-glow-purple:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 20px 50px rgba(139, 92, 246, 0.1), 0 0 25px rgba(139, 92, 246, 0.08);
+}
+
+.cp-glass-card-glow-gold:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 20px 50px rgba(245, 158, 11, 0.1), 0 0 25px rgba(245, 158, 11, 0.08);
+}
+
+/* Corner glow accent */
+.cp-card-corner-glow {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    filter: blur(50px);
+    pointer-events: none;
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+}
+
+.cp-glass-card:hover .cp-card-corner-glow {
+    opacity: 0.35;
+}
+
+/* ==========================================================================
+   5. ICON BOXES
+   ========================================================================== */
+.cp-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cp-glass-card:hover .cp-icon-box {
+    transform: scale(1.08) rotate(3deg);
+}
+
+.cp-icon-box-blue {
+    background: rgba(31, 143, 255, 0.1);
+    color: var(--cp-primary);
+    border: 1px solid rgba(31, 143, 255, 0.2);
+}
+
+.cp-glass-card:hover .cp-icon-box-blue {
+    box-shadow: 0 0 20px rgba(31, 143, 255, 0.2);
+}
+
+.cp-icon-box-cyan {
+    background: rgba(0, 210, 255, 0.1);
+    color: #0ea5e9;
+    border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.cp-glass-card:hover .cp-icon-box-cyan {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+}
+
+.cp-icon-box-purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--cp-purple);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.cp-glass-card:hover .cp-icon-box-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.cp-icon-box-gold {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.cp-glass-card:hover .cp-icon-box-gold {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.cp-icon-box-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ==========================================================================
+   6. BADGES & LABELS
+   ========================================================================== */
+.cp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-bottom: 14px;
+}
+
+.cp-badge-blue {
+    background: rgba(31, 143, 255, 0.1);
+    color: #1d6fbf;
+    border: 1px solid rgba(31, 143, 255, 0.2);
+}
+
+.cp-badge-cyan {
+    background: rgba(0, 210, 255, 0.08);
+    color: #0284c7;
+    border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.cp-badge-purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: #7c3aed;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.cp-badge-gold {
+    background: rgba(245, 158, 11, 0.1);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Section Header Styles */
+.cp-section-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--cp-text-heading);
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+}
+
+.cp-section-desc {
+    color: var(--cp-text-muted);
+    font-size: 1.05rem;
+    max-width: 650px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* Gradient text helper */
+.cp-gradient-text {
+    background: linear-gradient(135deg, #1F8FFF 20%, #00D2FF 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   7. TIMELINE (About Page)
+   ========================================================================== */
+.cp-timeline-wrapper {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+.cp-timeline-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cp-primary), rgba(31, 143, 255, 0.15) 85%, transparent);
+    transform: translateX(-50%);
+}
+
+.cp-timeline-item {
+    position: relative;
+    margin-bottom: 45px;
+    width: 50%;
+}
+
+.cp-timeline-item.left { left: 0; padding-right: 45px; text-align: right; }
+.cp-timeline-item.right { left: 50%; padding-left: 45px; text-align: left; }
+.cp-timeline-item.left .cp-timeline-node { right: -16px; }
+.cp-timeline-item.right .cp-timeline-node { left: -16px; }
+
+.cp-timeline-node {
+    position: absolute;
+    top: 24px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--cp-primary);
+    box-shadow: 0 0 12px rgba(31, 143, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--cp-primary);
+    z-index: 2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cp-timeline-item:hover .cp-timeline-node {
+    transform: scale(1.2);
+    box-shadow: 0 0 22px rgba(31, 143, 255, 0.5);
+}
+
+.cp-timeline-content {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: var(--cp-shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.cp-timeline-item:hover .cp-timeline-content {
+    border-color: rgba(31, 143, 255, 0.3);
+    transform: translateY(-4px);
+    box-shadow: var(--cp-shadow-md), 0 0 15px rgba(31, 143, 255, 0.08);
+}
+
+.cp-timeline-year {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cp-primary);
+    background: rgba(31, 143, 255, 0.08);
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   8. TEAM CARDS (About Page)
+   ========================================================================== */
+.cp-team-card {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 22px;
+    padding: 32px 24px;
+    text-align: center;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.cp-team-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(31, 143, 255, 0.35);
+    box-shadow: var(--cp-shadow-lg), var(--cp-shadow-glow);
+}
+
+.cp-team-avatar-box {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, rgba(31, 143, 255, 0.08), rgba(0, 210, 255, 0.08));
+    border: 2px solid rgba(31, 143, 255, 0.2);
+    color: var(--cp-primary);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cp-team-card:hover .cp-team-avatar-box {
+    transform: scale(1.08);
+    border-color: var(--cp-primary);
+    box-shadow: 0 0 25px rgba(31, 143, 255, 0.2);
+}
+
+.cp-team-social {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.cp-team-social a {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cp-text-muted);
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.cp-team-social a:hover {
+    background: var(--cp-primary);
+    border-color: var(--cp-primary);
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(31, 143, 255, 0.3);
+}
+
+/* Filter nav */
+.cp-filter-nav { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+
+.cp-filter-btn {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    color: var(--cp-text-muted);
+    padding: 8px 22px;
+    border-radius: 30px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cp-filter-btn:hover,
+.cp-filter-btn.active {
+    background: var(--cp-primary);
+    border-color: var(--cp-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(31, 143, 255, 0.25);
+}
+
+/* ==========================================================================
+   9. STORY CHAPTER CARDS & VISUAL PODIUMS
+   ========================================================================== */
+.cp-story-chapter-card {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: var(--cp-shadow-sm);
+    transition: all 0.35s ease;
+}
+
+.cp-story-chapter-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(31, 143, 255, 0.3);
+    box-shadow: var(--cp-shadow-lg), var(--cp-shadow-glow);
+}
+
+.cp-story-index {
+    position: absolute;
+    top: 24px;
+    right: 30px;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(31, 143, 255, 0.06);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.cp-visual-podium {
+    background: rgba(241, 245, 249, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    height: 100%;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cp-podium-center-icon {
+    font-size: 5.5rem;
+    background: linear-gradient(135deg, #1F8FFF 10%, #00D2FF 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(31, 143, 255, 0.3));
+    animation: cpPodiumHover 4s ease-in-out infinite;
+    z-index: 2;
+}
+
+@keyframes cpPodiumHover {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.cp-podium-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(30px);
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+/* ==========================================================================
+   10. PILLAR CARDS (How We Work)
+   ========================================================================== */
+.cp-pillar-card {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 22px;
+    padding: 34px;
+    height: 100%;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.cp-pillar-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--cp-primary), var(--cp-cyan));
+    border-radius: 4px 0 0 4px;
+}
+
+.cp-pillar-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(31, 143, 255, 0.35);
+    box-shadow: var(--cp-shadow-lg), var(--cp-shadow-glow);
+}
+
+.cp-bullet-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(31, 143, 255, 0.08);
+    color: var(--cp-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   11. TERMS & LEGAL (Search, TOC, Bento)
+   ========================================================================== */
+.cp-legal-search-wrapper {
+    max-width: 580px;
+    margin: 0 auto 40px;
+    position: relative;
+}
+
+.cp-legal-search-input {
+    width: 100%;
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 14px 22px 14px 50px;
+    border-radius: 40px;
+    color: var(--cp-text-heading);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--cp-shadow-sm);
+}
+
+.cp-legal-search-input::placeholder {
+    color: var(--cp-text-muted);
+}
+
+.cp-legal-search-input:focus {
+    border-color: var(--cp-primary);
+    box-shadow: 0 0 25px rgba(31, 143, 255, 0.15);
+}
+
+.cp-legal-search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cp-text-muted);
+    font-size: 1.15rem;
+    pointer-events: none;
+}
+
+/* Quick TOC bar */
+.cp-toc-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 35px;
+    scrollbar-width: thin;
+}
+
+.cp-toc-bar::-webkit-scrollbar { height: 4px; }
+.cp-toc-bar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
+
+.cp-toc-pill {
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--cp-text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.cp-toc-pill:hover,
+.cp-toc-pill.active {
+    background: rgba(31, 143, 255, 0.1);
+    border-color: rgba(31, 143, 255, 0.3);
+    color: var(--cp-primary);
+}
+
+/* Bento grid */
+.cp-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+/* TL;DR box */
+.cp-tldr-box {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(31, 143, 255, 0.05);
+    border: 1px dashed rgba(31, 143, 255, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.cp-tldr-badge {
+    background: var(--cp-primary);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ==========================================================================
+   12. PRIVACY PRISM NAV & TAGS
+   ========================================================================== */
+.cp-prism-nav {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 100;
+}
+
+.cp-prism-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(31, 143, 255, 0.2);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.cp-prism-dot:hover,
+.cp-prism-dot.active {
+    background: var(--cp-primary);
+    transform: scale(1.4);
+    box-shadow: 0 0 15px rgba(31, 143, 255, 0.5);
+}
+
+.cp-tag-pill {
+    display: inline-block;
+    background: rgba(31, 143, 255, 0.06);
+    border: 1px solid rgba(31, 143, 255, 0.12);
+    color: var(--cp-text-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+/* ==========================================================================
+   13. STAT DISPLAY (Light Theme)
+   ========================================================================== */
+.cp-stat-card {
+    background: var(--cp-glass-bg);
+    border: 1px solid var(--cp-glass-border);
+    backdrop-filter: blur(16px);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.cp-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--cp-shadow-md);
+}
+
+.cp-stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1F8FFF, #00D2FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+}
+
+.cp-stat-label {
+    color: var(--cp-text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* ==========================================================================
+   14. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 991px) {
+    .cp-section { padding: 50px 0; }
+
+    .cp-timeline-wrapper::before { left: 20px; }
+    .cp-timeline-item {
+        width: 100%;
+        left: 0 !important;
+        padding-left: 60px !important;
+        padding-right: 0 !important;
+        text-align: left !important;
+    }
+    .cp-timeline-node { left: 4px !important; right: auto !important; }
+
+    .cp-prism-nav { display: none; }
+    .cp-section-title { font-size: 1.85rem; }
+}
+
+@media (max-width: 576px) {
+    .cp-glass-card { padding: 22px; border-radius: 16px; }
+    .cp-bento-grid { grid-template-columns: 1fr; }
+    .cp-section-title { font-size: 1.6rem; }
+}

@@ -23,7 +23,10 @@ import {
     X,
     Shield,
     LogOut,
-    Mail
+    Mail,
+    Info,
+    Trophy,
+    Building
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
@@ -46,7 +49,7 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
             ],
         },
         {
-            title: 'مدیریت محتوا',
+            title: 'آموزش و یادگیری',
             items: [
                 {
                     name: 'دوره‌های آموزشی',
@@ -62,85 +65,11 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                     active: url.startsWith('/admin/books'),
                     isSpa: true,
                 },
-                {
-                    name: 'صفحات سایت',
-                    icon: FileText,
-                    href: '/admin-panel/company-pages-management',
-                    active: url.includes('company-pages'),
-                },
-                {
-                    name: 'مدیریت فایل‌ها',
-                    icon: FolderKanban,
-                    href: '/admin-panel/file-manager',
-                    active: url.includes('file-manager'),
-                },
             ],
         },
         {
-            title: 'کاربران و اعضا',
+            title: 'جامعه و رویدادها (Community)',
             items: [
-                {
-                    name: 'دانشجویان',
-                    icon: Users,
-                    href: '/admin-panel/students',
-                    active: url.includes('/students'),
-                },
-                {
-                    name: 'اساتید و مدرسان',
-                    icon: UserCheck,
-                    href: '/admin-panel/teachers',
-                    active: url.includes('/teachers'),
-                    badge: pendingTeachersCount > 0 ? `${pendingTeachersCount} جدید` : null,
-                    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-                },
-            ],
-        },
-        {
-            title: 'آموزش و امتیازدهی',
-            items: [
-                {
-                    name: 'گواهینامه‌ها',
-                    icon: Award,
-                    href: '/admin-panel/certificates',
-                    active: url.includes('certificates'),
-                },
-                {
-                    name: 'قوانین امتیازات',
-                    icon: Sparkles,
-                    href: '/admin-panel/scoring-rules',
-                    active: url.includes('scoring-rules'),
-                },
-                {
-                    name: 'مراحل نقشه راه',
-                    icon: Map,
-                    href: '/admin-panel/roadmap-stages',
-                    active: url.includes('roadmap-stages'),
-                },
-                {
-                    name: 'امتیازات کاربران',
-                    icon: Coins,
-                    href: '/admin-panel/points',
-                    active: url.includes('points'),
-                },
-            ],
-        },
-        {
-            title: 'ارتباطات و رویدادها',
-            items: [
-                {
-                    name: 'پیام‌های تماس',
-                    icon: MessageSquare,
-                    href: '/admin-panel/contact-messages',
-                    active: url.includes('contact-messages'),
-                    badge: unreadMessagesCount > 0 ? unreadMessagesCount : null,
-                    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-                },
-                {
-                    name: 'نظرات و بازخوردها',
-                    icon: Star,
-                    href: '/admin-panel/reviews',
-                    active: url.includes('reviews'),
-                },
                 {
                     name: 'مدیریت رویدادها',
                     icon: CalendarDays,
@@ -148,7 +77,113 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                     active: url.includes('/admin/events'),
                 },
                 {
-                    name: 'ارسال ایمیل همگانی',
+                    name: 'جدول برترین‌ها (Leaderboard)',
+                    icon: Trophy,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+            ],
+        },
+        {
+            title: 'منابع و مسیر یادگیری (Resources & Roadmap)',
+            items: [
+                {
+                    name: 'مراحل نقشه راه (Roadmap)',
+                    icon: Map,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'محتوای فونداسیون (Foundation)',
+                    icon: Building,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'قوانین و راهنمای امتیازات',
+                    icon: Sparkles,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'گواهینامه‌ها (Certificates)',
+                    icon: Award,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'امتیازات کاربران (Points)',
+                    icon: Coins,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+            ],
+        },
+        {
+            title: 'صفحات عمومی (About & Legal)',
+            items: [
+                {
+                    name: 'درباره ما (About Us)',
+                    icon: Info,
+                    href: '/admin/company-pages/about',
+                    active: url === '/admin/company-pages/about' || url.startsWith('/admin/company-pages/about'),
+                    isSpa: true,
+                },
+                {
+                    name: 'داستان ما (Our Story)',
+                    icon: BookOpen,
+                    href: '/admin/company-pages/story',
+                    active: url === '/admin/company-pages/story' || url.startsWith('/admin/company-pages/story'),
+                    isSpa: true,
+                },
+                {
+                    name: 'نحوه کار ما (How We Work)',
+                    icon: Sparkles,
+                    href: '/admin/company-pages/how-we-work',
+                    active: url === '/admin/company-pages/how-we-work' || url.startsWith('/admin/company-pages/how-we-work'),
+                    isSpa: true,
+                },
+                {
+                    name: 'قوانین و شرایط (Terms)',
+                    icon: FileText,
+                    href: '/admin/company-pages/terms',
+                    active: url === '/admin/company-pages/terms' || url.startsWith('/admin/company-pages/terms'),
+                    isSpa: true,
+                },
+                {
+                    name: 'حریم خصوصی (Privacy)',
+                    icon: Shield,
+                    href: '/admin/company-pages/privacy',
+                    active: url === '/admin/company-pages/privacy' || url.startsWith('/admin/company-pages/privacy'),
+                    isSpa: true,
+                },
+            ],
+        },
+        {
+            title: 'ارتباطات و پیام‌ها (Communications)',
+            items: [
+                {
+                    name: 'پیام‌های تماس (Contact)',
+                    icon: MessageSquare,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'نظرات و بازخوردها (Reviews)',
+                    icon: Star,
+                    href: '#',
+                    active: false,
+                    disabled: true,
+                },
+                {
+                    name: 'ارسال ایمیل همگانی (Broadcast)',
                     icon: Mail,
                     href: '/admin/broadcast-emails',
                     active: url.startsWith('/admin/broadcast-emails'),
@@ -157,20 +192,42 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
             ],
         },
         {
-            title: 'تنظیمات و سیستم',
+            title: 'کاربران و اعضا (Users)',
             items: [
+                {
+                    name: 'دانشجویان',
+                    icon: Users,
+                    href: '/admin/students',
+                    active: url.startsWith('/admin/students'),
+                    isSpa: true,
+                },
+                {
+                    name: 'اساتید و مدرسان',
+                    icon: UserCheck,
+                    href: '/admin/teachers',
+                    active: url.startsWith('/admin/teachers'),
+                    isSpa: true,
+                    badge: pendingTeachersCount > 0 ? `${pendingTeachersCount} جدید` : null,
+                    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                },
+            ],
+        },
+        {
+            title: 'تنظیمات و ابزارها (System)',
+            items: [
+                {
+                    name: 'مدیریت فایل‌ها',
+                    icon: FolderKanban,
+                    href: '/admin/file-manager',
+                    active: url.startsWith('/admin/file-manager'),
+                    isSpa: true,
+                },
                 {
                     name: 'تنظیمات وب‌سایت',
                     icon: Settings,
-                    href: '/admin-panel/site-settings',
-                    active: url.includes('site-settings'),
-                },
-                {
-                    name: 'پنل کلاسیک فیلامنت',
-                    icon: ExternalLink,
-                    href: '/admin-panel',
+                    href: '#',
                     active: false,
-                    isExternal: true,
+                    disabled: true,
                 },
             ],
         },
@@ -234,19 +291,24 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                             <div className="space-y-1 mt-1">
                                 {group.items.map((item, itemIdx) => {
                                     const Icon = item.icon;
+                                    const isDisabled = item.disabled;
                                     const activeClass = item.active
                                         ? 'bg-gradient-to-r from-brand-500/20 to-brand-600/10 text-brand-400 font-bold border-r-4 border-brand-500 shadow-sm'
+                                        : isDisabled
+                                        ? 'text-slate-500 opacity-50 cursor-not-allowed select-none'
                                         : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium';
 
                                     const linkContent = (
                                         <div
                                             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${activeClass}`}
-                                            title={isCollapsed ? item.name : undefined}
+                                            title={isCollapsed ? (isDisabled ? `${item.name} (به زودی ⭐)` : item.name) : undefined}
                                         >
                                             <div
                                                 className={`p-1.5 rounded-lg transition-colors ${
                                                     item.active
                                                         ? 'bg-brand-500/20 text-brand-400'
+                                                        : isDisabled
+                                                        ? 'text-slate-600'
                                                         : 'text-slate-400 group-hover:text-brand-300 group-hover:bg-slate-800'
                                                 }`}
                                             >
@@ -255,13 +317,22 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
 
                                             {!isCollapsed && (
                                                 <div className="flex-1 flex items-center justify-between min-w-0">
-                                                    <span className="truncate text-sm">{item.name}</span>
-                                                    {item.badge && (
-                                                        <span
-                                                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${item.badgeColor}`}
-                                                        >
-                                                            {item.badge}
+                                                    <span className="truncate text-sm flex items-center gap-1.5">
+                                                        {item.name}
+                                                    </span>
+                                                    {isDisabled ? (
+                                                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-0.5 shrink-0" title="این بخش به زودی فعال می‌شود">
+                                                            <span>⭐</span>
+                                                            <span>به زودی</span>
                                                         </span>
+                                                    ) : (
+                                                        item.badge && (
+                                                            <span
+                                                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${item.badgeColor}`}
+                                                            >
+                                                                {item.badge}
+                                                            </span>
+                                                        )
                                                     )}
                                                 </div>
                                             )}
@@ -269,11 +340,19 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                                             {/* Tooltip for collapsed state */}
                                             {isCollapsed && (
                                                 <div className="hidden lg:block absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 text-white text-xs rounded-lg shadow-xl border border-slate-700 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
-                                                    {item.name}
+                                                    {item.name} {isDisabled && '⭐ (به زودی)'}
                                                 </div>
                                             )}
                                         </div>
                                     );
+
+                                    if (isDisabled) {
+                                        return (
+                                            <div key={itemIdx} className="cursor-not-allowed" onClick={(e) => e.preventDefault()}>
+                                                {linkContent}
+                                            </div>
+                                        );
+                                    }
 
                                     return item.isSpa ? (
                                         <Link key={itemIdx} href={item.href}>

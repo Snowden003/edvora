@@ -22,18 +22,19 @@
             <a href="{{ route('admin.dashboard') }}" class="nav-link active" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-speedometer2" style="width: 24px; margin-right: 10px;"></i>Dashboard
             </a>
-            <a href="{{ route('filament.admin.resources.courses.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
+            <a href="/admin/courses" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-book" style="width: 24px; margin-right: 10px;"></i>Courses
             </a>
-            <a href="{{ route('filament.admin.resources.teachers.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
+            <a href="/admin/teachers" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-person-video3" style="width: 24px; margin-right: 10px;"></i>Teachers
             </a>
             <a href="{{ route('admin.events.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
                 <i class="bi bi-calendar-event" style="width: 24px; margin-right: 10px;"></i>Events
             </a>
-            <a href="{{ route('filament.admin.resources.contact-messages.index') }}" class="nav-link" style="color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 0; transition: all 0.3s;">
-                <i class="bi bi-envelope" style="width: 24px; margin-right: 10px;"></i>Messages
-            </a>
+            <span class="nav-link disabled" style="color: rgba(255,255,255,0.4); padding: 12px 20px; cursor: not-allowed; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="bi bi-envelope" style="width: 24px; margin-right: 10px;"></i>Messages</span>
+                <span class="badge bg-warning text-dark font-normal" style="font-size: 10px;">⭐ به زودی</span>
+            </span>
         </nav>
     </div>
 

@@ -435,6 +435,36 @@
     cursor: not-allowed !important;
 }
 
+#edvoraAiWindow .voice-action-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 10px !important;
+    background: rgba(31, 143, 255, 0.1) !important;
+    border: 1px solid rgba(31, 143, 255, 0.25) !important;
+    color: #1f8fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+}
+#edvoraAiWindow .voice-action-btn:hover {
+    background: rgba(31, 143, 255, 0.2) !important;
+}
+#edvoraAiWindow .voice-action-btn.is-recording {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    animation: edvoraVoicePulse 1.2s infinite ease-in-out !important;
+}
+@keyframes edvoraVoicePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.85; }
+}
+
 /* Mobile */
 @media (max-width: 480px) {
     #edvoraAiTrigger {
@@ -521,6 +551,9 @@
                    placeholder="Type your question in English or فارسی..."
                    autocomplete="off"
                    dir="auto" />
+            <button type="button" class="voice-action-btn" id="edvoraAiMicBtn" title="ورودی صوتی (ضبط ویس به فارسی)">
+                <i class="bi bi-mic-fill"></i>
+            </button>
             <button type="submit" class="send-action-btn" id="edvoraAiSendBtn" aria-label="Send">
                 <i class="bi bi-arrow-up-short"></i>
             </button>
@@ -844,6 +877,74 @@
                     e.preventDefault();
                     var text = this.value;
                     handleUserSend(text);
+                }
+            });
+        }
+
+        // Voice Input (Speech Recognition)
+        var micBtn = document.getElementById('edvoraAiMicBtn');
+        var isRecordingVoice = false;
+        var speechInstance = null;
+
+        if (micBtn && inputEl) {
+            micBtn.addEventListener('click', function () {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+                if (!SpeechRecognition) {
+                    alert('مرورگر شما از ورودی صوتی پشتیبانی نمی‌کند. لطفاً از مرورگر جدیدتر مانند Chrome یا Edge استفاده فرمایید.');
+                    return;
+                }
+
+                if (isRecordingVoice) {
+                    if (speechInstance) speechInstance.stop();
+                    isRecordingVoice = false;
+                    micBtn.classList.remove('is-recording');
+                    micBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+                    return;
+                }
+
+                try {
+                    var recognition = new SpeechRecognition();
+                    recognition.lang = 'fa-IR';
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+
+                    recognition.onstart = function () {
+                        isRecordingVoice = true;
+                        micBtn.classList.add('is-recording');
+                        micBtn.innerHTML = '<i class="bi bi-mic-mute-fill"></i>';
+                    };
+
+                    recognition.onresult = function (e) {
+                        var transcript = '';
+                        for (var i = e.resultIndex; i < e.results.length; i++) {
+                            transcript += e.results[i][0].transcript;
+                        }
+                        if (transcript) {
+                            inputEl.value = transcript;
+                        }
+                    };
+
+                    recognition.onerror = function (e) {
+                        console.error('[Voice Input Error]', e);
+                        isRecordingVoice = false;
+                        micBtn.classList.remove('is-recording');
+                        micBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+                    };
+
+                    recognition.onend = function () {
+                        isRecordingVoice = false;
+                        micBtn.classList.remove('is-recording');
+                        micBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+                    };
+
+                    speechInstance = recognition;
+                    recognition.start();
+                } catch (err) {
+                    console.error('[Voice Exception]', err);
+                    isRecordingVoice = false;
+                    micBtn.classList.remove('is-recording');
+                    micBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
                 }
             });
         }

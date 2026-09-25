@@ -19,18 +19,19 @@
             <a href="{{ route('admin.dashboard') }}" class="nav-link">
                 <i class="bi bi-speedometer2"></i>Dashboard
             </a>
-            <a href="{{ route('filament.admin.resources.courses.index') }}" class="nav-link">
+            <a href="/admin/courses" class="nav-link">
                 <i class="bi bi-book"></i>Courses
             </a>
-            <a href="{{ route('filament.admin.resources.teachers.index') }}" class="nav-link">
+            <a href="/admin/teachers" class="nav-link">
                 <i class="bi bi-person-video3"></i>Teachers
             </a>
             <a href="{{ route('admin.events.index') }}" class="nav-link active">
                 <i class="bi bi-calendar-event"></i>Events
             </a>
-            <a href="{{ route('filament.admin.resources.contact-messages.index') }}" class="nav-link">
-                <i class="bi bi-envelope"></i>Messages
-            </a>
+            <span class="nav-link text-muted opacity-50 d-flex align-items-center justify-content-between" style="cursor: not-allowed;">
+                <span><i class="bi bi-envelope"></i>Messages</span>
+                <span class="badge bg-warning text-dark font-normal" style="font-size: 10px;">⭐ به زودی</span>
+            </span>
         </nav>
     </div>
 

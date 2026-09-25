@@ -302,8 +302,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index']);
         Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::post('/teachers/{id}/verify', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'verifyTeacher'])->name('teachers.verify');
-        Route::post('/teachers/{id}/reject', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'rejectTeacher'])->name('teachers.reject');
 
         // Courses Management (React SPA)
         Route::prefix('courses')->name('courses.')->group(function () {
@@ -335,7 +333,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{book}', [\App\Http\Controllers\Admin\AdminBookController::class, 'destroy'])->name('destroy');
         });
 
-        // Events Management (Custom Admin - Not Filament)
+        // Events Management (Custom Admin)
         Route::get('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'index'])->name('events.index');
         Route::get('/events/create', [\App\Http\Controllers\Admin\EventAdminController::class, 'create'])->name('events.create');
         Route::post('/events', [\App\Http\Controllers\Admin\EventAdminController::class, 'store'])->name('events.store');
@@ -349,8 +347,52 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/send', [\App\Http\Controllers\Admin\AdminBroadcastEmailController::class, 'send'])->name('send');
             Route::post('/test', [\App\Http\Controllers\Admin\AdminBroadcastEmailController::class, 'sendTest'])->name('test');
         });
+
+        // File Manager (React SPA)
+        Route::prefix('file-manager')->name('file-manager.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminFileManagerController::class, 'index'])->name('index');
+            Route::post('/upload', [\App\Http\Controllers\Admin\AdminFileManagerController::class, 'upload'])->name('upload');
+            Route::post('/delete', [\App\Http\Controllers\Admin\AdminFileManagerController::class, 'destroy'])->name('destroy');
+            Route::post('/create-folder', [\App\Http\Controllers\Admin\AdminFileManagerController::class, 'createFolder'])->name('create-folder');
+            Route::post('/bulk-delete', [\App\Http\Controllers\Admin\AdminFileManagerController::class, 'bulkDestroy'])->name('bulk-delete');
+        });
+
+        // Students Management (React SPA)
+        Route::prefix('students')->name('students.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminStudentController::class, 'index'])->name('index');
+            Route::post('/{user}/status', [\App\Http\Controllers\Admin\AdminStudentController::class, 'updateStatus'])->name('update-status');
+            Route::post('/{user}/enrollment/{enrollment}/status', [\App\Http\Controllers\Admin\AdminStudentController::class, 'updateEnrollmentStatus'])->name('update-enrollment-status');
+            Route::delete('/{user}/enrollment/{enrollment}', [\App\Http\Controllers\Admin\AdminStudentController::class, 'removeEnrollment'])->name('remove-enrollment');
+            Route::post('/{user}/message', [\App\Http\Controllers\Admin\AdminStudentController::class, 'sendMessage'])->name('send-message');
+            Route::post('/bulk-action', [\App\Http\Controllers\Admin\AdminStudentController::class, 'bulkAction'])->name('bulk-action');
+        });
+
+        // Teachers Management (React SPA)
+        Route::prefix('teachers')->name('teachers.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'store'])->name('store');
+            Route::post('/{user}', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'update'])->name('update');
+            Route::post('/{user}/verify', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'verify'])->name('verify');
+            Route::post('/{user}/reject', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'reject'])->name('reject');
+            Route::post('/{user}/status', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'updateStatus'])->name('update-status');
+            Route::post('/{user}/message', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'sendMessage'])->name('send-message');
+            Route::delete('/{user}', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-action', [\App\Http\Controllers\Admin\AdminTeacherController::class, 'bulkAction'])->name('bulk-action');
+        });
+
+        // Public / Company Pages Management (React SPA + Gemini AI)
+        Route::prefix('company-pages')->name('company-pages.')->group(function () {
+            Route::get('/{pageKey?}', [\App\Http\Controllers\Admin\AdminCompanyPagesController::class, 'index'])->name('index');
+            Route::post('/ai/generate', [\App\Http\Controllers\Admin\AdminCompanyPagesController::class, 'generateAi'])->name('ai.generate');
+            Route::post('/{pageKey}', [\App\Http\Controllers\Admin\AdminCompanyPagesController::class, 'update'])->name('update');
+        });
     });
 });
+
+// Legacy Admin-Panel Redirects
+Route::redirect('/admin-panel/students', '/admin/students');
+Route::redirect('/admin-panel/teachers', '/admin/teachers');
+Route::redirect('/admin-panel', '/admin/dashboard');
 
 // API Routes for events
 Route::get('/api/events', [EventController::class, 'apiIndex'])->name('api.events.index');

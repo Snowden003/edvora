@@ -821,4 +821,83 @@ class GeminiService
             'sources' => $sources,
         ];
     }
+
+    /**
+     * Generate or refine web content for public pages using Gemini AI (supports Text + Multimodal Audio input).
+     */
+    public function generatePageContentText(string $pageTitle, string $prompt, string $currentText = '', ?string $audioBase64 = null, string $mimeType = 'audio/webm'): array
+    {
+        if (empty($this->apiKey)) {
+            return [
+                'success' => false,
+                'message' => 'کلید Gemini API در فایل .env تنظیم نشده است.',
+            ];
+        }
+
+        $systemInstruction = "شما یک دستیار تولید محتوا و نویسنده حرفه‌ای وب‌سایت آموزشی «ادورا تک (Edvora Tech)» هستید. 
+وظیفه شما نگارش متنی بسیار جذاب، معتبر، روان، استاندارد و فاقد کلیشه‌های بی‌روح برای بخش «{$pageTitle}» وب‌سایت است.
+لحن باید مدرن، الهام‌بخش، حرفه‌ای و کاربرپسند به زبان فارسی باشد.
+اگر ویس صوتی یا متن قبلی داده شده است، آن را تحلیل کرده و طبق دستور کاربر متنی باکیفیت به زبان فارسی ارائه دهید.";
+
+        $userContent = "دستور کاربر: " . (!empty($prompt) ? $prompt : 'لطفاً طبق ویس صوتی ضبط شده متنی مناسب برای این بخش بنویس.');
+        if (!empty($currentText)) {
+            $userContent .= "\n\nمتن فعلی جهت ویرایش/الهام‌گیری:\n{$currentText}";
+        }
+
+        $parts = [
+            ['text' => $systemInstruction . "\n\n" . $userContent]
+        ];
+
+        if (!empty($audioBase64)) {
+            // Clean base64 header if present
+            $cleanBase64 = preg_replace('#^data:audio/\w+;base64,#i', '', $audioBase64);
+            $parts[] = [
+                'inline_data' => [
+                    'mime_type' => $mimeType,
+                    'data' => trim($cleanBase64)
+                ]
+            ];
+        }
+
+        $payload = [
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => $parts
+                ]
+            ],
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 1500,
+            ]
+        ];
+
+        $res = $this->callGeminiApi($payload);
+
+        if (!$res['success']) {
+            return [
+                'success' => false,
+                'message' => $res['error'] ?? 'خطا در ارتباط با هوش مصنوعی.',
+            ];
+        }
+
+        $candidates = $res['data']['candidates'] ?? [];
+        $generatedText = '';
+
+        if (!empty($candidates[0]['content']['parts'][0]['text'])) {
+            $generatedText = trim($candidates[0]['content']['parts'][0]['text']);
+        }
+
+        if (empty($generatedText)) {
+            return [
+                'success' => false,
+                'message' => 'پاسخی از هوش مصنوعی دریافت نشد.',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'text' => $generatedText,
+        ];
+    }
 }
