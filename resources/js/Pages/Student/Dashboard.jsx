@@ -95,88 +95,141 @@ export default function Dashboard({
             )}
 
             {/* Welcome Banner */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#030712] via-[#09152e] to-[#040e24] dark:from-[#02050f] dark:via-[#071329] dark:to-[#030919] text-white p-6 sm:p-10 border border-slate-800/80 dark:border-cyan-500/30 dark:shadow-[0_20px_50px_-15px_rgba(0,240,255,0.2)] mb-6">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#030712] via-[#09152e] to-[#040e24] dark:from-[#02050f] dark:via-[#071329] dark:to-[#030919] text-white p-5 sm:p-8 lg:p-10 border border-slate-800/80 dark:border-cyan-500/30 dark:shadow-[0_20px_50px_-15px_rgba(0,240,255,0.2)] mb-6 transition-all">
                 <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                    <div className="absolute top-6 left-10 text-cyan-400/20 dark:text-cyan-400/25 animate-bounce" style={{ animationDuration: '6s' }}>
-                        <GraduationCap size={44} />
+                    <div className="absolute top-4 left-6 text-cyan-400/15 animate-bounce" style={{ animationDuration: '6s' }}>
+                        <GraduationCap size={40} />
                     </div>
-                    <div className="absolute bottom-8 left-1/3 text-indigo-400/20 dark:text-indigo-400/25 animate-pulse" style={{ animationDuration: '4s' }}>
-                        <Sparkles size={48} />
+                    <div className="absolute bottom-6 left-1/3 text-indigo-400/15 animate-pulse" style={{ animationDuration: '4s' }}>
+                        <Sparkles size={42} />
                     </div>
-                    <div className="absolute top-12 right-1/4 text-amber-400/20 dark:text-amber-400/25 animate-bounce" style={{ animationDuration: '8s' }}>
-                        <Award size={40} />
+                    <div className="absolute top-8 right-1/4 text-amber-400/15 animate-bounce" style={{ animationDuration: '8s' }}>
+                        <Award size={36} />
                     </div>
                     {/* Glowing Aurora Orbs */}
                     <div className="absolute -top-24 -right-24 w-96 h-96 bg-cyan-500/20 dark:bg-cyan-500/25 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/20 dark:bg-indigo-600/25 rounded-full blur-3xl pointer-events-none" />
                 </div>
 
-                <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 max-w-2xl text-center lg:text-start">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-xs font-bold text-cyan-300 shadow-[0_0_15px_rgba(0,240,255,0.2)]">
-                            <Sparkles size={14} className="text-cyan-400 animate-pulse" />
-                            <span>{t('level')} {level.level} · {level.title || t('scholar')}</span>
+                <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
+                    {/* Main Identity & Greeting: Avatar is prominently first/beside name */}
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-start flex-1 min-w-0 w-full">
+                        {/* 3D Holographic User Avatar (Never pushed to the bottom!) */}
+                        <div className="relative shrink-0 group">
+                            <div className="relative w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl sm:rounded-3xl p-[2.5px] bg-gradient-to-tr from-cyan-400 via-brand-500 to-indigo-500 shadow-[0_0_30px_rgba(0,240,255,0.35)] group-hover:shadow-[0_0_40px_rgba(0,240,255,0.55)] transition-all">
+                                <div className="w-full h-full rounded-[14px] sm:rounded-[22px] overflow-hidden bg-slate-950 relative">
+                                    <img
+                                        src={userAvatar}
+                                        alt={user.name || 'Student'}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
+                                </div>
+                                <span className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-emerald-500 border-2 border-slate-900 rounded-full ring-2 ring-emerald-400/60 shadow-[0_0_10px_#10b981] animate-pulse" title={t('active')} />
+                            </div>
                         </div>
-                        <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-                            {t('welcome_back')}{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-300 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
-                                {user.name || t('scholar')}
-                            </span> 👋
-                        </h2>
-                        <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium">
-                            {t('hero_desc_start')}{' '}
-                            <strong className="text-cyan-200 font-bold">{stats.active_courses || 0} {t('hero_active_courses')}</strong>{' '}
-                            {t('hero_and')}{' '}
-                            <strong className="text-indigo-200 font-bold">{upcomingEvents.length} {t('hero_upcoming_events')}</strong>{' '}
-                            {t('hero_desc_end')}
-                        </p>
 
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
-                            {firstActiveCourse ? (
-                                <a
-                                    href={`/student/courses/${firstActiveCourse.course.slug}/learn`}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-brand-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-[0_0_25px_-3px_rgba(0,240,255,0.5)] transition-all hover:scale-[1.02]"
-                                >
-                                    <PlayCircle size={16} />
-                                    <span>{t('continue_course')} {firstActiveCourse.course.title}</span>
-                                </a>
-                            ) : (
-                                <a
-                                    href="/courses"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-brand-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-[0_0_25px_-3px_rgba(0,240,255,0.5)] transition-all hover:scale-[1.02]"
-                                >
-                                    <Compass size={16} />
-                                    <span>{t('explore_btn')}</span>
-                                </a>
-                            )}
+                        {/* User Greeting & Description */}
+                        <div className="space-y-3 flex-1 min-w-0 w-full">
+                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-xs font-bold text-cyan-300 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+                                    <Sparkles size={13} className="text-cyan-400 animate-pulse" />
+                                    <span>{t('level')} {level.level} · {level.title || t('scholar')}</span>
+                                </div>
+                                {stats.streak > 0 && (
+                                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs font-extrabold text-amber-400 shadow-xs">
+                                        <span className="anim-flame text-xs">🔥</span>
+                                        <span>{stats.streak} {t('days')}</span>
+                                    </div>
+                                )}
+                            </div>
 
-                            <a
-                                href="/leaderboard"
-                                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-white/20 dark:border-amber-400/30 text-white font-bold text-xs transition-colors shadow-xs"
-                            >
-                                <Trophy size={14} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-                                <span>{t('rank_badge')}{stats.rank ? ` #${stats.rank}` : ' —'}</span>
-                            </a>
+                            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
+                                {t('welcome_back')}{' '}
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-300 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                                    {user.name || t('scholar')}
+                                </span> 👋
+                            </h2>
+
+                            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium max-w-xl">
+                                {t('hero_desc_start')}{' '}
+                                <strong className="text-cyan-300 font-bold">{stats.active_courses || 0} {t('hero_active_courses')}</strong>{' '}
+                                {t('hero_and')}{' '}
+                                <strong className="text-indigo-300 font-bold">{upcomingEvents.length} {t('hero_upcoming_events')}</strong>{' '}
+                                {t('hero_desc_end')}
+                            </p>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
+                                {firstActiveCourse ? (
+                                    <a
+                                        href={`/student/courses/${firstActiveCourse.course.slug}/learn`}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-brand-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-[0_0_25px_-3px_rgba(0,240,255,0.5)] transition-all hover:scale-[1.02] active:scale-95"
+                                    >
+                                        <PlayCircle size={16} />
+                                        <span>{t('continue_course')} {firstActiveCourse.course.title}</span>
+                                    </a>
+                                ) : (
+                                    <a
+                                        href="/courses"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-brand-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-[0_0_25px_-3px_rgba(0,240,255,0.5)] transition-all hover:scale-[1.02] active:scale-95"
+                                    >
+                                        <Compass size={16} />
+                                        <span>{t('explore_btn')}</span>
+                                    </a>
+                                )}
+
+                                <a
+                                    href="/leaderboard"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-white/20 dark:border-amber-400/30 text-white font-bold text-xs transition-all hover:scale-[1.02] shadow-xs active:scale-95"
+                                >
+                                    <Trophy size={14} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+                                    <span>{t('rank_badge')}{stats.rank ? ` #${stats.rank}` : ' —'}</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Rotating Avatar with Neon Rings */}
-                    <div className="relative flex items-center justify-center shrink-0">
-                        <div
-                            className="absolute w-44 h-44 rounded-full border-2 border-dashed border-cyan-400/50 animate-spin pointer-events-none drop-shadow-[0_0_10px_rgba(0,240,255,0.4)]"
-                            style={{ animationDuration: '20s' }}
-                        />
-                        <div
-                            className="absolute w-36 h-36 rounded-full border-2 border-dotted border-indigo-400/60 animate-spin pointer-events-none drop-shadow-[0_0_8px_rgba(99,102,241,0.4)]"
-                            style={{ animationDuration: '12s', animationDirection: 'reverse' }}
-                        />
-                        <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-cyan-300/80 dark:border-cyan-400/90 shadow-[0_0_25px_rgba(0,240,255,0.4)] z-10 group">
-                            <img
-                                src={userAvatar}
-                                alt={user.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                            <span className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full ring-2 ring-emerald-400/60 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                    {/* Progress & Ranking Glass Card */}
+                    <div className="w-full lg:w-72 shrink-0 bg-white/5 dark:bg-slate-900/60 backdrop-blur-xl border border-white/10 dark:border-cyan-500/25 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 shadow-lg">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-slate-300 dark:text-cyan-300/80 uppercase tracking-wider">
+                                {t('progression_title')}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-xs font-black text-amber-400">
+                                <Trophy size={13} />
+                                <span>{stats.rank ? `#${stats.rank}` : '—'}</span>
+                            </span>
+                        </div>
+
+                        {/* Level & XP Mini Bar */}
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                                <span className="font-extrabold text-white">
+                                    {t('level')} {level.level}
+                                </span>
+                                <span className="font-bold text-cyan-300 text-[11px]">
+                                    {level.progress || 0} XP
+                                </span>
+                            </div>
+                            <div className="w-full h-2 rounded-full bg-slate-800 dark:bg-slate-950/80 overflow-hidden p-0.5 border border-white/10">
+                                <div
+                                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 shadow-[0_0_10px_#00f0ff] transition-all duration-700"
+                                    style={{ width: `${Math.min(100, Math.max(8, (level.progress || 0) % 100))}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Quick Stats Grid */}
+                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 dark:border-slate-800/80">
+                            <div className="p-2 rounded-xl bg-white/5 dark:bg-slate-950/40 text-center">
+                                <span className="text-[10px] text-slate-400 block">{t('stat_active_courses')}</span>
+                                <span className="text-sm font-black text-cyan-300 mt-0.5 block">{stats.active_courses || 0}</span>
+                            </div>
+                            <div className="p-2 rounded-xl bg-white/5 dark:bg-slate-950/40 text-center">
+                                <span className="text-[10px] text-slate-400 block">{t('stat_certificates')}</span>
+                                <span className="text-sm font-black text-amber-300 mt-0.5 block">{stats.certificates || 0}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

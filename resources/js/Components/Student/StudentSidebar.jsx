@@ -1,6 +1,29 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useLanguage } from '@/Context/LanguageContext';
+import {
+    Home,
+    LayoutDashboard,
+    BookOpen,
+    ClipboardCheck,
+    Award,
+    Compass,
+    Trophy,
+    HelpCircle,
+    Bell,
+    User,
+    FileText,
+    LogOut,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    X,
+    Play,
+    MessageSquare,
+    Layers,
+    Settings,
+    GraduationCap
+} from 'lucide-react';
 
 export default function StudentSidebar({
     isOpen,
@@ -46,17 +69,6 @@ export default function StudentSidebar({
 
     return (
         <>
-            {/* Mobile Sidebar Toggle Button */}
-            <button
-                className="sidebar-mobile-toggle d-flex d-lg-none"
-                id="sidebarMobileToggle"
-                aria-label="Open sidebar"
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                <i className="bi bi-list"></i>
-            </button>
-
             {/* Sidebar Overlay */}
             <div
                 className={`sidebar-overlay ${isOpen ? 'active' : ''}`}
@@ -69,25 +81,29 @@ export default function StudentSidebar({
                 className={`edvora-sidebar ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'active' : ''}`}
                 id="sidebar"
             >
-                {/* Desktop Collapse Toggle */}
+                {/* Desktop Collapse Toggle (strictly hidden on mobile) */}
                 <div
                     className="sidebar-collapse-toggle d-none d-lg-flex"
                     id="sidebarCollapse"
                     title={isCollapsed ? t('view_all') : t('close')}
                     onClick={toggleCollapse}
                 >
-                    <i className={`bi ${isRtl ? (isCollapsed ? 'bi-chevron-left' : 'bi-chevron-right') : (isCollapsed ? 'bi-chevron-right' : 'bi-chevron-left')}`}></i>
+                    {isRtl ? (
+                        isCollapsed ? <ChevronLeft size={14} /> : <ChevronRight size={14} />
+                    ) : (
+                        isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />
+                    )}
                 </div>
 
-                {/* Mobile Close Button */}
+                {/* Mobile Close Button (properly positioned to never collide with logo) */}
                 <button
                     type="button"
                     className="sidebar-mobile-close d-flex d-lg-none"
                     id="sidebarMobileClose"
-                    aria-label="Close sidebar"
+                    aria-label={t('close')}
                     onClick={() => setIsOpen(false)}
                 >
-                    <i className="bi bi-x-lg"></i>
+                    <X size={18} />
                 </button>
 
                 {/* Brand Header */}
@@ -97,8 +113,9 @@ export default function StudentSidebar({
                     </div>
                     <div className="edvora-brand-info">
                         <span className="edvora-brand-title">{t('brand_title')}</span>
-                        <span className="edvora-brand-badge">
-                            <i className="bi bi-mortarboard-fill me-1"></i>{t('portal_name')}
+                        <span className="edvora-brand-badge flex items-center gap-1">
+                            <GraduationCap size={13} className="shrink-0" />
+                            <span>{t('portal_name')}</span>
                         </span>
                     </div>
                 </a>
@@ -106,11 +123,16 @@ export default function StudentSidebar({
                 {/* Navigation Menu */}
                 <ul className="edvora-nav">
                     {/* 1. MAIN MENU */}
-                    <li className="edvora-nav-section-title">{t('main_menu')}</li>
+                    <li className="edvora-nav-section-title">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                        <span>{t('main_menu')}</span>
+                    </li>
 
                     <li className="edvora-nav-item">
-                        <a href="/" className="edvora-nav-link" title={t('home')}>
-                            <span className="edvora-nav-icon"><i className="bi bi-house-door-fill"></i></span>
+                        <a href="/" className="edvora-nav-link group" title={t('home')}>
+                            <span className="edvora-nav-icon text-sky-500 bg-sky-500/10 dark:bg-sky-500/15">
+                                <Home size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('home')}</span>
                         </a>
                     </li>
@@ -118,27 +140,34 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <Link
                             href="/student/dashboard"
-                            className={`edvora-nav-link ${isDashboardActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isDashboardActive ? 'active' : ''}`}
                             title={t('dashboard')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-grid-1x2-fill"></i></span>
+                            <span className="edvora-nav-icon text-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/15">
+                                <LayoutDashboard size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('dashboard')}</span>
                         </Link>
                     </li>
 
-                    {/* 2. ACADEMICS */}
-                    <li className="edvora-nav-section-title">{t('academics')}</li>
+                    {/* 2. ACADEMICS & LEARNING */}
+                    <li className="edvora-nav-section-title">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0"></span>
+                        <span>{t('academics')}</span>
+                    </li>
 
                     <li className={`edvora-nav-item ${coursesSubmenuOpen ? 'open' : ''}`}>
                         <button
                             type="button"
-                            className={`edvora-submenu-toggle ${isCoursesActive ? 'active' : ''}`}
+                            className={`edvora-submenu-toggle group ${isCoursesActive ? 'active' : ''}`}
                             onClick={() => setCoursesSubmenuOpen(!coursesSubmenuOpen)}
                             title={t('my_courses')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-journal-bookmark-fill"></i></span>
+                            <span className="edvora-nav-icon text-indigo-500 bg-indigo-500/10 dark:bg-indigo-500/15">
+                                <BookOpen size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('my_courses')}</span>
-                            <i className="bi bi-chevron-down edvora-chevron"></i>
+                            <ChevronDown size={14} className="edvora-chevron" />
                         </button>
                         <ul className="edvora-submenu" style={{ display: coursesSubmenuOpen ? 'block' : 'none' }}>
                             <div className="edvora-submenu-inner">
@@ -146,7 +175,10 @@ export default function StudentSidebar({
                                     href="/student/courses"
                                     className={`edvora-sublink-all ${url === '/student/courses' ? 'active' : ''}`}
                                 >
-                                    <span><i className="bi bi-grid"></i> {t('all_courses')}</span>
+                                    <span className="flex items-center gap-1.5">
+                                        <Layers size={14} className="text-cyan-500" />
+                                        {t('all_courses')}
+                                    </span>
                                 </Link>
 
                                 {studentCourses.map((c) => (
@@ -156,24 +188,25 @@ export default function StudentSidebar({
                                     >
                                         <div className="edvora-course-header">
                                             <Link href={`/student/courses/${c.slug}/learn`} className="edvora-course-title">
-                                                <i className="bi bi-book edvora-course-icon"></i>
+                                                <BookOpen size={13} className="edvora-course-icon shrink-0" />
                                                 <span className="edvora-course-name">{c.title}</span>
                                             </Link>
                                         </div>
                                         <div className="edvora-course-actions">
-                                            <Link href={`/student/courses/${c.slug}/learn`} className="edvora-action-btn action-view">
-                                                <i className="bi bi-play-circle"></i> {t('learn')}
+                                            <Link href={`/student/courses/${c.slug}/learn`} className="edvora-action-btn action-view flex items-center gap-1">
+                                                <Play size={10} fill="currentColor" /> {t('learn')}
                                             </Link>
-                                            <a href={`/courses/${c.id}/chat`} className="edvora-action-btn action-chat">
-                                                <i className="bi bi-chat-dots"></i> {t('chat')}
+                                            <a href={`/courses/${c.id}/chat`} className="edvora-action-btn action-chat flex items-center gap-1">
+                                                <MessageSquare size={10} /> {t('chat')}
                                             </a>
                                         </div>
                                     </div>
                                 ))}
 
                                 {totalStudentCourses > 6 && (
-                                    <Link href="/student/courses" className="edvora-view-all-link">
-                                        {t('view_all_courses')} <i className={`bi ${isRtl ? 'bi-arrow-left-circle' : 'bi-arrow-right-circle'}`}></i>
+                                    <Link href="/student/courses" className="edvora-view-all-link flex items-center gap-1">
+                                        <span>{t('view_all_courses')}</span>
+                                        {isRtl ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
                                     </Link>
                                 )}
                             </div>
@@ -183,10 +216,12 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <Link
                             href="/student/quizzes"
-                            className={`edvora-nav-link ${isQuizzesActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isQuizzesActive ? 'active' : ''}`}
                             title={t('quizzes')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-clipboard-check-fill"></i></span>
+                            <span className="edvora-nav-icon text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/15">
+                                <ClipboardCheck size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('quizzes')}</span>
                         </Link>
                     </li>
@@ -194,27 +229,36 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <Link
                             href="/student/certificates"
-                            className={`edvora-nav-link ${isCertificatesActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isCertificatesActive ? 'active' : ''}`}
                             title={t('certificates')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-award-fill"></i></span>
+                            <span className="edvora-nav-icon text-amber-500 bg-amber-500/10 dark:bg-amber-500/15">
+                                <Award size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('certificates')}</span>
                         </Link>
                     </li>
 
                     <li className="edvora-nav-item">
-                        <a href="/courses" className="edvora-nav-link" title={t('explore_courses')}>
-                            <span className="edvora-nav-icon"><i className="bi bi-compass-fill"></i></span>
+                        <a href="/courses" className="edvora-nav-link group" title={t('explore_courses')}>
+                            <span className="edvora-nav-icon text-teal-500 bg-teal-500/10 dark:bg-teal-500/15">
+                                <Compass size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('explore_courses')}</span>
                         </a>
                     </li>
 
-                    {/* 3. COMMUNITY */}
-                    <li className="edvora-nav-section-title">{t('community')}</li>
+                    {/* 3. COMMUNITY & LEADERBOARD */}
+                    <li className="edvora-nav-section-title">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
+                        <span>{t('community')}</span>
+                    </li>
 
                     <li className="edvora-nav-item">
-                        <a href="/leaderboard" className="edvora-nav-link" title={t('leaderboard')}>
-                            <span className="edvora-nav-icon"><i className="bi bi-trophy-fill"></i></span>
+                        <a href="/leaderboard" className="edvora-nav-link group" title={t('leaderboard')}>
+                            <span className="edvora-nav-icon text-amber-500 bg-amber-500/10 dark:bg-amber-500/15">
+                                <Trophy size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('leaderboard')}</span>
                         </a>
                     </li>
@@ -222,10 +266,12 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <Link
                             href="/scoring-help"
-                            className={`edvora-nav-link ${isScoringHelpActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isScoringHelpActive ? 'active' : ''}`}
                             title={t('how_scoring_works')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-question-circle-fill"></i></span>
+                            <span className="edvora-nav-icon text-blue-500 bg-blue-500/10 dark:bg-blue-500/15">
+                                <HelpCircle size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('how_scoring_works')}</span>
                         </Link>
                     </li>
@@ -233,29 +279,36 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <a
                             href="/student/notifications"
-                            className={`edvora-nav-link ${isNotificationsActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isNotificationsActive ? 'active' : ''}`}
                             title={t('notifications')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-bell-fill"></i></span>
+                            <span className="edvora-nav-icon text-rose-500 bg-rose-500/10 dark:bg-rose-500/15">
+                                <Bell size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('notifications')}</span>
                             {unreadNotifications > 0 && (
-                                <span className="edvora-badge edvora-badge-danger ms-auto">
+                                <span className="edvora-badge edvora-badge-danger ms-auto px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold shadow-sm shadow-rose-500/40">
                                     {unreadNotifications}
                                 </span>
                             )}
                         </a>
                     </li>
 
-                    {/* 4. ACCOUNT */}
-                    <li className="edvora-nav-section-title">{t('account')}</li>
+                    {/* 4. ACCOUNT & SETTINGS */}
+                    <li className="edvora-nav-section-title">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                        <span>{t('account')}</span>
+                    </li>
 
                     <li className="edvora-nav-item">
                         <Link
                             href="/student/profile"
-                            className={`edvora-nav-link ${isProfileActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isProfileActive ? 'active' : ''}`}
                             title={t('profile')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-person-circle"></i></span>
+                            <span className="edvora-nav-icon text-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/15">
+                                <User size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('profile')}</span>
                         </Link>
                     </li>
@@ -263,10 +316,12 @@ export default function StudentSidebar({
                     <li className="edvora-nav-item">
                         <Link
                             href="/student/profile-details"
-                            className={`edvora-nav-link ${isProfileDetailsActive ? 'active' : ''}`}
+                            className={`edvora-nav-link group ${isProfileDetailsActive ? 'active' : ''}`}
                             title={t('my_details')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-person-vcard-fill"></i></span>
+                            <span className="edvora-nav-icon text-purple-500 bg-purple-500/10 dark:bg-purple-500/15">
+                                <FileText size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('my_details')}</span>
                         </Link>
                     </li>
@@ -276,32 +331,36 @@ export default function StudentSidebar({
                             method="post"
                             as="button"
                             href="/logout"
-                            className="edvora-nav-link danger w-100 text-start border-0 bg-transparent cursor-pointer"
+                            className="edvora-nav-link danger w-100 text-start border-0 bg-transparent cursor-pointer group"
                             title={t('logout')}
                         >
-                            <span className="edvora-nav-icon"><i className="bi bi-box-arrow-right"></i></span>
+                            <span className="edvora-nav-icon text-rose-500 bg-rose-500/10 dark:bg-rose-500/15">
+                                <LogOut size={18} strokeWidth={2.2} />
+                            </span>
                             <span className="edvora-nav-text">{t('logout')}</span>
                         </Link>
                     </li>
                 </ul>
 
-                {/* Bottom Student Mini Profile Card */}
+                {/* Pinned Bottom Student Mini Profile Card */}
                 {user && (
-                    <a href="/student/profile" className="edvora-sidebar-user-card" title={t('profile')}>
-                        <div className="edvora-user-avatar-wrap">
-                            <img src={userAvatar} alt={user.name || 'Student'} className="edvora-user-avatar" />
-                            <span className="edvora-user-status-dot" title={t('active')}></span>
-                        </div>
-                        <div className="edvora-user-details">
-                            <span className="edvora-user-name">{user.name}</span>
-                            <span className="edvora-user-role">
-                                {t('level')} {studentLevel.level || 1} · {studentLevel.title || t('scholar')}
-                            </span>
-                        </div>
-                        <div className="edvora-user-action-btn">
-                            <i className="bi bi-gear-fill"></i>
-                        </div>
-                    </a>
+                    <div className="edvora-sidebar-footer">
+                        <a href="/student/profile" className="edvora-sidebar-user-card group" title={t('profile')}>
+                            <div className="edvora-user-avatar-wrap">
+                                <img src={userAvatar} alt={user.name || 'Student'} className="edvora-user-avatar" />
+                                <span className="edvora-user-status-dot" title={t('active')}></span>
+                            </div>
+                            <div className="edvora-user-details">
+                                <span className="edvora-user-name">{user.name}</span>
+                                <span className="edvora-user-role">
+                                    {t('level')} {studentLevel.level || 1} · {studentLevel.title || t('scholar')}
+                                </span>
+                            </div>
+                            <div className="edvora-user-action-btn flex items-center justify-center">
+                                <Settings size={16} />
+                            </div>
+                        </a>
+                    </div>
                 )}
             </aside>
         </>
