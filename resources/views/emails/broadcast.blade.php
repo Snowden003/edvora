@@ -22,18 +22,17 @@
                     @php
                         // Resolve Logo (Embed inline CID for maximum compatibility across all email clients)
                         $logoSrc = null;
-                        $optLogo = public_path('assets/images/email-logo.jpg');
-                        $origLogo = public_path('assets/images/logo1.jpg');
-                        $logoFile = file_exists($optLogo) ? $optLogo : (file_exists($origLogo) ? $origLogo : null);
+                        $origLogo = public_path('logo.png');
+                        $logoFile = file_exists($origLogo) ? $origLogo : null;
 
                         if ($logoFile && isset($message)) {
                             try {
                                 $logoSrc = $message->embed($logoFile);
                             } catch (\Throwable $e) {
-                                $logoSrc = asset('assets/images/logo1.jpg');
+                                $logoSrc = asset('logo.png');
                             }
                         } else {
-                            $logoSrc = asset('assets/images/logo1.jpg');
+                            $logoSrc = asset('logo.png');
                         }
 
                         // Resolve Hero Banner (Embed inline CID if local file, or preserve external URL)

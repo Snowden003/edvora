@@ -151,8 +151,8 @@
     try {
       var notif = new Notification(title, {
         body: body,
-        icon: '/assets/images/logo1.jpg',
-        badge: '/favicon.ico',
+        icon: '/extension_icon.png',
+        badge: '/favicon.png',
         tag: 'edvora-' + Date.now()
       });
 

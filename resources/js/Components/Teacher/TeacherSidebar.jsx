@@ -105,7 +105,7 @@ export default function TeacherSidebar({
                     <a href="/" className="flex items-center gap-3 group overflow-hidden">
                         <div className="relative w-10 h-10 rounded-xl overflow-hidden shrink-0 shadow-md shadow-[#0A58CA]/10 border border-[#E5EAF2] group-hover:scale-105 transition-transform duration-300">
                             <img
-                                src="/assets/images/logo1.jpg"
+                                src="/logo.png"
                                 alt="Edvora Tech"
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
@@ -163,18 +163,16 @@ export default function TeacherSidebar({
                                 <Link
                                     href="/teacher/dashboard"
                                     title={isCollapsed ? 'داشبورد' : undefined}
-                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isDashboardActive
-                                            ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isDashboardActive
+                                        ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div
-                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                            isDashboardActive
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                        }`}
+                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isDashboardActive
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                            }`}
                                     >
                                         <LayoutDashboard size={18} />
                                     </div>
@@ -198,19 +196,17 @@ export default function TeacherSidebar({
                                     onClick={() => setCoursesSubmenuOpen(!coursesSubmenuOpen)}
                                     type="button"
                                     title={isCollapsed ? 'دوره‌های من' : undefined}
-                                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isYourCoursesActive && !coursesSubmenuOpen
-                                            ? 'bg-[#0A58CA]/10 text-[#0A58CA]'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isYourCoursesActive && !coursesSubmenuOpen
+                                        ? 'bg-[#0A58CA]/10 text-[#0A58CA]'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-3 min-w-0">
                                         <div
-                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                                isYourCoursesActive
-                                                    ? 'bg-[#0A58CA]/15 text-[#0A58CA]'
-                                                    : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                            }`}
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isYourCoursesActive
+                                                ? 'bg-[#0A58CA]/15 text-[#0A58CA]'
+                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                                }`}
                                         >
                                             <BookOpen size={18} />
                                         </div>
@@ -227,9 +223,8 @@ export default function TeacherSidebar({
                                             )}
                                             <ChevronDown
                                                 size={15}
-                                                className={`text-slate-400 transition-transform duration-200 ${
-                                                    coursesSubmenuOpen ? 'rotate-180' : ''
-                                                }`}
+                                                className={`text-slate-400 transition-transform duration-200 ${coursesSubmenuOpen ? 'rotate-180' : ''
+                                                    }`}
                                             />
                                         </div>
                                     )}
@@ -240,11 +235,10 @@ export default function TeacherSidebar({
                                     <div className="mt-1 mr-4 pr-3 border-r-2 border-[#E5EAF2] space-y-1 py-1">
                                         <Link
                                             href="/teacher/your-courses"
-                                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                                                url === '/teacher/your-courses'
-                                                    ? 'bg-[#0A58CA]/10 text-[#0A58CA]'
-                                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-                                            }`}
+                                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${url === '/teacher/your-courses'
+                                                ? 'bg-[#0A58CA]/10 text-[#0A58CA]'
+                                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                                }`}
                                         >
                                             <div className="flex items-center gap-2">
                                                 <Grid size={14} className="text-slate-400" />
@@ -260,9 +254,8 @@ export default function TeacherSidebar({
                                             return (
                                                 <div
                                                     key={course.id}
-                                                    className={`group/course rounded-lg p-2 transition-all ${
-                                                        isThisCourse ? 'bg-slate-100/80' : 'hover:bg-slate-50'
-                                                    }`}
+                                                    className={`group/course rounded-lg p-2 transition-all ${isThisCourse ? 'bg-slate-100/80' : 'hover:bg-slate-50'
+                                                        }`}
                                                 >
                                                     <div className="flex items-center justify-between gap-1 mb-1">
                                                         <a
@@ -303,19 +296,17 @@ export default function TeacherSidebar({
                                 <a
                                     href="/teacher/enrollment-requests"
                                     title={isCollapsed ? 'ثبت‌نام‌ها' : undefined}
-                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isEnrollmentsActive
-                                            ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isEnrollmentsActive
+                                        ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-3 min-w-0">
                                         <div
-                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                                isEnrollmentsActive
-                                                    ? 'bg-white/20 text-white'
-                                                    : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                            }`}
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isEnrollmentsActive
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                                }`}
                                         >
                                             <UserCheck size={18} />
                                         </div>
@@ -334,18 +325,16 @@ export default function TeacherSidebar({
                                 <a
                                     href="/teacher/quizzes"
                                     title={isCollapsed ? 'آزمون‌ها' : undefined}
-                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isQuizzesActive
-                                            ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isQuizzesActive
+                                        ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div
-                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                            isQuizzesActive
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                        }`}
+                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isQuizzesActive
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                            }`}
                                     >
                                         <HelpCircle size={18} />
                                     </div>
@@ -368,19 +357,17 @@ export default function TeacherSidebar({
                                 <a
                                     href="/teacher/notifications"
                                     title={isCollapsed ? 'اعلان‌ها' : undefined}
-                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isNotificationsActive
-                                            ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isNotificationsActive
+                                        ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-3 min-w-0">
                                         <div
-                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                                isNotificationsActive
-                                                    ? 'bg-white/20 text-white'
-                                                    : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                            }`}
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isNotificationsActive
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                                }`}
                                         >
                                             <Bell size={18} />
                                         </div>
@@ -399,18 +386,16 @@ export default function TeacherSidebar({
                                 <a
                                     href="/profile"
                                     title={isCollapsed ? 'پروفایل' : undefined}
-                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
-                                        isProfileActive
-                                            ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
-                                            : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
-                                    }`}
+                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${isProfileActive
+                                        ? 'bg-[#0A58CA] text-white shadow-md shadow-[#0A58CA]/20'
+                                        : 'text-slate-600 hover:text-[#0A58CA] hover:bg-[#F5F8FC]'
+                                        }`}
                                 >
                                     <div
-                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                            isProfileActive
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
-                                        }`}
+                                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isProfileActive
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-slate-100 text-slate-600 group-hover:bg-[#0A58CA]/10 group-hover:text-[#0A58CA]'
+                                            }`}
                                     >
                                         <UserCog size={18} />
                                     </div>

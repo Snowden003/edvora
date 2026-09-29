@@ -16,7 +16,7 @@
                     <tr>
                         <td style="background:linear-gradient(135deg,#0D0D0D 0%,#1F3A5F 50%,#1F8FFF 100%);padding:32px 48px;text-align:center;">
                             <a href="{{ url('/') }}" style="text-decoration:none;display:inline-block;">
-                                <img src="{{ url('assets/images/logo1.jpg') }}" alt="Edvora Tech"
+                                <img src="{{ url('logo.png') }}" alt="Edvora Tech"
                                      width="120" style="height:auto;border-radius:8px;display:block;border:0;" />
                             </a>
                             <p style="color:rgba(255,255,255,0.6);margin:10px 0 0;font-size:0.85rem;font-family:'Segoe UI',Tahoma,sans-serif;">Learning Platform</p>

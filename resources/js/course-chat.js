@@ -208,7 +208,7 @@ const sendDesktopNotification = (message) => {
         try {
             new Notification(`New message from ${message.user.name}`, {
                 body: message.body,
-                icon: message.user.avatar || '/assets/images/logo1.jpg'
+                icon: message.user.avatar || '/extension_icon.png'
             });
         } catch (e) {}
     } else if ('Notification' in window && Notification.permission !== 'denied') {

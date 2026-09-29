@@ -71,7 +71,7 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
                         <div className="relative w-10 h-10 rounded-2xl p-[1.5px] bg-gradient-to-tr from-cyan-400 via-brand-500 to-indigo-600 shadow-md shadow-brand-500/25 group-hover:shadow-cyan-400/40 transition-shadow">
                             <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center relative">
                                 <img
-                                    src="/assets/images/logo1.jpg"
+                                    src="/logo.png"
                                     alt="Edvora Tech"
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                 />
@@ -161,7 +161,7 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
                     <div className="relative w-9 h-9 rounded-xl p-[1.5px] bg-gradient-to-tr from-cyan-400 via-brand-500 to-indigo-600 shadow-sm shadow-brand-500/20 anim-float-3d">
                         <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-950 flex items-center justify-center relative">
                             <img
-                                src="/assets/images/logo1.jpg"
+                                src="/logo.png"
                                 alt="Edvora Tech"
                                 className="w-full h-full object-cover"
                             />
@@ -222,9 +222,8 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
 
                         {langDropdownOpen && (
                             <div
-                                className={`absolute mt-2 w-36 bg-white dark:bg-[#0b1730] rounded-2xl shadow-xl dark:shadow-slate-950/70 border border-slate-200/80 dark:border-cyan-500/30 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 ${
-                                    isRtl ? 'left-0' : 'right-0'
-                                }`}
+                                className={`absolute mt-2 w-36 bg-white dark:bg-[#0b1730] rounded-2xl shadow-xl dark:shadow-slate-950/70 border border-slate-200/80 dark:border-cyan-500/30 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 ${isRtl ? 'left-0' : 'right-0'
+                                    }`}
                             >
                                 <button
                                     type="button"
@@ -232,11 +231,10 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
                                         setLang('fa');
                                         setLangDropdownOpen(false);
                                     }}
-                                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors ${
-                                        lang === 'fa'
-                                            ? 'bg-brand-50 dark:bg-cyan-950/50 text-brand-600 dark:text-cyan-400 font-bold'
-                                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
-                                    }`}
+                                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors ${lang === 'fa'
+                                        ? 'bg-brand-50 dark:bg-cyan-950/50 text-brand-600 dark:text-cyan-400 font-bold'
+                                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
+                                        }`}
                                 >
                                     <span>فارسی (دری)</span>
                                     {lang === 'fa' && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />}
@@ -248,11 +246,10 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
                                         setLang('en');
                                         setLangDropdownOpen(false);
                                     }}
-                                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors ${
-                                        lang === 'en'
-                                            ? 'bg-brand-50 dark:bg-cyan-950/50 text-brand-600 dark:text-cyan-400 font-bold'
-                                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
-                                    }`}
+                                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors ${lang === 'en'
+                                        ? 'bg-brand-50 dark:bg-cyan-950/50 text-brand-600 dark:text-cyan-400 font-bold'
+                                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
+                                        }`}
                                 >
                                     <span>English</span>
                                     {lang === 'en' && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />}
@@ -308,9 +305,8 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
                         {/* Dropdown Menu with 3D Depth */}
                         {dropdownOpen && (
                             <div
-                                className={`absolute mt-2 w-56 bg-white dark:bg-[#0b1730] rounded-2xl shadow-2xl dark:shadow-slate-950/80 border border-slate-200/80 dark:border-cyan-500/30 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 ${
-                                    isRtl ? 'left-0' : 'right-0'
-                                }`}
+                                className={`absolute mt-2 w-56 bg-white dark:bg-[#0b1730] rounded-2xl shadow-2xl dark:shadow-slate-950/80 border border-slate-200/80 dark:border-cyan-500/30 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 ${isRtl ? 'left-0' : 'right-0'
+                                    }`}
                             >
                                 <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
                                     <p className="text-xs font-bold text-slate-800 dark:text-white truncate">

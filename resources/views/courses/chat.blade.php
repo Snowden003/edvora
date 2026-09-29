@@ -351,7 +351,7 @@ body.live-chat-page {
         </a>
 
         <div class="live-chat-title">
-            <img src="{{ $course->thumbnail ? asset('storage/' . $course->thumbnail) : asset('assets/images/logo1.jpg') }}"
+            <img src="{{ $course->thumbnail ? asset('storage/' . $course->thumbnail) : asset('logo.png') }}"
                  alt="{{ $course->title }}" class="live-chat-title__avatar">
             <div class="live-chat-title__text">
                 <h1>{{ $course->title }}</h1>

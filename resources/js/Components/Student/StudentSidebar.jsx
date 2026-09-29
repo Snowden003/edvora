@@ -109,7 +109,7 @@ export default function StudentSidebar({
                 {/* Brand Header */}
                 <a href="/" className="edvora-brand">
                     <div className="edvora-brand-logo-wrap">
-                        <img src="/assets/images/logo1.jpg" alt="Edvora Tech" />
+                        <img src="/logo.png" alt="Edvora Tech" />
                     </div>
                     <div className="edvora-brand-info">
                         <span className="edvora-brand-title">{t('brand_title')}</span>
