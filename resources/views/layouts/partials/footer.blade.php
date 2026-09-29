@@ -61,6 +61,7 @@
                     <h6 class="footer-title">Quick Links</h6>
                     <ul class="footer-links">
                         <li><a href="{{ route('about') }}">About Us</a></li>
+                        <li><a href="{{ route('team.index') }}">Our Team</a></li>
                         <li><a href="{{ route('courses.index') }}">Courses</a></li>
                         <li><a href="{{ route('teachers.index') }}">Teachers</a></li>
                         <li><a href="{{ route('events.index') }}">Events</a></li>

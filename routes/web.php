@@ -391,6 +391,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Team Members Management & QR System
         Route::prefix('team-members')->name('team-members.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'index'])->name('index');
             Route::post('/', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'store'])->name('store');
             Route::post('/{teamMember}', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'update'])->name('update');
             Route::delete('/{teamMember}', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'destroy'])->name('destroy');
@@ -399,7 +400,8 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-// Public Team Member QR Profile (Scanned from QR Code)
+// Public Team Showcase Page & Member QR Profile
+Route::get('/team', [\App\Http\Controllers\PublicTeamMemberController::class, 'index'])->name('team.index');
 Route::get('/team/member/{uuid}', [\App\Http\Controllers\PublicTeamMemberController::class, 'show'])->name('team.member.show');
 Route::get('/team/member/{uuid}/vcard', [\App\Http\Controllers\PublicTeamMemberController::class, 'downloadVcard'])->name('team.member.vcard');
 

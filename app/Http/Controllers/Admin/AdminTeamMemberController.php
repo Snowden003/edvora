@@ -12,6 +12,14 @@ use Illuminate\Support\Str;
 class AdminTeamMemberController extends Controller
 {
     /**
+     * Display or redirect to the team members management section in admin dashboard.
+     */
+    public function index()
+    {
+        return redirect('/admin/dashboard#team-members');
+    }
+
+    /**
      * Store a newly created team member.
      */
     public function store(Request $request)

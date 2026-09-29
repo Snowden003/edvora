@@ -57,15 +57,16 @@
             </li>
 
             {{-- About dropdown --}}
-            <li class="nav-item dropdown {{ request()->routeIs(['about','story','how-we-work','terms','privacy']) ? 'open' : '' }}">
+            <li class="nav-item dropdown {{ request()->routeIs(['about','story','how-we-work','terms','privacy','team.index']) ? 'open' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#" role="button">
                     <i class="bi bi-info-circle"></i>About
                 </a>
-                <ul class="mobile-sub-menu {{ request()->routeIs(['about','story','how-we-work','terms','privacy']) ? 'open' : '' }}">
+                <ul class="mobile-sub-menu {{ request()->routeIs(['about','story','how-we-work','terms','privacy','team.index']) ? 'open' : '' }}">
                     <span class="dropdown-header-label">Company</span>
                     <li><a class="dropdown-item {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}"><i class="bi bi-info-circle"></i>About Us</a></li>
                     <li><a class="dropdown-item {{ request()->routeIs('story') ? 'active' : '' }}" href="{{ route('story') }}"><i class="bi bi-book"></i>Our Story</a></li>
                     <li><a class="dropdown-item {{ request()->routeIs('how-we-work') ? 'active' : '' }}" href="{{ route('how-we-work') }}"><i class="bi bi-gear"></i>How We Work</a></li>
+                    <li><a class="dropdown-item {{ request()->routeIs('team.index') ? 'active' : '' }}" href="{{ route('team.index') }}"><i class="bi bi-people"></i>Our Team</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item {{ request()->routeIs('terms') ? 'active' : '' }}" href="{{ route('terms') }}"><i class="bi bi-file-text"></i>Terms</a></li>
                     <li><a class="dropdown-item {{ request()->routeIs('privacy') ? 'active' : '' }}" href="{{ route('privacy') }}"><i class="bi bi-shield-check"></i>Privacy</a></li>
@@ -172,7 +173,7 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['about', 'story', 'how-we-work', 'terms', 'privacy']) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['about', 'story', 'how-we-work', 'terms', 'privacy', 'team.index']) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                         About
                     </a>
                     <ul class="dropdown-menu glass-dropdown">
@@ -180,6 +181,7 @@
                         <li><a class="dropdown-item {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}"><i class="bi bi-info-circle"></i>About Us</a></li>
                         <li><a class="dropdown-item {{ request()->routeIs('story') ? 'active' : '' }}" href="{{ route('story') }}"><i class="bi bi-book"></i>Our Story</a></li>
                         <li><a class="dropdown-item {{ request()->routeIs('how-we-work') ? 'active' : '' }}" href="{{ route('how-we-work') }}"><i class="bi bi-gear"></i>How We Work</a></li>
+                        <li><a class="dropdown-item {{ request()->routeIs('team.index') ? 'active' : '' }}" href="{{ route('team.index') }}"><i class="bi bi-people"></i>Our Team</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item {{ request()->routeIs('terms') ? 'active' : '' }}" href="{{ route('terms') }}"><i class="bi bi-file-text"></i>Terms</a></li>
                         <li><a class="dropdown-item {{ request()->routeIs('privacy') ? 'active' : '' }}" href="{{ route('privacy') }}"><i class="bi bi-shield-check"></i>Privacy</a></li>

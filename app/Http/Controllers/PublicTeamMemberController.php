@@ -7,8 +7,28 @@ use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+use Inertia\Inertia;
+
 class PublicTeamMemberController extends Controller
 {
+    /**
+     * Display the full team showcase page listing all verified team members.
+     */
+    public function index()
+    {
+        $members = TeamMember::where('status', 'active')
+            ->orderBy('order')
+            ->latest()
+            ->get();
+
+        $departments = $members->pluck('department')->filter()->unique()->values();
+
+        return Inertia::render('Team/Index', [
+            'members'     => $members,
+            'departments' => $departments,
+        ]);
+    }
+
     /**
      * Display the specified team member's public verification profile.
      * Only displays this individual's details when their QR code is scanned.
