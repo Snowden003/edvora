@@ -900,4 +900,97 @@ class GeminiService
             'text' => $generatedText,
         ];
     }
+
+    /**
+     * Translate course title, description, and optional lessons into Persian using Gemini AI.
+     */
+    public function translateCourseContent(string $title, ?string $description = null, array $lessons = []): array
+    {
+        if (empty($this->apiKey)) {
+            return [
+                'success' => false,
+                'message' => 'کلید Gemini API در فایل .env تنظیم نشده است.',
+            ];
+        }
+
+        $systemInstruction = "شما یک مترجم تخصصی و حرفه‌ای در آکادمی فناوری و آموزش ادورا تک (Edvora Tech) هستید.
+وظیفه شما ترجمه دقیق، فاخر، روان، جذاب و سلیس مشخصات دوره‌های آموزشی از زبان انگلیسی به زبان فارسی است.
+قواعد ترجمه:
+۱. عنوان دوره (title) باید رسا، جذاب، حرفه‌ای و منطبق بر اصطلاحات متداول فناوری در ایران باشد (مثلاً Windows Master Class به «دوره جامع ویندوز» یا «مسترکلاس ویندوز»).
+۲. متن توضیحات (description) باید فوق‌العاده سلیس، آموزشی و بدون خطای نگارشی به زبان فارسی باشد.
+۳. در صورتی که سرفصل‌ها (lessons) ارسال شده باشند، عناوین و توضیحات هر سرفصل را نیز با همان شناسه (id) به زبان فارسی ترجمه کنید.
+۴. خروجی باید حتماً و فقط یک شیء معتبر JSON باشد و هیچ متن، توضیح، مقدمه یا موخره‌ای خارج از JSON تولید نشود.";
+
+        $inputData = [
+            'title' => $title,
+            'description' => $description ?? '',
+        ];
+
+        if (!empty($lessons)) {
+            $inputData['lessons'] = $lessons;
+        }
+
+        $prompt = "اطلاعات دوره آموزشی زیر را به زبان فارسی روان ترجمه کنید:\n"
+            . json_encode($inputData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+            . "\n\nقالب دقیق خروجی JSON:\n"
+            . '{"title": "عنوان ترجمه شده به فارسی", "description": "توضیحات ترجمه شده به فارسی", "lessons": [{"id": 1, "title": "عنوان درس به فارسی", "description": "توضیح درس به فارسی"}]}';
+
+        $payload = [
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [
+                        ['text' => $systemInstruction . "\n\n" . $prompt]
+                    ]
+                ]
+            ],
+            'generationConfig' => [
+                'temperature' => 0.2,
+                'maxOutputTokens' => 3000,
+            ]
+        ];
+
+        $res = $this->callGeminiApi($payload);
+
+        if (!$res['success']) {
+            return [
+                'success' => false,
+                'message' => $res['error'] ?? 'خطا در ارتباط با هوش مصنوعی.',
+            ];
+        }
+
+        $rawText = $res['data']['candidates'][0]['content']['parts'][0]['text'] ?? '';
+
+        // Strip markdown ```json ... ``` code blocks
+        $cleanJson = preg_replace('/^```(?:json)?\s*/i', '', trim($rawText));
+        $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
+
+        $parsed = json_decode($cleanJson, true);
+        if (!$parsed || !isset($parsed['title'])) {
+            // Fallback regex matching
+            if (preg_match('/"title"\s*:\s*"([^"]+)"/u', $cleanJson, $mTitle)) {
+                $parsedTitle = $mTitle[1];
+                $parsedDesc = '';
+                if (preg_match('/"description"\s*:\s*"([^"]+)"/u', $cleanJson, $mDesc)) {
+                    $parsedDesc = $mDesc[1];
+                }
+                $parsed = [
+                    'title' => $parsedTitle,
+                    'description' => $parsedDesc,
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'پاسخ هوش مصنوعی ساختار متنی قابل تحلیلی نداشت.',
+                    'raw' => $rawText,
+                ];
+            }
+        }
+
+        return [
+            'success' => true,
+            'data' => $parsed,
+        ];
+    }
 }
+

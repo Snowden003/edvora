@@ -8,6 +8,7 @@ import CategoryPieChart from '@/Components/Admin/Charts/CategoryPieChart';
 import SessionsLineChart from '@/Components/Admin/Charts/SessionsLineChart';
 import QuickActions from '@/Components/Admin/QuickActions';
 import RecentLists from '@/Components/Admin/RecentLists';
+import TeamMembersSection from '@/Components/Admin/TeamMembersSection';
 import {
     Users,
     GraduationCap,
@@ -31,6 +32,7 @@ export default function Dashboard({
     pendingTeachers = [],
     recentCourses = [],
     recentMessages = [],
+    teamMembers = [],
 }) {
     // Current date formatted in Persian
     const todayPersian = new Intl.DateTimeFormat('fa-IR', {
@@ -155,6 +157,9 @@ export default function Dashboard({
 
             {/* Quick Actions Shortcuts */}
             <QuickActions />
+
+            {/* Team Members & QR Code Identity System */}
+            <TeamMembersSection teamMembers={teamMembers} />
 
             {/* Analytics & Charts Section */}
             <div className="space-y-6">

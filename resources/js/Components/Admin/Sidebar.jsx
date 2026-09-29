@@ -26,7 +26,8 @@ import {
     Mail,
     Info,
     Trophy,
-    Building
+    Building,
+    QrCode
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
@@ -44,6 +45,13 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                     icon: LayoutDashboard,
                     href: '/admin/dashboard',
                     active: url === '/admin' || url === '/admin/dashboard',
+                    isSpa: true,
+                },
+                {
+                    name: 'اعضای تیم و کدهای QR',
+                    icon: QrCode,
+                    href: '/admin/dashboard#team-members',
+                    active: false,
                     isSpa: true,
                 },
             ],

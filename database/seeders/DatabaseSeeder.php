@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             StudentDataSeeder::class,
             SiteSettingSeeder::class,
             CompanyPagesSeeder::class,
+            TeamMemberSeeder::class,
         ]);
     }
 }

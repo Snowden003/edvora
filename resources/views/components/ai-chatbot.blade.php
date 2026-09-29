@@ -465,14 +465,21 @@
     50% { transform: scale(1.1); opacity: 0.85; }
 }
 
-/* Mobile */
-@media (max-width: 480px) {
+/* Mobile & Tablet Responsive */
+@media (max-width: 991.98px) {
     #edvoraAiTrigger {
-        bottom: 18px !important;
-        right: 18px !important;
+        bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+        right: 16px !important;
         padding: 9px 14px !important;
         font-size: 0.82rem !important;
     }
+    body.sidebar-open #edvoraAiTrigger {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}
+@media (max-width: 480px) {
     #edvoraAiWindow {
         bottom: 0 !important;
         right: 0 !important;

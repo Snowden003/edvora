@@ -826,6 +826,89 @@ class TeacherDashboardController extends Controller
     }
 
     /**
+     * Translate course title, description, and optional lessons using Gemini AI
+     */
+    public function translateCourseWithAi(Request $request, $id, \App\Services\GeminiService $geminiService)
+    {
+        $user = Auth::user();
+        $course = Course::where('id', $id);
+        if ($user->role !== 'admin') {
+            $course->where('teacher_id', $user->id);
+        }
+        $course = $course->firstOrFail();
+
+        $includeLessons = (bool) $request->input('include_lessons', false);
+        $save = (bool) $request->input('save', true);
+
+        $lessonsPayload = [];
+        if ($includeLessons) {
+            $lessons = $course->lessons()->orderBy('order')->get(['id', 'title', 'description']);
+            foreach ($lessons as $lesson) {
+                $lessonsPayload[] = [
+                    'id' => $lesson->id,
+                    'title' => $lesson->title,
+                    'description' => $lesson->description ?? '',
+                ];
+            }
+        }
+
+        $result = $geminiService->translateCourseContent(
+            $course->title,
+            $course->description,
+            $lessonsPayload
+        );
+
+        if (!$result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'خطا در ارتباط با سرویس هوش مصنوعی Gemini.',
+            ], 422);
+        }
+
+        $translated = $result['data'];
+        $newTitle = trim($translated['title'] ?? '');
+        $newDescription = trim($translated['description'] ?? '');
+
+        if (empty($newTitle)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'پاسخ معتبری از هوش مصنوعی برای عنوان دوره دریافت نشد.',
+            ], 422);
+        }
+
+        if ($save) {
+            $course->title = $newTitle;
+            if (!empty($newDescription)) {
+                $course->description = $newDescription;
+            }
+            $course->save();
+
+            // If lessons were translated, update them as well
+            if (!empty($translated['lessons']) && is_array($translated['lessons'])) {
+                foreach ($translated['lessons'] as $tl) {
+                    if (!empty($tl['id']) && !empty($tl['title'])) {
+                        Lesson::where('course_id', $course->id)
+                            ->where('id', $tl['id'])
+                            ->update([
+                                'title' => trim($tl['title']),
+                                'description' => !empty($tl['description']) ? trim($tl['description']) : null,
+                            ]);
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'عنوان و توضیحات دوره با موفقیت توسط هوش مصنوعی Gemini به فارسی ترجمه و ذخیره شد.',
+            'title' => $newTitle,
+            'description' => $newDescription,
+            'lessons' => $translated['lessons'] ?? [],
+        ]);
+    }
+
+
+    /**
      * Update last participant activity timestamp
      */
     public function updateParticipantActivity(Request $request, $sessionId)

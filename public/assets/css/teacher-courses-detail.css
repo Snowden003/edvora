@@ -89,29 +89,74 @@
 
 /* ── Tabs ───────────────────────────────────── */
 .cd-tabs {
-    display: flex;
-    gap: 6px;
+    display: flex !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
     background: #f1f5f9;
-    border-radius: 12px;
-    padding: 5px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    border-radius: 16px !important;
+    padding: 8px 10px !important;
+    margin-bottom: 1.75rem !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(148, 163, 184, 0.4) transparent !important;
 }
+
+.cd-tabs::-webkit-scrollbar {
+    height: 5px !important;
+    display: block !important;
+}
+
+.cd-tabs::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.cd-tabs::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3) !important;
+    border-radius: 10px !important;
+}
+
 .cd-tab-btn {
-    flex: 1;
-    min-width: 100px;
-    padding: 9px 16px;
-    border: none;
-    border-radius: 9px;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+    min-width: max-content !important;
+    padding: 10px 18px !important;
+    border: 1px solid transparent !important;
+    border-radius: 12px !important;
     background: transparent;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.86rem !important;
+    font-weight: 700 !important;
     color: #64748b;
     cursor: pointer;
-    transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all .22s ease-in-out !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
 }
-.cd-tab-btn.active { background: #fff; color: #1F8FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+.cd-tab-btn:hover {
+    color: #0A58CA;
+    background: rgba(10, 88, 202, 0.06);
+}
+
+.cd-tab-btn.active {
+    background: #fff !important;
+    color: #0A58CA !important;
+    border-color: rgba(10, 88, 202, 0.2) !important;
+    box-shadow: 0 4px 14px rgba(10, 88, 202, 0.12) !important;
+}
+
+.cd-tab-btn .badge {
+    font-size: 0.72rem !important;
+    padding: 3px 8px !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+}
+
 .cd-tab-pane { display: none; }
 .cd-tab-pane.active { display: block; }
 
@@ -120,26 +165,30 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.25rem;
+    padding: 1.1rem 1.25rem;
     background: #fff;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-    transition: box-shadow .2s;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    transition: all .2s ease;
 }
-.lesson-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09); }
+.lesson-row:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
 .lesson-num {
-    width: 34px; height: 34px;
-    border-radius: 50%;
+    width: 36px; height: 36px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #1F8FFF, #6366f1);
     color: #fff;
-    font-size: 0.8rem; font-weight: 700;
+    font-size: 0.82rem; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 }
-.lesson-title { font-weight: 600; color: #1e293b; font-size: 0.95rem; }
-.lesson-desc  { font-size: 0.78rem; color: #94a3b8; }
-.lesson-dur   { font-size: 0.78rem; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 3px 10px; flex-shrink: 0; }
+.lesson-title { font-weight: 700; color: #1e293b; font-size: 0.95rem; }
+.lesson-desc  { font-size: 0.82rem; color: #64748b; line-height: 1.5; }
+.lesson-dur   { font-size: 0.78rem; font-weight: 600; color: #0A58CA; background: rgba(31, 143, 255, 0.08); border: 1px solid rgba(31, 143, 255, 0.15); border-radius: 8px; padding: 4px 10px; flex-shrink: 0; }
 
 /* ── Student Card ───────────────────────────── */
 .student-card {
@@ -1570,4 +1619,633 @@
 .cd-regenerate-btn:active {
     background-color: #1773cc !important;
     transform: translateY(0);
+}
+
+/* =========================================================================
+   DARK MODE & MODERN SAAS STYLING FOR TEACHER COURSE DETAIL
+   ========================================================================= */
+
+html.dark body,
+html.dark .dashboard-wrapper {
+    background: #030712 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark .main-content {
+    background: transparent !important;
+}
+
+/* Hero Section in Dark Mode */
+html.dark .cd-hero {
+    background: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.12) 0%, transparent 40%),
+                linear-gradient(135deg, #071328 0%, #0b1a36 60%, #030712 100%) !important;
+    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 240, 255, 0.08) !important;
+}
+
+html.dark .cd-hero-badge {
+    background: rgba(6, 182, 212, 0.15) !important;
+    color: #38bdf8 !important;
+    border-color: rgba(6, 182, 212, 0.35) !important;
+}
+
+html.dark .cd-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+html.dark .cd-desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .cd-schedule-box {
+    background: rgba(15, 23, 42, 0.75) !important;
+    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Stat Cards in Dark Mode */
+html.dark .cd-stat-card {
+    background: #071328 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .cd-stat-card:hover {
+    border-color: rgba(6, 182, 212, 0.3) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(0, 240, 255, 0.1) !important;
+}
+
+html.dark .cd-stat-num {
+    color: #f8fafc !important;
+}
+
+html.dark .cd-stat-lbl {
+    color: #94a3b8 !important;
+}
+
+/* Cards & Containers */
+html.dark .cd-card {
+    background: #071328 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark .cd-card-header {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .cd-card-title,
+html.dark .cd-card h5,
+html.dark .cd-card h6 {
+    color: #f8fafc !important;
+}
+
+/* Tab Navigation Buttons */
+html.dark .cd-tabs {
+    background: #071328 !important;
+    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45) !important;
+    scrollbar-color: rgba(6, 182, 212, 0.3) transparent !important;
+}
+
+html.dark .cd-tabs::-webkit-scrollbar-thumb {
+    background: rgba(6, 182, 212, 0.3) !important;
+}
+
+html.dark .cd-tab-btn {
+    color: #94a3b8 !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark .cd-tab-btn:hover {
+    color: #38bdf8 !important;
+    background: rgba(6, 182, 212, 0.1) !important;
+    border-color: rgba(6, 182, 212, 0.25) !important;
+}
+
+html.dark .cd-tab-btn.active {
+    background: linear-gradient(135deg, rgba(10, 88, 202, 0.95), rgba(2, 132, 199, 0.95)) !important;
+    color: #ffffff !important;
+    border-color: rgba(0, 240, 255, 0.45) !important;
+    box-shadow: 0 4px 18px rgba(2, 132, 199, 0.35), 0 0 12px rgba(0, 240, 255, 0.2) !important;
+}
+
+html.dark .cd-tab-btn .badge {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .cd-tab-btn.active .badge {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Dark Mode Lesson Row (Fixes syllabus list contrast) */
+html.dark .lesson-row {
+    background: #0b1730 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .lesson-row:hover {
+    background: #0e1e3e !important;
+    border-color: rgba(6, 182, 212, 0.35) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 240, 255, 0.08) !important;
+    transform: translateX(-2px);
+}
+
+html.dark .lesson-num {
+    background: linear-gradient(135deg, #0A58CA, #00f0ff) !important;
+    color: #fff !important;
+    box-shadow: 0 3px 10px rgba(0, 240, 255, 0.2) !important;
+}
+
+html.dark .lesson-title {
+    color: #f8fafc !important;
+}
+
+html.dark .lesson-desc {
+    color: #94a3b8 !important;
+}
+
+html.dark .lesson-dur {
+    background: rgba(6, 182, 212, 0.12) !important;
+    color: #38bdf8 !important;
+    border-color: rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Students & Access List */
+html.dark .student-card {
+    background: #071328 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .student-avatar {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .student-item .cd-card {
+    background: #071328 !important;
+}
+
+/* Review Cards */
+html.dark .review-card {
+    background: #0b1730 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .review-card p {
+    color: #cbd5e1 !important;
+}
+
+/* Attendance v2 */
+html.dark .att2-stat-item {
+    background: #071328 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .att2-stat-num {
+    color: #f8fafc !important;
+}
+
+html.dark .att2-stat-lbl {
+    color: #94a3b8 !important;
+}
+
+html.dark .att2-student-card {
+    background: #071328 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .att2-counter {
+    background: #0b1730 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .att2-counter span:last-child {
+    color: #94a3b8 !important;
+}
+
+/* History Cards */
+html.dark .shistory-card {
+    background: #071328 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .shistory-date {
+    color: #f1f5f9 !important;
+}
+
+html.dark .shistory-badge-dur {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #cbd5e1 !important;
+}
+
+/* Notes & Curriculum */
+html.dark .cn-note-card,
+html.dark .curr-lesson-card {
+    background: #0b1730 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .cn-note-content {
+    color: #cbd5e1 !important;
+}
+
+/* Forms & Inputs */
+html.dark .form-control,
+html.dark .form-select,
+html.dark .input-group-text {
+    background-color: #0b162a !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #f8fafc !important;
+}
+
+html.dark .form-control:focus,
+html.dark .form-select:focus {
+    background-color: #0f1f3a !important;
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+html.dark .form-control::placeholder {
+    color: #64748b !important;
+}
+
+/* Tables */
+html.dark .table {
+    color: #e2e8f0 !important;
+    --bs-table-bg: transparent !important;
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .table-light,
+html.dark thead.table-light,
+html.dark thead.table-light th {
+    background-color: #0b1730 !important;
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .table td,
+html.dark .table th {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Modal */
+html.dark .modal-content {
+    background: #071328 !important;
+    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .modal-header,
+html.dark .modal-footer {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Text Overrides for hardcoded colors in Dark Mode */
+html.dark [style*="color:#1e293b"],
+html.dark [style*="color: #1e293b"],
+html.dark [style*="color:#0f172a"],
+html.dark [style*="color: #0f172a"],
+html.dark .text-dark {
+    color: #f8fafc !important;
+}
+
+html.dark [style*="color:#475569"],
+html.dark [style*="color: #475569"],
+html.dark [style*="color:#334155"],
+html.dark [style*="color: #334155"] {
+    color: #cbd5e1 !important;
+}
+
+html.dark [style*="background: #f8fafc"],
+html.dark [style*="background:#f8fafc"],
+html.dark [style*="background: #fff"],
+html.dark [style*="background:#fff"],
+html.dark [style*="background: white"],
+html.dark [style*="background:#ffffff"] {
+    background: #0b1730 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark .cd-regenerate-btn {
+    background-color: #0b1730 !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+html.dark .cd-regenerate-btn i {
+    color: #94a3b8 !important;
+}
+
+/* Sidebar Dark Overrides */
+html.dark .edvora-sidebar,
+html.dark #sidebar {
+    background: #071328 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .edvora-sidebar-nav {
+    background: transparent !important;
+}
+
+html.dark .edvora-nav-link {
+    color: #94a3b8 !important;
+}
+
+html.dark .edvora-nav-link:hover,
+html.dark .edvora-nav-link.active {
+    color: #38bdf8 !important;
+    background: rgba(6, 182, 212, 0.1) !important;
+}
+
+html.dark .edvora-course-item {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark .edvora-course-name {
+    color: #f1f5f9 !important;
+}
+
+html.dark .edvora-sidebar-tab-btn {
+    color: #94a3b8 !important;
+}
+
+html.dark .edvora-sidebar-tab-btn:hover,
+html.dark .edvora-sidebar-tab-btn.active {
+    color: #38bdf8 !important;
+    background: rgba(6, 182, 212, 0.15) !important;
+}
+
+html.dark .edvora-submenu-inner {
+    background: #050d1a !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* =========================================================================
+   MOBILE RESPONSIVENESS OVERRIDES
+   ========================================================================= */
+@media (max-width: 991px) {
+    .dashboard-wrapper {
+        display: block !important;
+    }
+    .main-content {
+        width: 100% !important;
+        margin-right: 0 !important;
+        padding-bottom: 7.5rem !important; /* Space for bottom dock + Ask AI */
+    }
+    #edvoraAiTrigger,
+    .edvora-ai-trigger {
+        bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+        right: 16px !important;
+        z-index: 1045 !important;
+    }
+    body.sidebar-open #edvoraAiTrigger,
+    body.sidebar-open .edvora-ai-trigger {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+    .cd-hero {
+        padding: 1.5rem 1.25rem 1.25rem !important;
+        border-radius: 16px !important;
+        margin-bottom: 1.25rem !important;
+    }
+    .cd-title {
+        font-size: 1.45rem !important;
+    }
+    .cd-desc {
+        font-size: 0.9rem !important;
+    }
+    .cd-meta-row {
+        gap: 0.85rem !important;
+    }
+    .cd-meta-item {
+        font-size: 0.85rem !important;
+    }
+}
+
+/* =========================================================================
+   MOBILE DOCK & COMPONENT POLISH
+   ========================================================================= */
+.cd-mobile-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 1040;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+html.dark .cd-mobile-dock {
+    background: rgba(7, 19, 40, 0.92) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+.cd-mobile-dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    line-height: 1.2;
+    gap: 3px;
+}
+
+.cd-mobile-dock-item i {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.cd-mobile-dock-item:hover,
+.cd-mobile-dock-item.active {
+    color: #1F8FFF;
+}
+
+html.dark .cd-mobile-dock-item {
+    color: #94a3b8;
+}
+
+html.dark .cd-mobile-dock-item:hover,
+html.dark .cd-mobile-dock-item.active {
+    color: #00f0ff !important;
+}
+
+.cd-dock-action-btn {
+    position: relative;
+    top: -12px;
+    padding: 0 8px;
+}
+
+.cd-dock-action-orb {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00f0ff, #0A58CA);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.25rem;
+    box-shadow: 0 6px 16px rgba(0, 240, 255, 0.35);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cd-dock-action-btn:hover .cd-dock-action-orb {
+    transform: scale(1.1);
+}
+
+/* Student & Session Polish */
+.student-name {
+    color: #0f172a;
+}
+html.dark .student-name {
+    color: #f8fafc !important;
+}
+
+.att-session-bar {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 14px 20px;
+}
+
+html.dark .att-session-bar {
+    background: linear-gradient(135deg, #0a1936, #071328) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.att-session-date {
+    color: #1e293b;
+}
+
+html.dark .att-session-date {
+    color: #f8fafc !important;
+}
+
+/* Referral UI Polish */
+.cd-referral-badge-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+html.dark .cd-referral-badge-box {
+    background: #0b1730 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.cd-referral-input-group {
+    border-color: #e2e8f0 !important;
+}
+html.dark .cd-referral-input-group {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html.dark .cd-referral-input-group input,
+html.dark .cd-referral-input-group span {
+    background-color: #0b1730 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .cd-email-share-btn {
+    background: #0b1730 !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Note & Curriculum Text Polish */
+.cn-note-title,
+.curr-title {
+    color: #1e293b;
+}
+html.dark .cn-note-title,
+html.dark .curr-title {
+    color: #f8fafc !important;
+}
+
+.cn-note-content,
+.curr-desc {
+    color: #475569;
+}
+html.dark .cn-note-content,
+html.dark .curr-desc {
+    color: #cbd5e1 !important;
+}
+
+.att2-counters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.att2-counter {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.att2-counter-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.att2-counter-lbl {
+    font-size: 0.68rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+html.dark .att2-counter {
+    background: #0b1730 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark .att2-counter-lbl {
+    color: #94a3b8 !important;
+}
+
+html.dark .att2-student-card {
+    background: #071328 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .att-mark-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark .att-mark-row.att-row-alt {
+    background: rgba(255, 255, 255, 0.015) !important;
 }

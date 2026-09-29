@@ -11,6 +11,7 @@ use App\Models\ClassSession;
 use App\Models\Enrollment;
 use App\Models\Book;
 use App\Models\ContactMessage;
+use App\Models\TeamMember;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -38,6 +39,8 @@ class AdminDashboardController extends Controller
         $eventsWeek = Event::where('created_at', '>=', Carbon::now()->subDays(7))->count();
         $totalBooks = Book::count();
         $unreadMessagesCount = ContactMessage::where('status', 'new')->orWhereNull('status')->count();
+        $totalTeamMembers = TeamMember::count();
+        $activeTeamMembers = TeamMember::where('status', 'active')->count();
 
         $stats = [
             'active_students' => $activeStudents,
@@ -53,6 +56,8 @@ class AdminDashboardController extends Controller
             'events_week'     => $eventsWeek,
             'total_books'     => $totalBooks,
             'unread_messages' => $unreadMessagesCount,
+            'total_team_members' => $totalTeamMembers,
+            'active_team_members' => $activeTeamMembers,
         ];
 
         // 2. Registrations Chart (Last 12 Months)
@@ -205,6 +210,9 @@ class AdminDashboardController extends Controller
                 'created_at' => $m->created_at?->diffForHumans() ?? '-',
             ]);
 
+        // 10. Team Members
+        $teamMembers = TeamMember::orderBy('order')->latest()->get();
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
             'registrationsChart' => $registrationsChart,
@@ -215,6 +223,7 @@ class AdminDashboardController extends Controller
             'pendingTeachers' => $pendingTeachers,
             'recentCourses' => $recentCourses,
             'recentMessages' => $recentMessages,
+            'teamMembers' => $teamMembers,
         ]);
     }
 

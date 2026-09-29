@@ -24,32 +24,32 @@
             <img src="{{ asset('assets/images/logo1.jpg') }}" alt="Edvora Tech">
         </div>
         <div class="edvora-brand-info">
-            <span class="edvora-brand-title">Edvora Tech</span>
-            <span class="edvora-brand-badge"><i class="bi bi-shield-check me-1"></i>Instructor</span>
+            <span class="edvora-brand-title">ادورا تک</span>
+            <span class="edvora-brand-badge"><i class="bi bi-shield-check me-1"></i>مدرس رسمی</span>
         </div>
     </a>
 
     <!-- Nav Items -->
     <ul class="edvora-nav">
-        <li class="edvora-nav-section-title">MAIN MENU</li>
+        <li class="edvora-nav-section-title">منوی اصلی</li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('home') }}"
-               class="edvora-nav-link {{ request()->routeIs('home') ? 'active' : '' }}" title="Home">
+               class="edvora-nav-link {{ request()->routeIs('home') ? 'active' : '' }}" title="صفحه اصلی">
                 <span class="edvora-nav-icon"><i class="bi bi-house-door-fill"></i></span>
-                <span class="edvora-nav-text">Home</span>
+                <span class="edvora-nav-text">صفحه اصلی</span>
             </a>
         </li>
 
         <li class="edvora-nav-item">
             <a href="{{ route('teacher.dashboard') }}"
-               class="edvora-nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}" title="Dashboard">
+               class="edvora-nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}" title="داشبورد اساتید">
                 <span class="edvora-nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
-                <span class="edvora-nav-text">Dashboard</span>
+                <span class="edvora-nav-text">داشبورد</span>
             </a>
         </li>
 
-        <li class="edvora-nav-section-title">TEACHING</li>
+        <li class="edvora-nav-section-title">آموزش و تدریس</li>
 
         @php
             $currentCourseId = request()->route('id') ?? (is_object(request()->route('course')) ? request()->route('course')->id : request()->route('course')) ?? (request()->segment(2) === 'courses' ? request()->segment(3) : null);
@@ -69,9 +69,9 @@
             <button type="button" class="edvora-submenu-toggle {{ request()->routeIs('teacher.your-courses', 'teacher.courses.*') ? 'active' : '' }}"
                     id="myCoursesToggle"
                     onclick="this.closest('.edvora-nav-item').classList.toggle('open')"
-                    title="My Courses">
+                    title="دوره‌های من">
                 <span class="edvora-nav-icon"><i class="bi bi-journal-bookmark-fill"></i></span>
-                <span class="edvora-nav-text">My Courses</span>
+                <span class="edvora-nav-text">دوره‌های من</span>
                 @if($totalTeacherCourses > 0)
                     <span class="edvora-badge edvora-badge-info me-1">{{ $totalTeacherCourses }}</span>
                 @endif
@@ -82,7 +82,7 @@
                 <div class="edvora-submenu-inner">
                     <!-- Link to All Courses Hub -->
                     <a href="{{ route('teacher.your-courses') }}" class="edvora-sublink-all {{ request()->routeIs('teacher.your-courses') ? 'active' : '' }}">
-                        <span><i class="bi bi-grid"></i> All Courses</span>
+                        <span><i class="bi bi-grid"></i> تمام دوره‌ها</span>
                         <span class="badge bg-white text-primary border">{{ $totalTeacherCourses }}</span>
                     </a>
 
@@ -104,17 +104,17 @@
                             <div class="edvora-course-actions">
                                 <a href="{{ route('teacher.courses.detail', $course->id) }}" 
                                    class="edvora-action-btn action-view {{ $isDetailActive ? 'active' : '' }}" 
-                                   title="Course Details & Lessons">
+                                   title="جزئیات دوره و سرفصل‌ها">
                                     <i class="bi bi-eye"></i>
-                                    <span>Details</span>
+                                    <span>جزئیات</span>
                                 </a>
                                 <a href="{{ route('courses.chat.show', $course) }}" 
                                    class="edvora-action-btn action-chat {{ $isChatActive ? 'active' : '' }}" 
-                                   title="Course Live Chat"
+                                   title="چت زنده صنف"
                                    data-bg-chat-course="{{ $course->id }}"
                                    data-bg-chat-user="{{ auth()->id() }}">
                                     <i class="bi bi-chat-dots"></i>
-                                    <span>Chat</span>
+                                    <span>چت</span>
                                 </a>
                             </div>
 
@@ -123,62 +123,62 @@
                             <div class="edvora-course-tabs-menu">
                                 <button type="button" class="edvora-sidebar-tab-btn active" data-tab="syllabus" onclick="if(window.switchCourseTab){switchCourseTab('syllabus', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-syllabus';}">
                                     <i class="bi bi-list-ol"></i>
-                                    <span>Syllabus</span>
+                                    <span>سرفصل‌ها</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="students" onclick="if(window.switchCourseTab){switchCourseTab('students', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-students';}">
                                     <i class="bi bi-shield-check"></i>
-                                    <span>Students & Access</span>
+                                    <span>دانشجویان و دسترسی</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="referrals" onclick="if(window.switchCourseTab){switchCourseTab('referrals', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-referrals';}">
                                     <i class="bi bi-link-45deg text-success"></i>
-                                    <span>Invite & Referrals</span>
+                                    <span>لینک معرفی و دعوت</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="points" onclick="if(window.switchCourseTab){switchCourseTab('points', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-points';}">
                                     <i class="bi bi-star-fill text-warning"></i>
-                                    <span>Student Scoring</span>
+                                    <span>سیستم نمرات</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="reviews" onclick="if(window.switchCourseTab){switchCourseTab('reviews', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-reviews';}">
                                     <i class="bi bi-star"></i>
-                                    <span>Reviews</span>
+                                    <span>دیدگاه‌ها</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="documents" onclick="if(window.switchCourseTab){switchCourseTab('documents', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-documents';}">
                                     <i class="bi bi-folder2-open"></i>
-                                    <span>Documents</span>
+                                    <span>اسناد و منابع</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="history" onclick="if(window.switchCourseTab){switchCourseTab('history', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-history';}">
                                     <i class="bi bi-clock-history"></i>
-                                    <span>Session History</span>
+                                    <span>تاریخچه جلسات</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="attendance" onclick="if(window.switchCourseTab){switchCourseTab('attendance', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-attendance';}">
                                     <i class="bi bi-person-check"></i>
-                                    <span>Attendance</span>
+                                    <span>حاضری و غیاب</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="classnotes" onclick="if(window.switchCourseTab){switchCourseTab('classnotes', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-classnotes';}">
                                     <i class="bi bi-journal-text"></i>
-                                    <span>Class Notes</span>
+                                    <span>یادداشت‌های صنف</span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="chat" onclick="if(window.switchCourseTab){switchCourseTab('chat', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-chat';}">
                                     <i class="bi bi-chat-heart"></i>
-                                    <span>Course Chat</span>
+                                    <span>چت صنف</span>
                                     <span class="chat-unread-badge ms-auto" style="display:none;" data-chat-badge-course="{{ $course->id }}"></span>
                                 </button>
                                 <button type="button" class="edvora-sidebar-tab-btn" data-tab="curriculum" onclick="if(window.switchCourseTab){switchCourseTab('curriculum', this);}else{window.location.href='{{ route('teacher.courses.detail', $course->id) }}#tab-curriculum';}">
                                     <i class="bi bi-pencil-square"></i>
-                                    <span>Curriculum</span>
+                                    <span>ویرایش دروس</span>
                                 </button>
                             </div>
                             @endif
                         </div>
                     @empty
                         <div class="edvora-submenu-empty">
-                            <span>No courses created yet</span>
+                            <span>هنوز دوره‌ای ثبت نشده است</span>
                         </div>
                     @endforelse
 
                     @if($totalTeacherCourses > 6)
                         <a href="{{ route('teacher.your-courses') }}" class="edvora-view-all-link">
-                            <span>View All ({{ $totalTeacherCourses }})</span>
-                            <i class="bi bi-arrow-right"></i>
+                            <span>مشاهده همه ({{ $totalTeacherCourses }})</span>
+                            <i class="bi bi-arrow-left"></i>
                         </a>
                     @endif
                 </div>
@@ -195,9 +195,9 @@
         <!-- Enrollment Requests -->
         <li class="edvora-nav-item">
             <a href="{{ route('teacher.enrollment-requests') }}"
-               class="edvora-nav-link {{ request()->routeIs('teacher.enrollment-requests*') ? 'active' : '' }}" title="Enrollment Requests">
+               class="edvora-nav-link {{ request()->routeIs('teacher.enrollment-requests*') ? 'active' : '' }}" title="درخواست‌های ثبت‌نام">
                 <span class="edvora-nav-icon"><i class="bi bi-person-check-fill"></i></span>
-                <span class="edvora-nav-text">Enrollments</span>
+                <span class="edvora-nav-text">ثبت‌نام‌ها</span>
                 @if($pendingEnrollmentsCount > 0)
                     <span class="edvora-badge edvora-badge-warning">{{ $pendingEnrollmentsCount }}</span>
                 @endif
@@ -207,20 +207,20 @@
         <!-- Quizzes -->
         <li class="edvora-nav-item">
             <a href="{{ route('teacher.exams.index') }}"
-               class="edvora-nav-link {{ request()->routeIs('teacher.exams.*') ? 'active' : '' }}" title="Quizzes & Exams">
+               class="edvora-nav-link {{ request()->routeIs('teacher.exams.*') ? 'active' : '' }}" title="آزمون‌ها و کوییزها">
                 <span class="edvora-nav-icon"><i class="bi bi-patch-question-fill"></i></span>
-                <span class="edvora-nav-text">Quizzes</span>
+                <span class="edvora-nav-text">آزمون‌ها</span>
             </a>
         </li>
 
-        <li class="edvora-nav-section-title">ACCOUNT</li>
+        <li class="edvora-nav-section-title">حساب کاربری</li>
 
         <!-- Notifications -->
         <li class="edvora-nav-item">
             <a href="{{ route('teacher.notifications.index') }}"
-               class="edvora-nav-link {{ request()->routeIs('teacher.notifications.*') ? 'active' : '' }}" title="Notifications">
+               class="edvora-nav-link {{ request()->routeIs('teacher.notifications.*') ? 'active' : '' }}" title="اعلان‌ها">
                 <span class="edvora-nav-icon"><i class="bi bi-bell-fill"></i></span>
-                <span class="edvora-nav-text">Notifications</span>
+                <span class="edvora-nav-text">اعلان‌ها</span>
                 @php $sidebarUnread = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count(); @endphp
                 @if($sidebarUnread > 0)
                     <span class="edvora-badge edvora-badge-danger">{{ $sidebarUnread }}</span>
@@ -231,18 +231,18 @@
         <!-- Profile -->
         <li class="edvora-nav-item">
             <a href="{{ route('profile') }}"
-               class="edvora-nav-link {{ request()->routeIs('profile') ? 'active' : '' }}" title="My Profile">
+               class="edvora-nav-link {{ request()->routeIs('profile') ? 'active' : '' }}" title="پروفایل من">
                 <span class="edvora-nav-icon"><i class="bi bi-person-fill-gear"></i></span>
-                <span class="edvora-nav-text">Profile</span>
+                <span class="edvora-nav-text">پروفایل</span>
             </a>
         </li>
 
         <!-- Logout -->
         <li class="edvora-nav-item">
-            <a href="{{ route('logout') }}" class="edvora-nav-link danger" title="Logout"
+            <a href="{{ route('logout') }}" class="edvora-nav-link danger" title="خروج از حساب"
                onclick="event.preventDefault(); document.getElementById('teacher-logout-form').submit();">
                 <span class="edvora-nav-icon"><i class="bi bi-box-arrow-right"></i></span>
-                <span class="edvora-nav-text">Logout</span>
+                <span class="edvora-nav-text">خروج</span>
             </a>
             <form id="teacher-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
         </li>

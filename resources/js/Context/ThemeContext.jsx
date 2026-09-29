@@ -5,7 +5,7 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState(() => {
         try {
-            const saved = localStorage.getItem('edvora_student_theme');
+            const saved = localStorage.getItem('edvora_theme') || localStorage.getItem('edvora_student_theme');
             if (saved === 'dark' || saved === 'light') return saved;
             return 'dark'; // Premium dark mode by default
         } catch (e) {
@@ -15,6 +15,7 @@ export function ThemeProvider({ children }) {
 
     useEffect(() => {
         try {
+            localStorage.setItem('edvora_theme', theme);
             localStorage.setItem('edvora_student_theme', theme);
             const root = document.documentElement;
             if (theme === 'dark') {
@@ -27,14 +28,6 @@ export function ThemeProvider({ children }) {
         } catch (e) {
             // ignore
         }
-
-        return () => {
-            // Clean up when leaving student dashboard
-            try {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.removeAttribute('data-theme');
-            } catch (e) {}
-        };
     }, [theme]);
 
     const toggleTheme = () => {
@@ -51,7 +44,6 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
     const context = useContext(ThemeContext);
     if (!context) {
-        // Fallback if rendered outside ThemeProvider
         return {
             theme: 'dark',
             isDark: true,

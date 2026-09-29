@@ -229,6 +229,7 @@ Route::middleware(['auth'])->group(function () {
     // ─── TEACHER AREA ─── prefix: /teacher
     Route::prefix('teacher')->name('teacher.')->middleware(['role:teacher', 'teacher.onboarded'])->group(function () {
         Route::get('/dashboard',         [TeacherDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/courses',           [TeacherDashboardController::class, 'yourCourses'])->name('courses');
         Route::get('/your-courses',      [TeacherDashboardController::class, 'yourCourses'])->name('your-courses');
         Route::get('/onboarding',        [TeacherDashboardController::class, 'onboarding'])->name('onboarding');
         Route::post('/onboarding',       [TeacherDashboardController::class, 'submitOnboarding'])->name('onboarding.submit');
@@ -268,6 +269,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/courses/{id}',                       [TeacherDashboardController::class, 'courseDetail'])->name('courses.detail');
         Route::post('/courses/{id}/toggle-enrollment',    [TeacherDashboardController::class, 'toggleEnrollment'])->name('courses.toggle-enrollment');
         Route::post('/courses/{id}/regenerate-referral',  [TeacherDashboardController::class, 'regenerateReferralCode'])->name('courses.referral.regenerate');
+        Route::post('/courses/{id}/ai-translate',         [TeacherDashboardController::class, 'translateCourseWithAi'])->name('courses.ai-translate');
         Route::post('/courses/{id}/documents',            [TeacherDashboardController::class, 'uploadDocument'])->name('courses.documents.upload');
         Route::delete('/courses/{id}/documents/{docId}',  [TeacherDashboardController::class, 'deleteDocument'])->name('courses.documents.delete');
         Route::get('/courses/{id}/export-pdf',            [TeacherDashboardController::class, 'exportPdf'])->name('courses.export-pdf');
@@ -386,8 +388,20 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/ai/generate', [\App\Http\Controllers\Admin\AdminCompanyPagesController::class, 'generateAi'])->name('ai.generate');
             Route::post('/{pageKey}', [\App\Http\Controllers\Admin\AdminCompanyPagesController::class, 'update'])->name('update');
         });
+
+        // Team Members Management & QR System
+        Route::prefix('team-members')->name('team-members.')->group(function () {
+            Route::post('/', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'store'])->name('store');
+            Route::post('/{teamMember}', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'update'])->name('update');
+            Route::delete('/{teamMember}', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'destroy'])->name('destroy');
+            Route::get('/{teamMember}/qr-svg', [\App\Http\Controllers\Admin\AdminTeamMemberController::class, 'downloadQrSvg'])->name('qr-svg');
+        });
     });
 });
+
+// Public Team Member QR Profile (Scanned from QR Code)
+Route::get('/team/member/{uuid}', [\App\Http\Controllers\PublicTeamMemberController::class, 'show'])->name('team.member.show');
+Route::get('/team/member/{uuid}/vcard', [\App\Http\Controllers\PublicTeamMemberController::class, 'downloadVcard'])->name('team.member.vcard');
 
 // Legacy Admin-Panel Redirects
 Route::redirect('/admin-panel/students', '/admin/students');
@@ -399,3 +413,4 @@ Route::get('/api/events', [EventController::class, 'apiIndex'])->name('api.event
 
 // Breeze Auth routes
 require __DIR__.'/auth.php';
+

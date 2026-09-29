@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "chillerlan/php-qrcode": "*",
         "grkamil/laravel-telegram-logging": "^1.15",
         "inertiajs/inertia-laravel": "^3.3",
         "intervention/image": "^4.1",
