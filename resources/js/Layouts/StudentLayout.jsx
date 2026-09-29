@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head, usePage, Link } from '@inertiajs/react';
 import StudentSidebar from '@/Components/Student/StudentSidebar';
 import StudentTopbar from '@/Components/Student/StudentTopbar';
+import StudentMobileMenu from '@/Components/Student/StudentMobileMenu';
 import { useLanguage } from '@/Context/LanguageContext';
 import { ThemeProvider, useTheme } from '@/Context/ThemeContext';
 import {
@@ -19,6 +20,7 @@ import {
 
 function StudentLayoutInner({ children, title }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { flash, url } = usePage().props;
     const currentUrl = usePage().url;
@@ -63,11 +65,17 @@ function StudentLayoutInner({ children, title }) {
                 setIsCollapsed={setIsCollapsed}
             />
 
-            {/* Main Application Area */}
-            <div className="main-content flex-1 flex flex-col min-w-0" id="mainContent">
+            {/* Main Application Area (Padded against fixed sidebar on desktop) */}
+            <div
+                className={`main-content flex-1 flex flex-col min-w-0 transition-all duration-300 ${isRtl
+                    ? (isCollapsed ? 'lg:mr-[78px]' : 'lg:mr-[275px]')
+                    : (isCollapsed ? 'lg:ml-[78px]' : 'lg:ml-[275px]')
+                    }`}
+                id="mainContent"
+            >
                 {/* 3D Navigation Bar / Topbar */}
                 <StudentTopbar
-                    onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                    onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
                     title={title}
                 />
 
@@ -134,11 +142,10 @@ function StudentLayoutInner({ children, title }) {
                     {/* 1. Dashboard */}
                     <Link
                         href="/student/dashboard"
-                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${
-                            isDashboardActive
-                                ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
-                                : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                        }`}
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${isDashboardActive
+                            ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
+                            : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                            }`}
                     >
                         <LayoutDashboard size={20} className={isDashboardActive ? 'text-cyan-500 dark:text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]' : ''} />
                         <span className="text-[10px] sm:text-[11px] font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-1 leading-none">
@@ -150,11 +157,10 @@ function StudentLayoutInner({ children, title }) {
                     {/* 2. Courses */}
                     <Link
                         href="/student/courses"
-                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${
-                            isCoursesActive
-                                ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
-                                : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                        }`}
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${isCoursesActive
+                            ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
+                            : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                            }`}
                     >
                         <BookOpen size={20} className={isCoursesActive ? 'text-cyan-500 dark:text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]' : ''} />
                         <span className="text-[10px] sm:text-[11px] font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-1 leading-none">
@@ -166,11 +172,10 @@ function StudentLayoutInner({ children, title }) {
                     {/* 3. Quizzes */}
                     <Link
                         href="/student/quizzes"
-                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${
-                            isQuizzesActive
-                                ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
-                                : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                        }`}
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${isQuizzesActive
+                            ? 'bg-gradient-to-tr from-brand-500/20 via-cyan-500/15 to-indigo-500/20 text-brand-600 dark:text-cyan-400 border border-cyan-500/35 shadow-[0_0_12px_rgba(0,240,255,0.25)]'
+                            : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                            }`}
                     >
                         <ClipboardCheck size={20} className={isQuizzesActive ? 'text-cyan-500 dark:text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]' : ''} />
                         <span className="text-[10px] sm:text-[11px] font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-1 leading-none">
@@ -182,11 +187,10 @@ function StudentLayoutInner({ children, title }) {
                     {/* 4. Leaderboard / Awards */}
                     <a
                         href="/leaderboard"
-                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${
-                            isLeaderboardActive
-                                ? 'bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-orange-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/35 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
-                                : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                        }`}
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all nav-3d-button ${isLeaderboardActive
+                            ? 'bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-orange-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/35 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
+                            : 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                            }`}
                     >
                         <Trophy size={20} className={isLeaderboardActive ? 'text-amber-400 drop-shadow-[0_0_8px_#f59e0b]' : ''} />
                         <span className="text-[10px] sm:text-[11px] font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-1 leading-none">
@@ -195,10 +199,10 @@ function StudentLayoutInner({ children, title }) {
                         {isLeaderboardActive && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b] mt-0.5" />}
                     </a>
 
-                    {/* 5. Menu Button (triggers sidebar) */}
+                    {/* 5. Mobile App Menu Button */}
                     <button
                         type="button"
-                        onClick={() => setSidebarOpen(true)}
+                        onClick={() => setMobileMenuOpen(true)}
                         className="flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all nav-3d-button"
                     >
                         <div className="relative">
@@ -210,6 +214,12 @@ function StudentLayoutInner({ children, title }) {
                         </span>
                     </button>
                 </nav>
+
+                {/* Mobile Application Bottom Sheet Menu */}
+                <StudentMobileMenu
+                    isOpen={mobileMenuOpen}
+                    setIsOpen={setMobileMenuOpen}
+                />
 
                 {/* Dashboard Footer (Hidden on mobile to avoid dock collision) */}
                 <footer className="hidden sm:flex mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/50 dark:bg-[#081224]/60 backdrop-blur-xs py-4 px-6 sm:px-8 text-xs text-slate-500 dark:text-slate-400 flex-col sm:flex-row items-center justify-between gap-3 transition-colors">

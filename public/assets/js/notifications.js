@@ -36,7 +36,7 @@
           arr.forEach(function (id) { set.add(Number(id)); });
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return set;
   }
 
@@ -50,7 +50,7 @@
         arr = arr.slice(arr.length - 500);
       }
       localStorage.setItem(getStorageKey(), JSON.stringify(arr));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Initialize dismissed sessions from sessionStorage
@@ -61,7 +61,7 @@
         dismissedLiveSessions.add(Number(id));
       });
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // --- Helpers ---
   function getCsrfToken() {
@@ -204,12 +204,12 @@
     toast.innerHTML =
       '<div class="toast-icon-wrap"><i class="' + escapeHtml(iconClass) + '"></i></div>' +
       '<div class="toast-body-wrap">' +
-        '<div class="toast-title">' + escapeHtml(notif.title) + '</div>' +
-        '<div class="toast-msg">' + escapeHtml(notif.message) + '</div>' +
-        actionHtml +
+      '<div class="toast-title">' + escapeHtml(notif.title) + '</div>' +
+      '<div class="toast-msg">' + escapeHtml(notif.message) + '</div>' +
+      actionHtml +
       '</div>' +
       '<button class="toast-close-btn" aria-label="Close">' +
-        '<i class="bi bi-x-lg"></i>' +
+      '<i class="bi bi-x-lg"></i>' +
       '</button>';
 
     var closeBtn = toast.querySelector('.toast-close-btn');
@@ -277,20 +277,20 @@
 
     banner.innerHTML =
       '<div class="live-banner-header">' +
-        '<span class="live-pill">' +
-          '<span class="live-pulse-dot"></span> Live Class Now' +
-        '</span>' +
-        '<button class="live-banner-close" aria-label="Dismiss banner">' +
-          '<i class="bi bi-x-lg"></i>' +
-        '</button>' +
+      '<span class="live-pill">' +
+      '<span class="live-pulse-dot"></span> Live Class Now' +
+      '</span>' +
+      '<button class="live-banner-close" aria-label="Dismiss banner">' +
+      '<i class="bi bi-x-lg"></i>' +
+      '</button>' +
       '</div>' +
       '<div class="live-banner-title">' + escapeHtml(activeClass.course_title) + '</div>' +
       '<div class="live-banner-msg">Your teacher is hosting a live Google Meet class right now. Click below to join immediately.</div>' +
       '<div class="live-banner-actions">' +
-        '<a href="' + escapeHtml(meetLink) + '" target="_blank" rel="noopener noreferrer" class="btn-live-join">' +
-          '<i class="bi bi-camera-video-fill"></i> Join Google Meet Now ↗' +
-        '</a>' +
-        '<button class="btn-live-dismiss">Dismiss</button>' +
+      '<a href="' + escapeHtml(meetLink) + '" target="_blank" rel="noopener noreferrer" class="btn-live-join">' +
+      '<i class="bi bi-camera-video-fill"></i> Join Google Meet Now ↗' +
+      '</a>' +
+      '<button class="btn-live-dismiss">Dismiss</button>' +
       '</div>';
 
     var closeBtn = banner.querySelector('.live-banner-close');
@@ -300,7 +300,7 @@
       dismissedLiveSessions.add(Number(activeClass.session_id));
       try {
         sessionStorage.setItem('edvora_dismissed_sessions', JSON.stringify(Array.from(dismissedLiveSessions)));
-      } catch (e) {}
+      } catch (e) { }
       banner.style.opacity = '0';
       banner.style.transform = 'translateY(-20px) scale(0.95)';
       setTimeout(function () {
@@ -354,67 +354,67 @@
         'X-Requested-With': 'XMLHttpRequest'
       }
     })
-    .then(function (res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
-    .then(function (data) {
-      isPolling = false;
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        isPolling = false;
 
-      // Update badge counts
-      if (typeof data.unread_count === 'number') {
-        updateBadges(data.unread_count);
-      }
+        // Update badge counts
+        if (typeof data.unread_count === 'number') {
+          updateBadges(data.unread_count);
+        }
 
-      // Check for active live class
-      updateLiveClassBanner(data.active_class);
+        // Check for active live class
+        updateLiveClassBanner(data.active_class);
 
-      // Process new notifications
-      if (data.notifications && data.notifications.length > 0) {
-        var hasNew = false;
-        var playSoundType = 'general';
+        // Process new notifications
+        if (data.notifications && data.notifications.length > 0) {
+          var hasNew = false;
+          var playSoundType = 'general';
 
-        data.notifications.forEach(function (notif) {
-          if (seenNotificationIds.has(Number(notif.id))) return;
-          saveSeenNotificationId(notif.id);
-          hasNew = true;
+          data.notifications.forEach(function (notif) {
+            if (seenNotificationIds.has(Number(notif.id))) return;
+            saveSeenNotificationId(notif.id);
+            hasNew = true;
 
-          if (notif.type === 'class_started') {
-            playSoundType = 'class_started';
-          }
+            if (notif.type === 'class_started') {
+              playSoundType = 'class_started';
+            }
 
-          // Show floating toast
-          showToast(notif);
+            // Show floating toast
+            showToast(notif);
 
-          // Native browser notification
-          var targetUrl = notif.action_url || (window.location.origin + '/notifications');
-          showBrowserNotification('Edvora: ' + notif.title, notif.message, targetUrl);
+            // Native browser notification
+            var targetUrl = notif.action_url || (window.location.origin + '/notifications');
+            showBrowserNotification('Edvora: ' + notif.title, notif.message, targetUrl);
 
-          // Dispatch custom DOM event in case specific pages want to listen
-          try {
-            window.dispatchEvent(new CustomEvent('edvora:new-notification', { detail: notif }));
-          } catch (e) {}
-        });
+            // Dispatch custom DOM event in case specific pages want to listen
+            try {
+              window.dispatchEvent(new CustomEvent('edvora:new-notification', { detail: notif }));
+            } catch (e) { }
+          });
 
-        if (hasNew) {
-          playNotificationSound(playSoundType);
+          if (hasNew) {
+            playNotificationSound(playSoundType);
 
-          // If current page is /notifications, reload to show latest cards
-          if (window.location.pathname.endsWith('/notifications') || window.location.pathname.endsWith('/notifications/')) {
-            // Optional: refresh after brief delay so user sees toast
-            // location.reload();
+            // If current page is /notifications, reload to show latest cards
+            if (window.location.pathname.endsWith('/notifications') || window.location.pathname.endsWith('/notifications/')) {
+              // Optional: refresh after brief delay so user sees toast
+              // location.reload();
+            }
           }
         }
-      }
 
-      if (data.timestamp) {
-        lastPollTimestamp = data.timestamp;
-      }
-    })
-    .catch(function (err) {
-      isPolling = false;
-      // Fail silently to avoid console spam when offline
-    });
+        if (data.timestamp) {
+          lastPollTimestamp = data.timestamp;
+        }
+      })
+      .catch(function (err) {
+        isPolling = false;
+        // Fail silently to avoid console spam when offline
+      });
   }
 
   // --- CRUD Functions (Global Scope for inline HTML onclicks) ---
@@ -427,28 +427,28 @@
         'X-CSRF-TOKEN': getCsrfToken()
       }
     })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data.success) {
-        var el = document.querySelector('[data-notification-id="' + notificationId + '"]');
-        if (el) {
-          el.classList.remove('unread');
-          var badge = el.querySelector('.badge.bg-primary');
-          if (badge && badge.textContent.trim() === 'New') badge.remove();
-          var dot = el.querySelector('.badge.bg-primary.rounded-circle');
-          if (dot) dot.remove();
-          var title = el.querySelector('h6');
-          if (title) title.classList.remove('fw-bold');
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          var el = document.querySelector('[data-notification-id="' + notificationId + '"]');
+          if (el) {
+            el.classList.remove('unread');
+            var badge = el.querySelector('.badge.bg-primary');
+            if (badge && badge.textContent.trim() === 'New') badge.remove();
+            var dot = el.querySelector('.badge.bg-primary.rounded-circle');
+            if (dot) dot.remove();
+            var title = el.querySelector('h6');
+            if (title) title.classList.remove('fw-bold');
+          }
+          // Decrement badge count
+          var badgeEl = document.querySelector('.edvora-nav-notif-badge');
+          if (badgeEl) {
+            var current = parseInt(badgeEl.textContent, 10) || 0;
+            if (current > 0) updateBadges(current - 1);
+          }
         }
-        // Decrement badge count
-        var badgeEl = document.querySelector('.edvora-nav-notif-badge');
-        if (badgeEl) {
-          var current = parseInt(badgeEl.textContent, 10) || 0;
-          if (current > 0) updateBadges(current - 1);
-        }
-      }
-    })
-    .catch(function (err) { console.error(err); });
+      })
+      .catch(function (err) { console.error(err); });
   };
 
   window.markAllAsRead = function () {
@@ -460,14 +460,14 @@
         'X-CSRF-TOKEN': getCsrfToken()
       }
     })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data.success) {
-        updateBadges(0);
-        location.reload();
-      }
-    })
-    .catch(function (err) { console.error(err); });
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          updateBadges(0);
+          location.reload();
+        }
+      })
+      .catch(function (err) { console.error(err); });
   };
 
   window.refreshNotifications = function () {
@@ -484,23 +484,23 @@
         'X-CSRF-TOKEN': getCsrfToken()
       }
     })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data.success) {
-        var el = document.querySelector('[data-notification-id="' + notificationId + '"]');
-        if (el) {
-          el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-          el.style.opacity = '0';
-          el.style.transform = 'translateX(20px)';
-          setTimeout(function () {
-            el.remove();
-            var remaining = document.querySelectorAll('.notification-item');
-            if (remaining.length === 0) location.reload();
-          }, 260);
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          var el = document.querySelector('[data-notification-id="' + notificationId + '"]');
+          if (el) {
+            el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(20px)';
+            setTimeout(function () {
+              el.remove();
+              var remaining = document.querySelectorAll('.notification-item');
+              if (remaining.length === 0) location.reload();
+            }, 260);
+          }
         }
-      }
-    })
-    .catch(function (err) { console.error(err); });
+      })
+      .catch(function (err) { console.error(err); });
   };
 
   window.deleteAllNotifications = function () {
@@ -513,14 +513,14 @@
         'X-CSRF-TOKEN': getCsrfToken()
       }
     })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data.success) {
-        updateBadges(0);
-        location.reload();
-      }
-    })
-    .catch(function (err) { console.error(err); });
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          updateBadges(0);
+          location.reload();
+        }
+      })
+      .catch(function (err) { console.error(err); });
   };
 
   function escapeHtml(str) {

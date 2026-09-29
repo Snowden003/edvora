@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import TeacherSidebar from '@/Components/Teacher/TeacherSidebar';
 import TeacherTopbar from '@/Components/Teacher/TeacherTopbar';
-import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
+import TeacherMobileMenu from '@/Components/Teacher/TeacherMobileMenu';
+import {
+    CheckCircle,
+    AlertCircle,
+    Info,
+    X,
+    LayoutDashboard,
+    BookOpen,
+    UserCheck,
+    ClipboardCheck,
+    Menu
+} from 'lucide-react';
 
 export default function TeacherLayout({ children, title = 'پنل اساتید و مدرسین - ادورا تک' }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { flash } = usePage().props;
+    const currentUrl = usePage().url;
     const [showFlash, setShowFlash] = useState(true);
 
     useEffect(() => {
@@ -53,9 +66,8 @@ export default function TeacherLayout({ children, title = 'پنل اساتید �
 
             {/* Main Application Area (Starts from the right after the sidebar) */}
             <div
-                className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-                    isCollapsed ? 'lg:mr-20' : 'lg:mr-72'
-                }`}
+                className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:mr-20' : 'lg:mr-72'
+                    }`}
             >
                 {/* Fixed Topbar */}
                 <TeacherTopbar
@@ -112,12 +124,84 @@ export default function TeacherLayout({ children, title = 'پنل اساتید �
                 )}
 
                 {/* Main Content Body */}
-                <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-8">
+                <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 max-w-7xl w-full mx-auto space-y-8">
                     {children}
                 </main>
 
+                {/* =========================================================================
+                    TEACHER MOBILE DOCK NAVIGATION
+                    ========================================================================= */}
+                <nav
+                    className="lg:hidden fixed bottom-3 inset-x-3 z-40 bg-white/95 backdrop-blur-2xl border border-[#E5EAF2] rounded-2xl shadow-[0_15px_45px_-5px_rgba(10,88,202,0.15)] px-1.5 py-1.5 flex items-center justify-between gap-1 transition-all"
+                    aria-label="Teacher Mobile Dock"
+                >
+                    {/* 1. Dashboard */}
+                    <Link
+                        href="/teacher/dashboard"
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all ${currentUrl === '/teacher/dashboard' || currentUrl === '/teacher'
+                            ? 'bg-[#0A58CA]/10 text-[#0A58CA] font-black'
+                            : 'text-slate-400 hover:text-slate-700'
+                            }`}
+                    >
+                        <LayoutDashboard size={20} className={currentUrl === '/teacher/dashboard' || currentUrl === '/teacher' ? 'text-[#0A58CA]' : ''} />
+                        <span className="text-[10px] font-bold mt-1">داشبورد</span>
+                    </Link>
+
+                    {/* 2. Courses */}
+                    <Link
+                        href="/teacher/your-courses"
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all ${currentUrl.startsWith('/teacher/your-courses') || currentUrl.startsWith('/teacher/courses')
+                            ? 'bg-[#0A58CA]/10 text-[#0A58CA] font-black'
+                            : 'text-slate-400 hover:text-slate-700'
+                            }`}
+                    >
+                        <BookOpen size={20} className={currentUrl.startsWith('/teacher/your-courses') || currentUrl.startsWith('/teacher/courses') ? 'text-[#0A58CA]' : ''} />
+                        <span className="text-[10px] font-bold mt-1">دوره‌ها</span>
+                    </Link>
+
+                    {/* 3. Enrollments */}
+                    <Link
+                        href="/teacher/enrollment-requests"
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all ${currentUrl.startsWith('/teacher/enrollment-requests')
+                            ? 'bg-[#0A58CA]/10 text-[#0A58CA] font-black'
+                            : 'text-slate-400 hover:text-slate-700'
+                            }`}
+                    >
+                        <UserCheck size={20} className={currentUrl.startsWith('/teacher/enrollment-requests') ? 'text-[#0A58CA]' : ''} />
+                        <span className="text-[10px] font-bold mt-1">ثبت‌نام‌ها</span>
+                    </Link>
+
+                    {/* 4. Quizzes */}
+                    <Link
+                        href="/teacher/quizzes"
+                        className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center transition-all ${currentUrl.startsWith('/teacher/quizzes')
+                            ? 'bg-[#0A58CA]/10 text-[#0A58CA] font-black'
+                            : 'text-slate-400 hover:text-slate-700'
+                            }`}
+                    >
+                        <ClipboardCheck size={20} className={currentUrl.startsWith('/teacher/quizzes') ? 'text-[#0A58CA]' : ''} />
+                        <span className="text-[10px] font-bold mt-1">آزمون‌ها</span>
+                    </Link>
+
+                    {/* 5. Mobile App Menu */}
+                    <button
+                        type="button"
+                        onClick={() => setMobileMenuOpen(true)}
+                        className="flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-center text-slate-400 hover:text-slate-700 transition-all"
+                    >
+                        <Menu size={20} />
+                        <span className="text-[10px] font-bold mt-1">منو</span>
+                    </button>
+                </nav>
+
+                {/* Mobile Application Bottom Sheet Menu */}
+                <TeacherMobileMenu
+                    isOpen={mobileMenuOpen}
+                    setIsOpen={setMobileMenuOpen}
+                />
+
                 {/* Modern RTL Footer */}
-                <footer className="h-16 border-t border-[#E5EAF2] px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 bg-white/70 backdrop-blur-xs mt-auto">
+                <footer className="hidden sm:flex h-16 border-t border-[#E5EAF2] px-4 sm:px-8 flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 bg-white/70 backdrop-blur-xs mt-auto">
                     <div>
                         © {new Date().getFullYear()} <span className="text-[#111827] font-bold">ادورا تک (Edvora Tech)</span> — تمامی حقوق محفوظ است.
                     </div>

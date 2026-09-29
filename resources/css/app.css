@@ -30,6 +30,7 @@
         -ms-overflow-style: none !important;
         scrollbar-width: none !important;
     }
+
     .scrollbar-none::-webkit-scrollbar {
         display: none !important;
         width: 0 !important;
@@ -37,7 +38,8 @@
     }
 
     /* Persian / Dari Typography & Bolder Legibility as requested */
-    [dir="rtl"], .rtl-layout {
+    [dir="rtl"],
+    .rtl-layout {
         font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         letter-spacing: 0 !important;
     }
@@ -46,11 +48,13 @@
     [dir="rtl"] {
         font-weight: 500;
     }
+
     [dir="rtl"] body {
         font-weight: 500;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
+
     [dir="rtl"] p,
     [dir="rtl"] span,
     [dir="rtl"] a,
@@ -58,18 +62,23 @@
     [dir="rtl"] button {
         letter-spacing: 0 !important;
     }
+
     [dir="rtl"] .font-normal {
         font-weight: 500 !important;
     }
+
     [dir="rtl"] .font-medium {
         font-weight: 600 !important;
     }
+
     [dir="rtl"] .font-semibold {
         font-weight: 700 !important;
     }
+
     [dir="rtl"] .font-bold {
         font-weight: 800 !important;
     }
+
     [dir="rtl"] .font-extrabold,
     [dir="rtl"] .font-black {
         font-weight: 900 !important;
@@ -81,11 +90,18 @@
     border-left: 1px solid var(--sb-border, #e2e8f0);
     border-right: none;
     box-shadow: -4px 0 24px rgba(15, 23, 42, 0.03);
+    right: 0 !important;
+    left: auto !important;
 }
 
-[dir="rtl"] .edvora-sidebar .sidebar-collapse-toggle {
-    left: -13px;
-    right: auto;
+[dir="ltr"] aside#sidebar.edvora-sidebar {
+    left: 0 !important;
+    right: auto !important;
+}
+
+.sidebar-collapse-toggle,
+.sidebar-mobile-close {
+    display: none !important;
 }
 
 [dir="rtl"] .edvora-nav-link {
@@ -148,9 +164,12 @@
 }
 
 @keyframes bounceSlow {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -160,6 +179,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -203,16 +223,16 @@
 .dashboard-wrapper .bg-white,
 .dashboard-wrapper .bg-slate-50 {
     transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Atmospheric Cosmic Background */
 .dark.dashboard-wrapper,
 .dark .dashboard-wrapper {
     background-color: #030712 !important;
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
         radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%) !important;
@@ -332,7 +352,7 @@
 }
 
 /* Dividers */
-.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-100> :not([hidden])~ :not([hidden]),
 .dark .border-slate-100 {
     border-color: rgba(30, 48, 80, 0.6) !important;
 }
@@ -439,18 +459,24 @@
 }
 
 @keyframes float3D {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0px) rotate(0deg);
     }
+
     50% {
         transform: translateY(-4px) rotate(2deg);
     }
 }
 
 @keyframes flameBounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1) rotate(-3deg);
     }
+
     50% {
         transform: scale(1.18) rotate(4deg);
     }
@@ -461,10 +487,12 @@
         transform: scale(0.95);
         box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6);
     }
+
     70% {
         transform: scale(1);
         box-shadow: 0 0 0 8px rgba(244, 63, 94, 0);
     }
+
     100% {
         transform: scale(0.95);
         box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
@@ -475,6 +503,7 @@
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -569,6 +598,7 @@
 
 /* Strictly hide desktop collapse handle on mobile */
 @media (max-width: 991.98px) {
+
     .edvora-sidebar .sidebar-collapse-toggle,
     #sidebarCollapse {
         display: none !important;
@@ -638,15 +668,27 @@
 }
 
 /* ==========================================================================
-   Sidebar Footer & User Profile Card Unbreakable Styling
+   Sidebar Fixed Desktop Positioning (Never scrolls with document body)
    ========================================================================== */
-aside#sidebar.edvora-sidebar {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
+@media (min-width: 1024px) {
+    aside#sidebar.edvora-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        z-index: 40 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    aside#sidebar.edvora-sidebar {
+        display: none !important;
+    }
 }
 
 /* Make nav list scrollable so footer is never crushed */
@@ -837,7 +879,3 @@ aside#sidebar.edvora-sidebar {
         max-height: 100dvh !important;
     }
 }
-
-
-
-

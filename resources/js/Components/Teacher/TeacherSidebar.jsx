@@ -56,82 +56,66 @@ export default function TeacherSidebar({
 
     return (
         <>
-            {/* Mobile Backdrop Overlay */}
-            {isOpen && (
-                <div
-                    onClick={() => setIsOpen(false)}
-                    className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden transition-opacity"
-                    aria-hidden="true"
-                />
-            )}
-
-            {/* Sidebar Shell - Positioned on the RIGHT */}
+            {/* Sidebar Shell - Positioned on the RIGHT (Fixed Desktop) */}
             <aside
-                className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white border-l border-[#E5EAF2] shadow-xl lg:shadow-none transition-all duration-300 ease-in-out select-none
-                    ${isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                    ${isCollapsed ? 'lg:w-20' : 'lg:w-72'}
-                    w-72
+                className={`hidden lg:flex fixed top-0 bottom-0 right-0 z-40 flex-col bg-white border-l border-[#E5EAF2] shadow-sm transition-all duration-300 ease-in-out select-none
+                    ${isCollapsed ? 'w-20' : 'w-72'}
                 `}
                 dir="rtl"
             >
-                {/* Desktop Collapse Button - on the left edge of the right-sidebar */}
-                <button
-                    onClick={toggleCollapse}
-                    type="button"
-                    title={isCollapsed ? 'گسترش منو' : 'جمع کردن منو'}
-                    className="hidden lg:flex absolute -left-3.5 top-6 z-30 w-7 h-7 bg-white border border-[#E5EAF2] rounded-full items-center justify-center text-slate-500 hover:text-[#0A58CA] hover:border-[#0A58CA]/50 shadow-md transition-all duration-200 hover:scale-110 active:scale-95"
-                >
-                    {isCollapsed ? (
-                        <ChevronLeft size={15} />
-                    ) : (
-                        <ChevronRight size={15} />
-                    )}
-                </button>
-
-                {/* Mobile Header */}
-                <div className="flex lg:hidden items-center justify-between p-4 border-b border-[#E5EAF2]">
-                    <span className="text-xs font-bold text-slate-500">منوی ناوبری</span>
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors"
-                        aria-label="بستن منو"
-                    >
-                        <X size={18} />
-                    </button>
-                </div>
-
-                {/* Brand Header */}
-                <div className="p-4 lg:p-5 border-b border-[#E5EAF2] flex items-center gap-3">
-                    <a href="/" className="flex items-center gap-3 group overflow-hidden">
-                        <div className="relative w-10 h-10 rounded-xl overflow-hidden shrink-0 shadow-md shadow-[#0A58CA]/10 border border-[#E5EAF2] group-hover:scale-105 transition-transform duration-300">
-                            <img
-                                src="/logo.png"
-                                alt="Edvora Tech"
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                    e.target.style.display = 'none';
-                                    e.target.nextElementSibling.style.display = 'flex';
-                                }}
-                            />
-                            <div className="hidden w-full h-full bg-gradient-to-tr from-[#0A58CA] to-[#1683F7] items-center justify-center text-white font-bold text-base">
-                                E
-                            </div>
-                        </div>
-
-                        {!isCollapsed && (
-                            <div className="flex flex-col min-w-0 transition-opacity duration-200">
-                                <span className="font-extrabold text-[#111827] text-base leading-tight tracking-tight group-hover:text-[#0A58CA] transition-colors truncate">
-                                    ادورا تک
-                                </span>
-                                <div className="flex items-center gap-1 mt-0.5">
-                                    <ShieldCheck size={12} className="text-[#0A58CA] shrink-0" />
-                                    <span className="text-[11px] font-bold text-[#0A58CA] tracking-wider truncate">
-                                        مدرس دوره
-                                    </span>
+                {/* Brand Header with Integrated Collapse Toggle Button */}
+                <div className={`p-4 border-b border-[#E5EAF2] flex items-center justify-between gap-2 ${isCollapsed ? 'flex-col justify-center' : ''}`}>
+                    {!isCollapsed ? (
+                        <>
+                            <a href="/" className="flex items-center gap-2.5 group overflow-hidden flex-1 min-w-0">
+                                <div className="relative w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-sm border border-[#E5EAF2] bg-slate-900 group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+                                    <img
+                                        src="/logo.png"
+                                        alt="Edvora Tech"
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-                            </div>
-                        )}
-                    </a>
+
+                                <div className="flex flex-col min-w-0 transition-opacity duration-200">
+                                    <span className="font-extrabold text-[#111827] text-sm leading-tight tracking-tight group-hover:text-[#0A58CA] transition-colors truncate">
+                                        ادورا تک
+                                    </span>
+                                    <div className="flex items-center gap-1 mt-0.5">
+                                        <ShieldCheck size={11} className="text-[#0A58CA] shrink-0" />
+                                        <span className="text-[10px] font-bold text-[#0A58CA] tracking-wider truncate">
+                                            مدرس دوره
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+
+                            {/* Collapse Button */}
+                            <button
+                                onClick={toggleCollapse}
+                                type="button"
+                                title="جمع کردن منو"
+                                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-[#0A58CA] flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 border border-slate-200 shrink-0"
+                            >
+                                <ChevronRight size={17} />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <a href="/" className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-slate-900 border border-slate-200 shadow-sm hover:scale-105 transition-transform" title="ادورا تک">
+                                <img src="/extension_icon.png" alt="Edvora Tech" className="w-8 h-8 object-contain" />
+                            </a>
+
+                            {/* Expand Button */}
+                            <button
+                                onClick={toggleCollapse}
+                                type="button"
+                                title="گسترش منو"
+                                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-[#0A58CA] flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 border border-slate-200"
+                            >
+                                <ChevronLeft size={17} />
+                            </button>
+                        </>
+                    )}
                 </div>
 
                 {/* Navigation Items (Scrollable) */}

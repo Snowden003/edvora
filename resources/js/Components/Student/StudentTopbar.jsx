@@ -21,6 +21,8 @@ import {
     Search
 } from 'lucide-react';
 
+import PwaInstallButton from '@/Components/PwaInstallButton';
+
 export default function StudentTopbar({ onToggleSidebar, title }) {
     const { auth, unreadNotificationsCount, studentNav } = usePage().props;
     const { lang, setLang, toggleLang, isRtl, t } = useLanguage();
@@ -54,105 +56,8 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
     return (
         <>
             {/* =========================================================================
-                1. MOBILE TOP NAVIGATION BAR (Ultra-Futuristic Dynamic Glass Island)
-                ========================================================================= */}
-            <header className="lg:hidden sticky top-2 z-40 px-3 transition-all duration-300">
-                <div className="relative overflow-hidden rounded-2xl bg-white/80 dark:bg-[#071328]/90 backdrop-blur-2xl border border-white/80 dark:border-cyan-500/25 shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12),0_0_20px_rgba(0,240,255,0.1)] px-3 py-2 flex items-center justify-between transition-all">
-                    {/* Ambient Glow Gradient in Dark Mode */}
-                    <div className="absolute -top-12 -left-12 w-28 h-28 bg-cyan-500/20 rounded-full blur-2xl pointer-events-none" />
-                    <div className="absolute -bottom-12 -right-12 w-28 h-28 bg-brand-500/20 rounded-full blur-2xl pointer-events-none" />
-
-                    {/* Brand & 3D Holographic Logo */}
-                    <Link
-                        href="/student/dashboard"
-                        className="relative z-10 flex items-center gap-2.5 group nav-3d-button"
-                    >
-                        {/* 3D Holographic Logo Box */}
-                        <div className="relative w-10 h-10 rounded-2xl p-[1.5px] bg-gradient-to-tr from-cyan-400 via-brand-500 to-indigo-600 shadow-md shadow-brand-500/25 group-hover:shadow-cyan-400/40 transition-shadow">
-                            <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center relative">
-                                <img
-                                    src="/logo.png"
-                                    alt="Edvora Tech"
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                />
-                                {/* Specular Light Reflection */}
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent pointer-events-none" />
-                            </div>
-                            {/* Live Online Ping */}
-                            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900 shadow-xs" />
-                        </div>
-
-                        {/* Title & Level Tag */}
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-none group-hover:text-brand-600 dark:group-hover:text-cyan-400 transition-colors">
-                                    {t('brand_title')}
-                                </span>
-                                <Sparkles size={11} className="text-cyan-500 animate-pulse" />
-                            </div>
-                            <span className="text-[10px] text-brand-600 dark:text-cyan-400/90 font-bold mt-1 flex items-center gap-1">
-                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                                {studentLevel.title || t('portal_name')} · Lvl {studentLevel.level || 1}
-                            </span>
-                        </div>
-                    </Link>
-
-                    {/* Quick 3D Interactive Items */}
-                    <div className="relative z-10 flex items-center gap-2">
-                        {/* 3D Flame Streak Chip */}
-                        <div
-                            className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-black shadow-xs nav-3d-button"
-                            title="Daily Streak"
-                        >
-                            <span className="anim-flame text-sm">🔥</span>
-                            <span>{studentLevel.progress || 0} XP</span>
-                        </div>
-
-                        {/* 3D Theme Switcher */}
-                        <button
-                            onClick={toggleTheme}
-                            type="button"
-                            className="w-9 h-9 rounded-xl border border-slate-200 dark:border-cyan-500/25 bg-slate-50/90 dark:bg-slate-900/80 text-slate-700 dark:text-amber-400 flex items-center justify-center shadow-xs nav-3d-button hover:border-amber-400/50 transition-all"
-                            title={isDark ? t('light_mode') : t('dark_mode')}
-                            aria-label={t('toggle_theme')}
-                        >
-                            {isDark ? (
-                                <Sun size={17} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
-                            ) : (
-                                <Moon size={17} className="text-slate-600" />
-                            )}
-                        </button>
-
-                        {/* 3D Notification Bell */}
-                        <a
-                            href="/student/notifications"
-                            className="relative w-9 h-9 rounded-xl border border-slate-200 dark:border-cyan-500/25 bg-slate-50/90 dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs nav-3d-button hover:border-brand-400/50 transition-all"
-                            title={t('notifications')}
-                        >
-                            <Bell size={17} className={unread > 0 ? 'text-brand-600 dark:text-cyan-400' : ''} />
-                            {unread > 0 && (
-                                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-slate-900 anim-radar">
-                                    {unread > 9 ? '9+' : unread}
-                                </span>
-                            )}
-                        </a>
-
-                        {/* 3D Sidebar Toggle Button */}
-                        <button
-                            onClick={onToggleSidebar}
-                            type="button"
-                            className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-brand-500/30 nav-3d-button active:scale-90"
-                            aria-label="Toggle Navigation Menu"
-                            title={t('main_menu')}
-                        >
-                            <Menu size={18} />
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            {/* =========================================================================
-                2. DESKTOP NAVIGATION BAR (Next-Gen SaaS Glassmorphism Topbar)
+                DESKTOP NAVIGATION BAR (Next-Gen SaaS Glassmorphism Topbar)
+                Mobile top header removed per request: mobile uses bottom app dock & sheet
                 ========================================================================= */}
             <header className="hidden lg:flex sticky top-0 z-30 h-16 bg-white/85 dark:bg-[#071022]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-cyan-500/20 px-8 items-center justify-between shadow-[0_4px_25px_-5px_rgba(0,0,0,0.06),0_0_20px_rgba(0,240,255,0.06)] transition-colors">
                 {/* Left: 3D Emblem & Dynamic Page Title */}
@@ -181,6 +86,9 @@ export default function StudentTopbar({ onToggleSidebar, title }) {
 
                 {/* Right: Actions, 3D Pills & User Menu */}
                 <div className="flex items-center gap-3">
+                    {/* PWA Install Button for Chrome / Edge */}
+                    <PwaInstallButton variant="topbar" />
+
                     {/* 3D Streak & XP Pill */}
                     <div
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-extrabold text-xs shadow-xs nav-3d-button cursor-default"

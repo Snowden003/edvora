@@ -68,65 +68,73 @@ export default function StudentSidebar({
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Student')}&background=1f8fff&color=fff&size=100`);
 
     return (
-        <>
-            {/* Sidebar Overlay */}
-            <div
-                className={`sidebar-overlay ${isOpen ? 'active' : ''}`}
-                id="sidebarOverlay"
-                onClick={() => setIsOpen(false)}
-            />
-
-            {/* Unified Edvora Sidebar */}
-            <aside
-                className={`edvora-sidebar ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'active' : ''}`}
-                id="sidebar"
-            >
-                {/* Desktop Collapse Toggle (strictly hidden on mobile) */}
-                <div
-                    className="sidebar-collapse-toggle d-none d-lg-flex"
-                    id="sidebarCollapse"
-                    title={isCollapsed ? t('view_all') : t('close')}
-                    onClick={toggleCollapse}
-                >
-                    {isRtl ? (
-                        isCollapsed ? <ChevronLeft size={14} /> : <ChevronRight size={14} />
-                    ) : (
-                        isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />
-                    )}
-                </div>
-
-                {/* Mobile Close Button (properly positioned to never collide with logo) */}
-                <button
-                    type="button"
-                    className="sidebar-mobile-close d-flex d-lg-none"
-                    id="sidebarMobileClose"
-                    aria-label={t('close')}
-                    onClick={() => setIsOpen(false)}
-                >
-                    <X size={18} />
-                </button>
-
-                {/* Brand Header */}
-                <a href="/" className="edvora-brand">
-                    <div className="edvora-brand-logo-wrap">
-                        <img src="/logo.png" alt="Edvora Tech" />
+        <aside
+            className={`hidden lg:flex edvora-sidebar fixed top-0 bottom-0 z-40 h-screen transition-all duration-300 select-none ${
+                isRtl ? 'right-0' : 'left-0'
+            } ${
+                isCollapsed
+                    ? 'w-[78px] min-w-[78px] max-w-[78px] collapsed'
+                    : 'w-[275px] min-w-[275px] max-w-[275px]'
+            }`}
+            id="sidebar"
+        >
+            {/* Brand Header with Integrated Collapse Toggle Button */}
+            <div className={`edvora-brand-header flex items-center justify-between gap-2 p-3 mb-2 border-b border-slate-100 dark:border-slate-800/80 transition-all ${isCollapsed ? 'flex-col justify-center' : ''}`}>
+                {!isCollapsed ? (
+                    <>
+                        <a href="/" className="edvora-brand flex items-center gap-2.5 overflow-hidden flex-1 min-w-0 !border-b-0 !p-0 !m-0">
+                    <div className="edvora-brand-logo-wrap w-9 h-9 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-slate-900 border border-slate-700/50 shadow-sm">
+                        <img src="/logo.png" alt="Edvora Tech" className="w-full h-full object-cover" />
                     </div>
-                    <div className="edvora-brand-info">
-                        <span className="edvora-brand-title">{t('brand_title')}</span>
-                        <span className="edvora-brand-badge flex items-center gap-1">
-                            <GraduationCap size={13} className="shrink-0" />
+                    <div className="edvora-brand-info flex flex-col min-w-0">
+                        <span className="edvora-brand-title text-sm font-extrabold text-slate-800 dark:text-white truncate">
+                            {t('brand_title')}
+                        </span>
+                        <span className="edvora-brand-badge flex items-center gap-1 text-[10px] font-bold text-cyan-600 dark:text-cyan-400">
+                            <GraduationCap size={11} className="shrink-0" />
                             <span>{t('portal_name')}</span>
                         </span>
                     </div>
                 </a>
 
-                {/* Navigation Menu */}
-                <ul className="edvora-nav">
-                    {/* 1. MAIN MENU */}
-                    <li className="edvora-nav-section-title">
+                {/* Collapse Button - Clearly visible, stylish, and easily clickable */}
+                <button
+                    type="button"
+                    onClick={toggleCollapse}
+                    title={t('close')}
+                    className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/90 dark:hover:bg-slate-700/90 text-slate-600 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-90 border border-slate-200/80 dark:border-cyan-500/20 shrink-0"
+                    aria-label="Collapse sidebar"
+                >
+                    {isRtl ? <ChevronRight size={17} /> : <ChevronLeft size={17} />}
+                </button>
+            </>
+        ) : (
+            <>
+                <a href="/" className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-slate-900 border border-slate-700/50 shadow-sm hover:scale-105 transition-transform" title={t('brand_title')}>
+                    <img src="/extension_icon.png" alt="Edvora Tech" className="w-8 h-8 object-contain" />
+                </a>
+
+                {/* Expand Button */}
+                <button
+                    type="button"
+                    onClick={toggleCollapse}
+                    title={t('view_all')}
+                    className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/90 dark:hover:bg-slate-700/90 text-slate-600 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-90 border border-slate-200/80 dark:border-cyan-500/20"
+                    aria-label="Expand sidebar"
+                >
+                    {isRtl ? <ChevronLeft size={17} /> : <ChevronRight size={17} />}
+                </button>
+            </>
+        )}
+            </div>
+
+            {/* Navigation Menu */}
+            <ul className="edvora-nav">
+                {/* 1. MAIN MENU */}
+                <li className="edvora-nav-section-title">
                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
                         <span>{t('main_menu')}</span>
-                    </li>
+                    </li >
 
                     <li className="edvora-nav-item">
                         <a href="/" className="edvora-nav-link group" title={t('home')}>
@@ -150,7 +158,7 @@ export default function StudentSidebar({
                         </Link>
                     </li>
 
-                    {/* 2. ACADEMICS & LEARNING */}
+{/* 2. ACADEMICS & LEARNING */ }
                     <li className="edvora-nav-section-title">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0"></span>
                         <span>{t('academics')}</span>
@@ -248,7 +256,7 @@ export default function StudentSidebar({
                         </a>
                     </li>
 
-                    {/* 3. COMMUNITY & LEADERBOARD */}
+{/* 3. COMMUNITY & LEADERBOARD */ }
                     <li className="edvora-nav-section-title">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
                         <span>{t('community')}</span>
@@ -294,7 +302,7 @@ export default function StudentSidebar({
                         </a>
                     </li>
 
-                    {/* 4. ACCOUNT & SETTINGS */}
+{/* 4. ACCOUNT & SETTINGS */ }
                     <li className="edvora-nav-section-title">
                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
                         <span>{t('account')}</span>
@@ -363,6 +371,5 @@ export default function StudentSidebar({
                     </div>
                 )}
             </aside>
-        </>
     );
 }
