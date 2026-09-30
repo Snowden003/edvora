@@ -1,0 +1,49 @@
+name: Build and Auto Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build Assets & Deploy to cPanel / Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install NPM dependencies
+        run: npm ci || npm install
+
+      - name: 🔨 Compile Production Frontend (Vite)
+        run: npm run build
+
+      - name: 💾 Commit & Push compiled assets (if changed)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/build/ -f
+          if git diff --staged --quiet; then
+            echo "No build changes to commit"
+          else
+            git commit -m "chore(assets): auto-build production assets [skip ci]"
+            git push origin main
+          fi
+
+      - name: 🚀 Trigger cPanel Auto-Deployment Webhook (Optional)
+        if: env.CPANEL_WEBHOOK_URL != ''
+        env:
+          CPANEL_WEBHOOK_URL: ${{ secrets.CPANEL_WEBHOOK_URL }}
+        run: |
+          echo "Triggering cPanel deployment webhook..."
+          curl -X POST "$CPANEL_WEBHOOK_URL"

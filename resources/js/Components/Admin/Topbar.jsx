@@ -18,6 +18,7 @@ import {
     Calendar,
     ArrowUpRight
 } from 'lucide-react';
+import PwaInstallButton from '@/Components/PwaInstallButton';
 
 export default function Topbar({ onToggleSidebar }) {
     const { props } = usePage();
@@ -51,7 +52,7 @@ export default function Topbar({ onToggleSidebar }) {
     }).format(new Date());
 
     return (
-        <header className="sticky top-0 z-30 h-20 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-8 flex items-center justify-between transition-all">
+        <header className="hidden lg:flex sticky top-0 z-30 h-20 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-8 items-center justify-between transition-all">
             {/* Left section: Hamburger & Search */}
             <div className="flex items-center gap-4 flex-1 max-w-xl">
                 <button
@@ -81,6 +82,9 @@ export default function Topbar({ onToggleSidebar }) {
 
             {/* Right section: Actions & Profile */}
             <div className="flex items-center gap-2 sm:gap-3">
+                {/* PWA Install Button */}
+                <PwaInstallButton variant="topbar" />
+
                 {/* View Live Website */}
                 <a
                     href="/"
