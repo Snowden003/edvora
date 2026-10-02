@@ -244,47 +244,58 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
     return (
         <>
             {/* Mobile Backdrop */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm lg:hidden transition-opacity"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
-
-            {/* Sidebar Container */}
+            {/* Sidebar Container - Fixed Desktop Sidebar */}
             <aside
-                className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-slate-900/95 lg:bg-slate-900/80 backdrop-blur-2xl border-l border-slate-800/80 text-slate-200 transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none
-                ${isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                ${isCollapsed ? 'lg:w-20' : 'lg:w-72'}
-                w-72
+                className={`hidden lg:flex fixed top-0 bottom-0 right-0 z-40 flex-col bg-slate-900/95 backdrop-blur-2xl border-l border-slate-800/80 text-slate-200 transition-all duration-300 ease-in-out select-none
+                ${isCollapsed ? 'w-20' : 'w-72'}
                 `}
             >
-                {/* Brand Header */}
-                <div className="h-20 flex items-center justify-between px-5 border-b border-slate-800/80 bg-slate-950/40">
-                    <Link href="/admin/dashboard" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent-500 flex items-center justify-center shadow-glow text-white font-black text-xl tracking-wider transition-transform group-hover:scale-105">
-                            E
-                        </div>
-                        {!isCollapsed && (
-                            <div className="flex flex-col">
-                                <span className="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5 font-display">
-                                    Edvora Tech
-                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                                        ADMIN
+                {/* Brand Header with Integrated Collapse Toggle Button */}
+                <div className={`p-4 border-b border-slate-800/80 flex items-center justify-between gap-2 bg-slate-950/40 ${isCollapsed ? 'flex-col justify-center' : ''}`}>
+                    {!isCollapsed ? (
+                        <>
+                            <Link href="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden flex-1 min-w-0">
+                                <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-950 border border-slate-700/60 flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+                                    <img src="/logo.png" alt="Edvora Tech" className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5 truncate">
+                                        ادوُرا تِک
+                                        <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30 shrink-0">
+                                            ADMIN
+                                        </span>
                                     </span>
-                                </span>
-                                <span className="text-xs text-slate-400 font-medium">سامانه مدیریت آموزشگاه</span>
-                            </div>
-                        )}
-                    </Link>
+                                    <span className="text-[11px] text-slate-400 font-medium truncate">سامانه مدیریت آموزشگاه</span>
+                                </div>
+                            </Link>
 
-                    {/* Mobile Close Button */}
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-                    >
-                        <X size={20} />
-                    </button>
+                            {/* Collapse Button - Visible & Sleek inside header */}
+                            <button
+                                type="button"
+                                onClick={() => setIsCollapsed(true)}
+                                title="جمع کردن منو"
+                                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 border border-slate-700 shrink-0"
+                            >
+                                <ChevronRight size={17} />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/admin/dashboard" className="w-10 h-10 rounded-xl overflow-hidden bg-slate-950 border border-slate-700/60 flex items-center justify-center shadow-md hover:scale-105 transition-transform" title="ادوُرا تِک">
+                                <img src="/extension_icon.png" alt="Edvora" className="w-8 h-8 object-contain" />
+                            </Link>
+
+                            {/* Expand Button */}
+                            <button
+                                type="button"
+                                onClick={() => setIsCollapsed(false)}
+                                title="گسترش منو"
+                                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 border border-slate-700"
+                            >
+                                <ChevronLeft size={17} />
+                            </button>
+                        </>
+                    )}
                 </div>
 
                 {/* Navigation Links (Scrollable) */}
@@ -408,23 +419,6 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                             </a>
                         )}
                     </div>
-
-                    {/* Desktop Collapse Toggle */}
-                    <button
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="hidden lg:flex w-full items-center justify-center gap-2 py-2 px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors text-xs font-medium"
-                    >
-                        {isCollapsed ? (
-                            <>
-                                <ChevronLeft size={16} />
-                            </>
-                        ) : (
-                            <>
-                                <ChevronRight size={16} />
-                                <span>جمع کردن منو</span>
-                            </>
-                        )}
-                    </button>
                 </div>
             </aside>
         </>

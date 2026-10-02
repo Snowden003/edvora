@@ -90,11 +90,18 @@
     border-left: 1px solid var(--sb-border, #e2e8f0);
     border-right: none;
     box-shadow: -4px 0 24px rgba(15, 23, 42, 0.03);
+    right: 0 !important;
+    left: auto !important;
 }
 
-[dir="rtl"] .edvora-sidebar .sidebar-collapse-toggle {
-    left: -13px;
-    right: auto;
+[dir="ltr"] aside#sidebar.edvora-sidebar {
+    left: 0 !important;
+    right: auto !important;
+}
+
+.sidebar-collapse-toggle,
+.sidebar-mobile-close {
+    display: none !important;
 }
 
 [dir="rtl"] .edvora-nav-link {
@@ -661,15 +668,27 @@
 }
 
 /* ==========================================================================
-   Sidebar Footer & User Profile Card Unbreakable Styling
+   Sidebar Fixed Desktop Positioning (Never scrolls with document body)
    ========================================================================== */
-aside#sidebar.edvora-sidebar {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
+@media (min-width: 1024px) {
+    aside#sidebar.edvora-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        z-index: 40 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    aside#sidebar.edvora-sidebar {
+        display: none !important;
+    }
 }
 
 /* Make nav list scrollable so footer is never crushed */

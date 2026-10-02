@@ -6,6 +6,18 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- PWA & Mobile Web App Meta & Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Edvora">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png">
     <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key') }}">
     <meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster') ?? 'mt1' }}">
 
@@ -13,7 +25,7 @@
         $metaTitle = trim($__env->yieldContent('meta_title', $__env->yieldContent('title', 'Edvora Tech - Free Online Education for Afghan Women')));
         $metaDescription = trim($__env->yieldContent('meta_description', 'Edvora provides free online courses and practical digital skills education for Afghan women and girls.'));
         $canonicalUrl = trim($__env->yieldContent('canonical', url()->current()));
-        $metaImage = trim($__env->yieldContent('meta_image', asset('assets/images/logo1.jpg')));
+        $metaImage = trim($__env->yieldContent('meta_image', asset('logo.png')));
         $metaType = trim($__env->yieldContent('meta_type', 'website'));
     @endphp
     <title>{{ $metaTitle }}</title>
@@ -121,6 +133,28 @@
     @endauth
 
     @include('components.ai-chatbot')
-    @stack('scripts')
+    <!-- PWA Service Worker Registration & Install Prompt Capture -->
+    <script>
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.deferredPwaPrompt = e;
+            window.dispatchEvent(new CustomEvent('pwa-prompt-ready'));
+        });
+        window.addEventListener('appinstalled', function() {
+            window.deferredPwaPrompt = null;
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(reg) {
+                        // console.log('PWA ServiceWorker registered with scope:', reg.scope);
+                    })
+                    .catch(function(err) {
+                        console.warn('PWA ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

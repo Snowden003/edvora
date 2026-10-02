@@ -15,13 +15,14 @@ import {
     GraduationCap
 } from 'lucide-react';
 
+import PwaInstallButton from '@/Components/PwaInstallButton';
+
 export default function TeacherTopbar({ onToggleSidebar, title = 'داشبورد اساتید' }) {
     const { isDark, toggleTheme } = useTheme();
     const page = usePage();
     const props = page?.props || {};
     const auth = props.auth || {};
     const unreadNotificationsCount = props.unreadNotificationsCount || 0;
-
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 

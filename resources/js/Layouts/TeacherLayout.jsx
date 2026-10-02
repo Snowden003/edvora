@@ -60,6 +60,7 @@ class ErrorBoundary extends Component {
 
 function TeacherLayoutInner({ children, title = 'پنل اساتید و مدرسین - ادورا تک' }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { theme, isDark } = useTheme();
     const page = usePage();
@@ -122,9 +123,8 @@ function TeacherLayoutInner({ children, title = 'پنل اساتید و مدرس
 
             {/* Main Application Area (Starts from the right after the sidebar on desktop) */}
             <div
-                className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-                    isCollapsed ? 'lg:mr-20' : 'lg:mr-72'
-                }`}
+                className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:mr-20' : 'lg:mr-72'
+                    }`}
             >
                 {/* Fixed / Sticky Topbar with Theme Switcher */}
                 <TeacherTopbar

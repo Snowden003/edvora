@@ -16,9 +16,13 @@ use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\CourseChatController;
+use App\Http\Controllers\PwaController;
 use App\Models\Course;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+// PWA Dedicated App Entry (For Google Play & Microsoft Store)
+Route::get('/app', [PwaController::class, 'index'])->name('pwa.app');
 
 // Home
 Route::get('/', [HomePageController::class, 'index'])->name('home');
@@ -416,3 +420,17 @@ Route::get('/api/events', [EventController::class, 'apiIndex'])->name('api.event
 // Breeze Auth routes
 require __DIR__.'/auth.php';
 
+// Smart Fallback Route: Prevents 404 errors for PWA / Google Play & Microsoft Store compliance
+Route::fallback(function (\Illuminate\Http\Request $request) {
+    $staticPath = public_path(ltrim($request->path(), '/'));
+    if (file_exists($staticPath) && is_file($staticPath)) {
+        return response()->file($staticPath);
+    }
+    if (auth()->check()) {
+        return redirect(auth()->user()->dashboardRoute());
+    }
+    if ($request->expectsJson()) {
+        return response()->json(['message' => 'Resource not found.'], 404);
+    }
+    return redirect()->route('pwa.app');
+});

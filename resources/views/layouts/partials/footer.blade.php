@@ -20,7 +20,7 @@
             <div class="col-lg-4">
                 <div class="footer-brand">
                     <div class="brand-logo">
-                        <img src="{{ $siteSettings->get('company_logo') ? asset('storage/' . $siteSettings->get('company_logo')) : asset('assets/images/logo1.jpg') }}" alt="{{ $siteSettings->get('company_name', 'Edvora Tech') }} Logo" class="footer-logo" />
+                        <img src="{{ $siteSettings->get('company_logo') ? asset('storage/' . $siteSettings->get('company_logo')) : asset('logo.png') }}" alt="{{ $siteSettings->get('company_name', 'Edvora Tech') }} Logo" class="footer-logo" />
                         <h4>{{ $siteSettings->get('company_name', 'Edvora Tech') }}</h4>
                     </div>
                     <p class="brand-description">

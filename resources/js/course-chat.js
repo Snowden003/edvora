@@ -161,7 +161,7 @@ const showChatToast = (message, courseId) => {
 
     const toast = document.createElement('div');
     toast.style.cssText = 'pointer-events:auto;background:#ffffff;border:1px solid #e0e7ff;border-left:5px solid #6366f1;border-radius:14px;padding:14px 16px;box-shadow:0 12px 35px rgba(15,23,42,0.18);display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:transform 0.2s ease, box-shadow 0.2s ease;';
-    
+
     toast.onmouseenter = () => { toast.style.transform = 'translateY(-2px)'; };
     toast.onmouseleave = () => { toast.style.transform = 'translateY(0)'; };
 
@@ -170,7 +170,7 @@ const showChatToast = (message, courseId) => {
 
     const content = document.createElement('div');
     content.style.cssText = 'flex:1;min-width:0;';
-    
+
     const title = document.createElement('div');
     title.style.cssText = 'font-weight:700;font-size:0.88rem;color:#1e293b;display:flex;justify-content:space-between;align-items:center;';
     title.innerHTML = `<span style="display:flex;align-items:center;gap:6px;"><i class="bi bi-chat-dots-fill" style="color:#6366f1;"></i> ${message.user.name}</span><span style="font-size:0.7rem;color:#94a3b8;font-weight:400;">Just now</span>`;
@@ -208,9 +208,9 @@ const sendDesktopNotification = (message) => {
         try {
             new Notification(`New message from ${message.user.name}`, {
                 body: message.body,
-                icon: message.user.avatar || '/assets/images/logo1.jpg'
+                icon: message.user.avatar || '/extension_icon.png'
             });
-        } catch (e) {}
+        } catch (e) { }
     } else if ('Notification' in window && Notification.permission !== 'denied') {
         Notification.requestPermission();
     }
@@ -257,7 +257,7 @@ const initCourseChat = (root) => {
     if (isChatTabVisible(root)) {
         clearBadge(courseId);
     }
-    
+
     injectBadgeElements(courseId);
     const savedCount = getBadgeCount(courseId);
     if (savedCount > 0) updateSidebarBadges(courseId, savedCount);
@@ -673,7 +673,7 @@ const initCourseChat = (root) => {
         .listen('.course.message.created', ({ message }) => {
             const isMine = Number(message.user.id) === currentUserId;
             renderOrUpdateMessage(message, true);
-            
+
             if (!isMine) {
                 const visible = isChatTabVisible(root);
                 if (!visible || document.hidden) {

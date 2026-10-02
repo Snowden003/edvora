@@ -10,24 +10,23 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <aside class="edvora-sidebar" id="sidebar">
-    <div class="sidebar-collapse-toggle d-none d-lg-flex" id="sidebarCollapse" title="Toggle Sidebar">
-        <i class="bi bi-chevron-left"></i>
+    <!-- Brand Header with Integrated Collapse Toggle Button -->
+    <div class="edvora-brand-header d-flex align-items-center justify-content-between p-2 mb-2 border-bottom">
+        <a href="{{ route('home') }}" class="edvora-brand d-flex align-items-center gap-2 mb-0 border-0 p-0 flex-grow-1 text-decoration-none">
+            <div class="edvora-brand-logo-wrap">
+                <img src="{{ asset('logo.png') }}" alt="Edvora Tech">
+            </div>
+            <div class="edvora-brand-info">
+                <span class="edvora-brand-title">ادوُرا تِک</span>
+                <span class="edvora-brand-badge"><i class="bi bi-shield-check me-1"></i>پورتال اساتید</span>
+            </div>
+        </a>
+
+        <!-- Sleek and clearly visible toggle button -->
+        <button type="button" class="sidebar-collapse-toggle-btn d-none d-lg-flex" id="sidebarCollapse" title="تغییر اندازه سایدبار" aria-label="تغییر اندازه سایدبار">
+            <i class="bi bi-chevron-right"></i>
+        </button>
     </div>
-
-    <button type="button" class="sidebar-mobile-close d-flex d-lg-none" id="sidebarMobileClose" aria-label="Close sidebar">
-        <i class="bi bi-x-lg"></i>
-    </button>
-
-    <!-- Brand Header -->
-    <a href="{{ route('home') }}" class="edvora-brand">
-        <div class="edvora-brand-logo-wrap">
-            <img src="{{ asset('assets/images/logo1.jpg') }}" alt="Edvora Tech">
-        </div>
-        <div class="edvora-brand-info">
-            <span class="edvora-brand-title">ادورا تک</span>
-            <span class="edvora-brand-badge"><i class="bi bi-shield-check me-1"></i>مدرس رسمی</span>
-        </div>
-    </a>
 
     <!-- Nav Items -->
     <ul class="edvora-nav">
