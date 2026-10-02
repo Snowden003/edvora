@@ -16,7 +16,6 @@ import {
     RefreshCw
 } from 'lucide-react';
 
-// Error Boundary to prevent White Screen of Death
 class ErrorBoundary extends Component {
     constructor(props) {
         super(props);
