@@ -30,7 +30,6 @@ export default function TeacherSidebar({
     const teacherNav = props.teacherNav || {};
     const unreadNotificationsCount = props.unreadNotificationsCount || 0;
 
-    // No submenu – courses dropdown replaced by dedicated hub page
 
     // Save collapse state in localStorage
     const toggleCollapse = () => {
