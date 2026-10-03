@@ -3,6 +3,9 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/edvokttv/edvora-project/
     - export PUBLICPATH=/home/edvokttv/public_html/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/mkdir -p $PUBLICPATH/screenshots
+    - /bin/mkdir -p $PUBLICPATH/widgets
     - /usr/bin/rsync -av --exclude='.env' --exclude='storage/' --exclude='bootstrap/cache/' --exclude='.git/' --exclude='node_modules/' --exclude='public/index.php' --exclude='public/.htaccess' --exclude='public/robots.txt' --exclude='public/favicon.ico' --exclude='public/app.token' ./ $DEPLOYPATH
     - /usr/bin/rsync -av --exclude='.htaccess' --exclude='index.php' --exclude='robots.txt' --exclude='favicon.ico' --exclude='storage' ./public/ $PUBLICPATH
     - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
