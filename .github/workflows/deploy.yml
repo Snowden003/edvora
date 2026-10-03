@@ -40,7 +40,18 @@ jobs:
             git push origin main
           fi
 
-      - name: 🚀 Trigger cPanel Auto-Deployment Webhook (Method 1)
+      - name: 🔑 Trigger cPanel Git Pull & Deploy via API Token (Recommended)
+        if: ${{ secrets.CPANEL_API_TOKEN != '' }}
+        run: |
+          echo "Updating repository from remote in cPanel..."
+          curl -s -k -H "Authorization: cpanel edvokttv:${{ secrets.CPANEL_API_TOKEN }}" \
+            "https://business118.web-hosting.com:2083/execute/VersionControl/update?repository_root=/home/edvokttv/repositories/edvora"
+          echo "Deploying HEAD commit in cPanel..."
+          curl -s -k -H "Authorization: cpanel edvokttv:${{ secrets.CPANEL_API_TOKEN }}" \
+            "https://business118.web-hosting.com:2083/execute/VersionControlDeployment/create?repository_root=/home/edvokttv/repositories/edvora"
+          echo "cPanel deployment triggered successfully!"
+
+      - name: 🚀 Trigger cPanel Auto-Deployment Webhook (Optional Webhook)
         if: ${{ secrets.CPANEL_WEBHOOK_URL != '' }}
         env:
           CPANEL_WEBHOOK_URL: ${{ secrets.CPANEL_WEBHOOK_URL }}
@@ -49,7 +60,7 @@ jobs:
           curl -s -X POST "$CPANEL_WEBHOOK_URL"
           echo "Webhook successfully triggered!"
 
-      - name: 📂 Direct FTP Deploy to Server (Method 2 - Optional)
+      - name: 📂 Direct FTP Deploy to Server (Optional Fallback)
         if: ${{ secrets.FTP_PASSWORD != '' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
