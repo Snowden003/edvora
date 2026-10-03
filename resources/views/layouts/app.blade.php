@@ -132,7 +132,11 @@
     @include('components.banned-account-modal')
     @endauth
 
-    @include('components.ai-chatbot')
+    {{-- Floating Ask AI Widget (Excluded completely from all dashboards and dedicated chat pages) --}}
+    @if(!request()->is('teacher*', 'student*', 'admin*', 'scoring-help*', 'courses/*/chat*', 'ai-chat*', 'assistant*') && !View::hasSection('hide_ai_chatbot'))
+        @include('components.ai-chatbot')
+    @endif
+
     <!-- PWA Service Worker Registration & Install Prompt Capture -->
     <script>
         window.addEventListener('beforeinstallprompt', function(e) {

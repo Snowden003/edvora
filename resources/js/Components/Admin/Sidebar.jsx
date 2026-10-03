@@ -410,13 +410,15 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                             </div>
                         )}
                         {!isCollapsed && (
-                            <a
+                            <Link
                                 href="/logout"
+                                method="post"
+                                as="button"
                                 className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                                 title="خروج از حساب"
                             >
                                 <LogOut size={17} />
-                            </a>
+                            </Link>
                         )}
                     </div>
                 </div>

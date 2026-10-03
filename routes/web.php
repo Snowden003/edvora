@@ -99,14 +99,14 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Logout GET (redirect to home for convenience)
-Route::get('/logout', function () {
-    return redirect()->route('home');
-})->name('logout.get');
+Route::get('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout.get');
 
 // Contact Message
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 
-// AI Chatbot
+// AI Assistant (Full-page chat room & API)
+Route::get('/ai-chat', [\App\Http\Controllers\AiChatController::class, 'showPage'])->name('ai.chat.page');
+Route::get('/assistant', fn() => redirect()->route('ai.chat.page'))->name('assistant');
 Route::post('/ai-chat', \App\Http\Controllers\AiChatController::class)->name('ai.chat');
 
 // Books (public, no login required)

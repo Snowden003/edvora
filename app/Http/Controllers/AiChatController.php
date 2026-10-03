@@ -16,6 +16,32 @@ class AiChatController extends Controller
     }
 
     /**
+     * Show dedicated full-screen AI Chat room.
+     */
+    public function showPage(Request $request)
+    {
+        $isGuest = !auth()->check();
+        $guestRemaining = 5;
+        $guestUsed = 0;
+
+        if ($isGuest) {
+            $ip = $request->ip() ?: '127.0.0.1';
+            $ipKey = 'ai_chat_guest_ip_' . md5($ip);
+            $guestToken = $request->cookie('edvora_ai_token') ?? $request->session()->get('edvora_ai_token');
+            $tokenKey = $guestToken ? ('ai_chat_guest_token_' . $guestToken) : null;
+            $ipCount = (int) \Illuminate\Support\Facades\Cache::get($ipKey, 0);
+            $tokenCount = $tokenKey ? (int) \Illuminate\Support\Facades\Cache::get($tokenKey, 0) : 0;
+            $sessionCount = (int) session()->get('ai_guest_question_count', 0);
+            $guestUsed = max($ipCount, $tokenCount, $sessionCount);
+            $guestRemaining = max(0, 5 - $guestUsed);
+        }
+
+        $user = auth()->user();
+
+        return view('ai.chat', compact('isGuest', 'guestRemaining', 'guestUsed', 'user'));
+    }
+
+    /**
      * Handle AI Chat input from frontend.
      */
     public function __invoke(Request $request): JsonResponse

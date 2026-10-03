@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', ($course->title ?? 'جزئیات دوره') . ' - ادورا تک')
+@section('hide_ai_chatbot', true)
 
 @push('styles')
     <script>
@@ -94,22 +95,9 @@
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.12);
         }
 
-        /* Elevate Ask AI trigger button on mobile above the bottom navigation dock */
         @media (max-width: 991.98px) {
-            #edvoraAiTrigger,
-            .edvora-ai-trigger {
-                bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
-                right: 16px !important;
-                z-index: 1045 !important;
-            }
             .main-content {
                 padding-bottom: 7.5rem !important;
-            }
-            body.sidebar-open #edvoraAiTrigger,
-            body.sidebar-open .edvora-ai-trigger {
-                opacity: 0 !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
             }
         }
 

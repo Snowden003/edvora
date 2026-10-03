@@ -43,6 +43,7 @@ export default function TeacherSidebar({
     };
 
     const isDashboardActive = url === '/teacher/dashboard' || url === '/teacher';
+    const isAiChatActive = url.startsWith('/ai-chat') || url.startsWith('/assistant');
     const isYourCoursesActive = url.startsWith('/teacher/your-courses') || url.startsWith('/teacher/courses');
     const isEnrollmentsActive = url.startsWith('/teacher/enrollment-requests');
     const isQuizzesActive = url.startsWith('/teacher/quizzes');
@@ -197,6 +198,38 @@ export default function TeacherSidebar({
                                     </div>
                                     {!isCollapsed && <span>داشبورد اساتید</span>}
                                 </Link>
+                            </li>
+
+                            {/* Dedicated AI Assistant Page */}
+                            <li>
+                                <a
+                                    href="/ai-chat"
+                                    onClick={() => setIsOpen(false)}
+                                    title={isCollapsed ? 'دستیار هوش مصنوعی' : undefined}
+                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
+                                        isAiChatActive
+                                            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20'
+                                            : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/70 dark:hover:bg-indigo-950/30'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                                                isAiChatActive
+                                                    ? 'bg-white/20 text-white'
+                                                    : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/60'
+                                            }`}
+                                        >
+                                            <Sparkles size={18} />
+                                        </div>
+                                        {!isCollapsed && <span>دستیار هوش مصنوعی</span>}
+                                    </div>
+                                    {!isCollapsed && (
+                                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 tracking-wider">
+                                            AI
+                                        </span>
+                                    )}
+                                </a>
                             </li>
                         </ul>
                     </div>

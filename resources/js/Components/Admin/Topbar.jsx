@@ -219,13 +219,15 @@ export default function Topbar({ onToggleSidebar }) {
 
                             <div className="my-1 border-t border-slate-800" />
 
-                            <a
+                            <Link
                                 href="/logout"
-                                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors"
+                                method="post"
+                                as="button"
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-right"
                             >
                                 <LogOut size={15} />
                                 <span>خروج از پنل</span>
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>

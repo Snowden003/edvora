@@ -45,6 +45,15 @@
             </a>
         </li>
 
+        <li class="edvora-nav-item">
+            <a href="{{ route('ai.chat.page') }}"
+               class="edvora-nav-link {{ request()->routeIs('ai.chat.page') ? 'active' : '' }}" title="دستیار هوش مصنوعی ادوُرا">
+                <span class="edvora-nav-icon"><i class="bi bi-robot text-primary"></i></span>
+                <span class="edvora-nav-text">دستیار هوش مصنوعی</span>
+                <span class="edvora-badge edvora-badge-info">AI</span>
+            </a>
+        </li>
+
         <!-- 2. ACADEMICS -->
         <li class="edvora-nav-section-title">بخش درسی و تعلیمی</li>
 
