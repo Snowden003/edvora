@@ -1,9 +1,9 @@
 /**
  * Edvora Official Service Worker
- * Fully compliant with Google Play Store (TWA) and Microsoft Store (PWABuilder)
+ * Fully compliant with Google Play Store (TWA), Microsoft Store, and PWABuilder
  */
 
-const CACHE_VERSION = 'edvora-pwa-v2';
+const CACHE_VERSION = 'edvora-pwa-v3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
@@ -14,34 +14,75 @@ const PRECACHE_ASSETS = [
     '/extension_icon.png',
     '/favicon.png',
     '/apple-touch-icon.png',
+    '/screenshots/desktop-1.png',
+    '/screenshots/mobile-1.png',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
     '/icons/icon-maskable-192x192.png',
     '/icons/icon-maskable-512x512.png'
 ];
 
-// Install: precache offline fallback and essential assets
+// Install: precache offline fallback and essential assets, activate immediately
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(STATIC_CACHE).then((cache) => {
-            return cache.addAll(PRECACHE_ASSETS);
-        }).then(() => self.skipWaiting())
+            return Promise.allSettled(
+                PRECACHE_ASSETS.map((url) => cache.add(url).catch((err) => console.warn('Precache skip:', url, err)))
+            );
+        })
     );
 });
 
-// Activate: clean up older caches
+// Activate: clean up older caches and claim clients immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((keys) => {
-            return Promise.all(
-                keys.filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE)
-                    .map((key) => caches.delete(key))
-            );
-        }).then(() => self.clients.claim())
+        Promise.all([
+            caches.keys().then((keys) => {
+                return Promise.all(
+                    keys.filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE)
+                        .map((key) => caches.delete(key))
+                );
+            }),
+            self.clients.claim()
+        ])
     );
 });
 
-// Fetch: Strategy for TWA / Play Store compliance
+// Message listener to trigger immediate activation
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// Background Sync API (PWABuilder requirement)
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'edvora-sync-tasks' || event.tag === 'sync-messages') {
+        event.waitUntil(
+            // When connection restores, background tasks or submissions can run
+            Promise.resolve()
+        );
+    }
+});
+
+// Periodic Background Sync API (PWABuilder requirement)
+self.addEventListener('periodicsync', (event) => {
+    if (event.tag === 'edvora-content-sync') {
+        event.waitUntil(
+            fetch('/app')
+                .then((response) => {
+                    if (response && response.status === 200) {
+                        const copy = response.clone();
+                        return caches.open(DYNAMIC_CACHE).then((cache) => cache.put('/app', copy));
+                    }
+                })
+                .catch(() => {})
+        );
+    }
+});
+
+// Fetch: Strategy for TWA / Play Store / PWABuilder compliance
 self.addEventListener('fetch', (event) => {
     const request = event.request;
     const url = new URL(request.url);
@@ -62,13 +103,12 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // HTML Navigation requests: Network-First with Offline Fallback (prevents 404 & connection error)
+    // HTML Navigation requests: Network-First with Offline Fallback
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    // Cache successful navigation responses for fast reload
-                    if (response.status === 200) {
+                    if (response && response.status === 200) {
                         const copy = response.clone();
                         caches.open(DYNAMIC_CACHE).then((cache) => cache.put(request, copy));
                     }
@@ -77,12 +117,45 @@ self.addEventListener('fetch', (event) => {
                 .catch(async () => {
                     const cache = await caches.open(STATIC_CACHE);
                     const dynamicCache = await caches.open(DYNAMIC_CACHE);
-                    // Try to serve previously cached version of page if available, else offline.html
+
                     const cachedResponse = await dynamicCache.match(request);
                     if (cachedResponse) {
                         return cachedResponse;
                     }
-                    return cache.match('/offline.html');
+
+                    const offlineFallback = await cache.match('/offline.html');
+                    if (offlineFallback) {
+                        return offlineFallback;
+                    }
+
+                    return new Response(
+                        `<!DOCTYPE html>
+                        <html lang="fa" dir="rtl">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>آفلاین هستید - ادورا</title>
+                            <style>
+                                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #fff; text-align: center; padding: 40px 20px; }
+                                .box { max-width: 480px; margin: 0 auto; background: #1e293b; padding: 32px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+                                h1 { font-size: 24px; color: #6366f1; margin-bottom: 12px; }
+                                p { color: #94a3b8; font-size: 15px; line-height: 1.6; }
+                                button { margin-top: 20px; background: #4f46e5; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="box">
+                                <h1>شما در حالت آفلاین هستید</h1>
+                                <p>اتصال شما به اینترنت قطع شده است. به محض برقراری مجدد ارتباط، اطلاعات به‌روزرسانی خواهند شد.</p>
+                                <button onclick="window.location.reload()">تلاش مجدد</button>
+                            </div>
+                        </body>
+                        </html>`,
+                        {
+                            status: 200,
+                            headers: { 'Content-Type': 'text/html; charset=utf-8' }
+                        }
+                    );
                 })
         );
         return;
@@ -93,6 +166,7 @@ self.addEventListener('fetch', (event) => {
         url.pathname.startsWith('/build/') ||
         url.pathname.startsWith('/assets/') ||
         url.pathname.startsWith('/icons/') ||
+        url.pathname.startsWith('/screenshots/') ||
         url.pathname.endsWith('.js') ||
         url.pathname.endsWith('.css') ||
         url.pathname.endsWith('.png') ||

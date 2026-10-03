@@ -149,15 +149,15 @@
         });
 
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(reg) {
-                        // console.log('PWA ServiceWorker registered with scope:', reg.scope);
-                    })
-                    .catch(function(err) {
-                        console.warn('PWA ServiceWorker registration failed:', err);
-                    });
-            });
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(function(reg) {
+                    if (reg.waiting) {
+                        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                })
+                .catch(function(err) {
+                    console.warn('PWA ServiceWorker registration failed:', err);
+                });
         }
     </script>
 </body>

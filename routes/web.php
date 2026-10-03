@@ -414,8 +414,16 @@ Route::redirect('/admin-panel/students', '/admin/students');
 Route::redirect('/admin-panel/teachers', '/admin/teachers');
 Route::redirect('/admin-panel', '/admin/dashboard');
 
-// API Routes for events
+// API Routes for events and PWA widgets
 Route::get('/api/events', [EventController::class, 'apiIndex'])->name('api.events.index');
+Route::get('/api/widget-data', function () {
+    return response()->json([
+        'title' => 'ادورا | Edvora Tech',
+        'subtitle' => 'سامانه آموزش و یادگیری آنلاین',
+        'status' => 'active',
+        'url' => url('/app'),
+    ]);
+})->name('api.widget-data');
 
 // Breeze Auth routes
 require __DIR__.'/auth.php';

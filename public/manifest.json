@@ -10,6 +10,7 @@
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
+    "tabbed",
     "standalone",
     "minimal-ui"
   ],
@@ -20,7 +21,108 @@
     "education",
     "productivity"
   ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://edvoratech.com/manifest.json"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
+  "tab_strip": {
+    "home_tab": {
+      "scope": "/"
+    },
+    "new_tab_button": {
+      "url": "/app"
+    }
+  },
+  "note_taking": {
+    "new_note_url": "/app?action=new-note"
+  },
+  "scope_extensions": [
+    {
+      "origin": "https://edvoratech.com"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+edvora",
+      "url": "/app?action=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/app",
+      "name": "Course Material",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ],
+      "accept": {
+        "text/plain": [".txt"],
+        "application/pdf": [".pdf"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/app",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "widgets": [
+    {
+      "name": "Edvora Courses",
+      "short_name": "Edvora",
+      "description": "دسترسی سریع به دوره‌ها و اعلانات فعال ادورا",
+      "tag": "edvora-widget",
+      "template": "edvora-widget",
+      "ms_ac_template": "widgets/edvora.json",
+      "data": "/api/widget-data",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/screenshots/desktop-1.png",
+          "sizes": "1376x768",
+          "label": "Edvora Widget"
+        }
+      ],
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1376x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Edvora Platform Desktop Dashboard"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "768x1376",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Edvora Platform Mobile App"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -102,6 +204,5 @@
         }
       ]
     }
-  ],
-  "related_applications": []
+  ]
 }

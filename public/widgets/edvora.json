@@ -1,0 +1,26 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "ادورا | Edvora Tech",
+      "weight": "Bolder",
+      "size": "Medium",
+      "color": "Accent"
+    },
+    {
+      "type": "TextBlock",
+      "text": "دسترسی سریع به کلاس‌ها، دوره‌ها و اطلاعیه‌های جدید",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "ورود به سامانه",
+      "url": "https://edvoratech.com/app"
+    }
+  ]
+}

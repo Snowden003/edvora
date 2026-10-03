@@ -9,3 +9,6 @@ deployment:
     - /usr/bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
     - /usr/bin/find $PUBLICPATH -type d -exec chmod 755 {} \;
     - /usr/bin/find $PUBLICPATH -type f -exec chmod 644 {} \;
+    - /usr/local/bin/php $DEPLOYPATH/artisan view:clear || true
+    - /usr/local/bin/php $DEPLOYPATH/artisan route:clear || true
+    - /usr/local/bin/php $DEPLOYPATH/artisan cache:clear || true
