@@ -9,6 +9,13 @@ jobs:
   build-and-deploy:
     name: Build Assets & Deploy to cPanel / Server
     runs-on: ubuntu-latest
+    env:
+      CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+      CPANEL_WEBHOOK_URL: ${{ secrets.CPANEL_WEBHOOK_URL }}
+      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+      FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
 
     steps:
       - name: 📥 Checkout repository
@@ -41,33 +48,31 @@ jobs:
           fi
 
       - name: 🔑 Trigger cPanel Git Pull & Deploy via API Token (Recommended)
-        if: ${{ secrets.CPANEL_API_TOKEN != '' }}
+        if: env.CPANEL_API_TOKEN != ''
         run: |
           echo "Updating repository from remote in cPanel..."
-          curl -s -k -H "Authorization: cpanel edvokttv:${{ secrets.CPANEL_API_TOKEN }}" \
+          curl -s -k -H "Authorization: cpanel edvokttv:$CPANEL_API_TOKEN" \
             "https://business118.web-hosting.com:2083/execute/VersionControl/update?repository_root=/home/edvokttv/repositories/edvora"
           echo "Deploying HEAD commit in cPanel..."
-          curl -s -k -H "Authorization: cpanel edvokttv:${{ secrets.CPANEL_API_TOKEN }}" \
+          curl -s -k -H "Authorization: cpanel edvokttv:$CPANEL_API_TOKEN" \
             "https://business118.web-hosting.com:2083/execute/VersionControlDeployment/create?repository_root=/home/edvokttv/repositories/edvora"
           echo "cPanel deployment triggered successfully!"
 
       - name: 🚀 Trigger cPanel Auto-Deployment Webhook (Optional Webhook)
-        if: ${{ secrets.CPANEL_WEBHOOK_URL != '' }}
-        env:
-          CPANEL_WEBHOOK_URL: ${{ secrets.CPANEL_WEBHOOK_URL }}
+        if: env.CPANEL_WEBHOOK_URL != ''
         run: |
           echo "Triggering cPanel deployment webhook..."
           curl -s -X POST "$CPANEL_WEBHOOK_URL"
           echo "Webhook successfully triggered!"
 
       - name: 📂 Direct FTP Deploy to Server (Optional Fallback)
-        if: ${{ secrets.FTP_PASSWORD != '' }}
+        if: env.FTP_PASSWORD != ''
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER || 'business118.web-hosting.com' }}
-          username: ${{ secrets.FTP_USERNAME || 'edvokttv' }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
+          server: ${{ env.FTP_SERVER || 'business118.web-hosting.com' }}
+          username: ${{ env.FTP_USERNAME || 'edvokttv' }}
+          password: ${{ env.FTP_PASSWORD }}
+          server-dir: ${{ env.FTP_SERVER_DIR || '/public_html/' }}
           local-dir: ./public/
           exclude: |
             **/.git*
